@@ -476,7 +476,6 @@ function editEntry(id) {
 const cssDatabase = [
     {
         category: "Border & Rahmen",
-        icon: "🔲",
         commands: [
             { name: "border", syntax: "border: 1px solid #000;", desc: "Kurzform für Breite, Stil und Farbe des Außenrahmens." },
             { name: "border-width", syntax: "border-width: 2px;", desc: "Bestimmt die Dicke des Außenrahmens." },
@@ -491,7 +490,6 @@ const cssDatabase = [
     },
     {
         category: "Abstände & Box-Modell",
-        icon: "📦",
         commands: [
             { name: "margin", syntax: "margin: 10px 20px 10px 20px;", desc: "Außenabstand zu anderen Elementen (oben rechts unten links)." },
             { name: "margin-top / right / bottom / left", syntax: "margin-top: 15px;", desc: "Gezielter Außenabstand an einer Seite." },
@@ -505,7 +503,6 @@ const cssDatabase = [
     },
     {
         category: "Flexbox Layout",
-        icon: "📐",
         commands: [
             { name: "display: flex", syntax: "display: flex | inline-flex;", desc: "Aktiviert das flexible Layout-System für Kinderelemente." },
             { name: "flex-direction", syntax: "flex-direction: row | column | row-reverse | column-reverse;", desc: "Bestimmt die Hauptachse (nebeneinander oder untereinander)." },
@@ -523,7 +520,6 @@ const cssDatabase = [
     },
     {
         category: "CSS Grid Layout",
-        icon: "🏁",
         commands: [
             { name: "display: grid", syntax: "display: grid | inline-grid;", desc: "Aktiviert das zweidimensionale Raster-Layout." },
             { name: "grid-template-columns", syntax: "grid-template-columns: repeat(3, 1fr) | 200px 1fr;", desc: "Definiert die Anzahl und Breite der Spalten." },
@@ -537,7 +533,6 @@ const cssDatabase = [
     },
     {
         category: "Text & Typografie",
-        icon: "✍️",
         commands: [
             { name: "color", syntax: "color: #333333 | rgb(0,0,0) | hsl(0, 0%, 20%);", desc: "Bestimmt die Textfarbe." },
             { name: "font-family", syntax: "font-family: 'Lobster', Arial, sans-serif;", desc: "Legt die Schriftart und Ersatz-Schriftarten fest." },
@@ -557,7 +552,6 @@ const cssDatabase = [
     },
     {
         category: "Hintergrund & Farben",
-        icon: "🎨",
         commands: [
             { name: "background-color", syntax: "background-color: #ffffff | transparent;", desc: "Bestimmt die Hintergrundfarbe." },
             { name: "background-image", syntax: "background-image: url('bild.png') | linear-gradient(...);", desc: "Setzt ein Hintergrundbild oder Farbverlauf." },
@@ -570,7 +564,6 @@ const cssDatabase = [
     },
     {
         category: "Positionierung & Anzeige",
-        icon: "📍",
         commands: [
             { name: "display", syntax: "display: block | inline | inline-block | none | flex | grid;", desc: "Bestimmt das Anzeige-Verhalten eines Elements." },
             { name: "position", syntax: "position: static | relative | absolute | fixed | sticky;", desc: "Bestimmt die Positionierungsart im Dokumentfluss." },
@@ -584,7 +577,6 @@ const cssDatabase = [
     },
     {
         category: "Transformationen, Animationen & Effekte",
-        icon: "✨",
         commands: [
             { name: "transform", syntax: "transform: rotate(45deg) scale(1.2) translate(10px, 20px);", desc: "Dreht, skaliert oder verschiebt Elemente im Raum." },
             { name: "transition", syntax: "transition: all 0.3s ease-in-out;", desc: "Steuert sanfte Übergänge von CSS-Eigenschaften (z.B. bei :hover)." },
@@ -619,7 +611,7 @@ function renderCssGuide() {
     container.innerHTML = cssDatabase.map((cat, catIdx) => `
         <div class="css-category-card" style="background: #fff; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <div onclick="toggleCssCategory(${catIdx})" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
-                <h3 style="margin: 0; font-size: 16px; color: #007bff;">${cat.icon} Ordner: ${cat.category}</h3>
+                <h3 style="margin: 0; font-size: 16px; color: #007bff;">📁 ${cat.category}</h3>
                 <span id="css-cat-icon-${catIdx}" style="font-size: 12px; color: #666;">▼ (${cat.commands.length} Befehle)</span>
             </div>
             
