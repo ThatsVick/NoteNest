@@ -1,4 +1,5 @@
 let currentEditId = null; // Speichert die ID der Notiz, wenn ein bestehender Eintrag bearbeitet wird
+let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angezeigte Datum (Standard: Heute)
 
 // =======================================================================================================================
 // 1. INITIALISIERUNG BEIM LADEN DER SEITE
@@ -56,6 +57,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Falls wir auf Start.html sind, die letzten Aktivitäten rendern
     renderStartDashboard();
+
+    // Falls wir auf Kalender.html sind, den Kalender rendern
+    renderCalendar();
 });
 
 // =======================================================================================================================
@@ -123,7 +127,7 @@ function insertImageFile(file) {
         const wrapper = document.createElement('div');
         wrapper.style.position = 'relative';
         wrapper.style.display = 'inline-block';
-        wrapper.style.resize = 'both'; // Ermöglicht das Anpassen der Größe per Mausklick an den Ecken
+        wrapper.style.resize = 'both';
         wrapper.style.overflow = 'hidden';
         wrapper.style.maxWidth = '100%';
         wrapper.style.width = '300px';
@@ -139,7 +143,6 @@ function insertImageFile(file) {
         img.style.objectFit = 'contain';
         img.style.display = 'block';
 
-        // Runder Lösch-Button oben rechts am Bild
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML = '✖';
         deleteBtn.title = 'Bild löschen';
@@ -160,7 +163,7 @@ function insertImageFile(file) {
 
         deleteBtn.addEventListener('click', function(event) {
             event.stopPropagation();
-            wrapper.remove(); // Entfernt den gesamten Bild-Block
+            wrapper.remove();
         });
 
         wrapper.appendChild(img);
@@ -195,7 +198,7 @@ function loadEntryForEditing(id) {
     }
 }
 
-// Speichert oder überschreibt Notizen im Browser-Speicher (ohne Weiterleitung)
+// Speichert oder überschreibt Notizen im Browser-Speicher
 function saveToArchive() {
     const datum = document.getElementById('datum').value;
     const thema = document.getElementById('thema').value.trim() || 'Unbenanntes Thema';
@@ -211,7 +214,6 @@ function saveToArchive() {
     let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
 
     if (currentEditId) {
-        // Eintrag aktualisieren
         const index = archive.findIndex(item => item.id === currentEditId);
         if (index !== -1) {
             archive[index] = {
@@ -223,7 +225,6 @@ function saveToArchive() {
             };
         }
     } else {
-        // Neuen Eintrag erstellen
         const newEntry = {
             id: Date.now(),
             date: datum,
@@ -243,7 +244,7 @@ function saveToArchive() {
 }
 
 // =======================================================================================================================
-// 4. ARCHIV-FUNKTIONEN (Ordner.html)
+// 4. ARCHIV-FUNKTIONEN MIT AUTOMATISCHEN MONATS-ORDNERN (Ordner.html)
 // =======================================================================================================================
 
 // Aktualisiert den Zähler auf der Archiv-Kachel
@@ -255,12 +256,12 @@ function updateArchiveCount() {
     }
 }
 
-// Öffnet die Notiz-Archiv Ansicht und schließt andere Unterbereiche
+// Öffnet die Notiz-Archiv Ansicht
 function openArchiveView() {
     const archiveSec = document.getElementById('archiveSection');
     const cssSec = document.getElementById('cssGuideSection');
 
-    if (cssSec) cssSec.style.display = "none"; // CSS Handbuch ausblenden
+    if (cssSec) cssSec.style.display = "none";
     if (archiveSec) {
         archiveSec.style.display = "block";
         loadArchive();
@@ -268,7 +269,23 @@ function openArchiveView() {
     }
 }
 
-// Lädt, sortiert und rendert die gespeicherten Notizen
+// Wandelt ein Datum (YYYY-MM-DD) in einen Monatsnamen um (z. B. "September 2026")
+function getMonthYearLabel(dateString) {
+    if (!dateString) return "Unbekannter Monat";
+    const parts = dateString.split('-');
+    if (parts.length < 2) return "Unbekannter Monat";
+
+    const monthNames = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember"
+    ];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const year = parts[0];
+
+    return `${monthNames[monthIndex] || 'Unbekannt'} ${year}`;
+}
+
+// Lädt das Archiv und gruppiert alle Notizen automatisch in Monats-Ordner (standardmäßig zugeklappt)
 function loadArchive() {
     const container = document.getElementById('archiveContainer');
     if (!container) return;
@@ -280,73 +297,92 @@ function loadArchive() {
         return;
     }
 
+    // Sortierung anwenden
     const sortSelect = document.getElementById('sortSelect');
     const sortValue = sortSelect ? sortSelect.value : 'date-desc';
 
-    // Sortierung anwenden
     archive.sort((a, b) => {
         const titleA = (a.title || '').toLowerCase();
         const titleB = (b.title || '').toLowerCase();
-        const tagsA = (a.tags || '').toLowerCase();
-        const tagsB = (b.tags || '').toLowerCase();
-
         switch (sortValue) {
-            case 'date-asc':
-                return new Date(a.date) - new Date(b.date);
-            case 'date-desc':
-                return new Date(b.date) - new Date(a.date);
-            case 'title-asc':
-                return titleA.localeCompare(titleB);
-            case 'title-desc':
-                return titleB.localeCompare(titleA);
-            case 'tags-asc':
-                return tagsA.localeCompare(tagsB);
-            case 'tags-desc':
-                return tagsB.localeCompare(tagsA);
-            default:
-                return new Date(b.date) - new Date(a.date);
+            case 'date-asc': return new Date(a.date) - new Date(b.date);
+            case 'date-desc': return new Date(b.date) - new Date(a.date);
+            case 'title-asc': return titleA.localeCompare(titleB);
+            case 'title-desc': return titleB.localeCompare(titleA);
+            default: return new Date(b.date) - new Date(a.date);
         }
     });
 
-    container.innerHTML = archive.map(item => `
-        <div class="archive-card" data-tags="${item.tags || ''}" data-title="${item.title}" style="background: #fff; border-left: 4px solid #007bff; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden;">
-            
-            <div style="padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+    // Gruppierung nach Monat und Jahr
+    const monthGroups = {};
+    archive.forEach(item => {
+        const label = getMonthYearLabel(item.date);
+        if (!monthGroups[label]) {
+            monthGroups[label] = [];
+        }
+        monthGroups[label].push(item);
+    });
+
+    // Rendert jeden Monats-Ordner als aufklappbare Karte (standardmäßig zugeklappt)
+    let folderIdx = 0;
+    container.innerHTML = Object.keys(monthGroups).map(monthLabel => {
+        const items = monthGroups[monthLabel];
+        folderIdx++;
+
+        return `
+            <div class="month-folder-card" style="background: #fff; border: 1px solid #007bff; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 
-                <div onclick="toggleContent(${item.id})" style="cursor: pointer; display: flex; align-items: center; gap: 15px; flex-grow: 1;">
-                    <span style="font-size: 13px; font-weight: bold; color: #555;">📅 ${item.date}</span>
-                    <h3 style="margin: 0; font-size: 16px; color: #222;">${item.title}</h3>
+                <div onclick="toggleMonthFolder(${folderIdx})" style="padding: 12px 15px; background: #e9f2ff; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; font-size: 16px; color: #007bff;">📁 ${monthLabel}</h3>
+                    <span id="month-folder-icon-${folderIdx}" style="font-size: 13px; color: #007bff; font-weight: bold;">▼ (${items.length} ${items.length === 1 ? 'Eintrag' : 'Einträge'})</span>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span onclick="toggleContent(${item.id})" style="cursor: pointer; font-size: 12px; background: #e9f2ff; color: #007bff; padding: 3px 8px; border-radius: 4px;">🏷️ ${item.tags || 'Keine Tags'}</span>
-                    
-                    <button onclick="event.stopPropagation(); editEntry(${item.id});" title="Eintrag bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px;">
-                        ✏️
-                    </button>
-
-                    <button onclick="event.stopPropagation(); deleteEntry(${item.id});" title="Eintrag löschen" style="background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px;">
-                        🗑️
-                    </button>
-
-                    <span onclick="toggleContent(${item.id})" id="icon-${item.id}" style="cursor: pointer; font-size: 12px; color: #888; width: 15px; text-align: center;">▼</span>
+                <div id="month-folder-body-${folderIdx}" class="month-folder-body" style="display: none; padding: 15px; background: #fafafa; border-top: 1px solid #d0e3ff;">
+                    ${items.map(item => `
+                        <div class="archive-card" data-tags="${item.tags || ''}" data-title="${item.title}" data-date="${item.date || ''}" style="background: #fff; border-left: 4px solid #007bff; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                            <div style="padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                                <div onclick="toggleContent(${item.id})" style="cursor: pointer; display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+                                    <span style="font-size: 12px; font-weight: bold; color: #555;">📅 ${item.date}</span>
+                                    <h4 style="margin: 0; font-size: 15px; color: #222;">${item.title}</h4>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span onclick="toggleContent(${item.id})" style="cursor: pointer; font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${item.tags || 'Keine Tags'}</span>
+                                    <button onclick="event.stopPropagation(); editEntry(${item.id});" title="Bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
+                                    <button onclick="event.stopPropagation(); deleteEntry(${item.id});" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
+                                    <span onclick="toggleContent(${item.id})" id="icon-${item.id}" style="cursor: pointer; font-size: 12px; color: #888; width: 15px; text-align: center;">▼</span>
+                                </div>
+                            </div>
+                            <div id="body-${item.id}" style="display: none; padding: 12px; border-top: 1px solid #eee; background: #fff;">
+                                <div style="font-size: 14px; color: #333; line-height: 1.5;">${item.content}</div>
+                            </div>
+                        </div>
+                    `).join('')}
                 </div>
 
             </div>
-
-            <div id="body-${item.id}" style="display: none; padding: 15px; border-top: 1px solid #eee; background: #fff;">
-                <div style="font-size: 14px; color: #333; line-height: 1.5;">${item.content}</div>
-            </div>
-
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     if (typeof filterArchive === "function") {
         filterArchive();
     }
 }
 
-// Blendet den Notiz-Inhalt im Archiv auf oder zu
+// Auf- und Zuklappen der Monats-Ordner
+function toggleMonthFolder(idx) {
+    const body = document.getElementById(`month-folder-body-${idx}`);
+    const icon = document.getElementById(`month-folder-icon-${idx}`);
+
+    if (body.style.display === "none") {
+        body.style.display = "block";
+        if (icon) icon.innerText = icon.innerText.replace("▲", "▼");
+    } else {
+        body.style.display = "none";
+        if (icon) icon.innerText = icon.innerText.replace("▼", "▲");
+    }
+}
+
+// Blendet Notiz-Inhalt im Archiv auf oder zu
 function toggleContent(id) {
     const body = document.getElementById(`body-${id}`);
     const icon = document.getElementById(`icon-${id}`);
@@ -360,19 +396,28 @@ function toggleContent(id) {
     }
 }
 
-// Echtzeit-Suchfunktion für das Notiz-Archiv
+// Echtzeit-Suchfunktion für das Notiz-Archiv (Durchsucht Tags, Thema UND Datum)
 function filterArchive() {
     const searchInput = document.getElementById('tagSearchInput');
     if (!searchInput) return;
 
-    const query = searchInput.value.toLowerCase();
+    const query = searchInput.value.toLowerCase().trim();
     const cards = document.querySelectorAll('.archive-card');
 
     cards.forEach(card => {
         const tags = card.getAttribute('data-tags').toLowerCase();
         const title = card.getAttribute('data-title').toLowerCase();
+        const date = card.getAttribute('data-date').toLowerCase();
 
-        if (tags.includes(query) || title.includes(query)) {
+        let germanDate = "";
+        if (date && date.includes('-')) {
+            const parts = date.split('-');
+            if (parts.length === 3) {
+                germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+            }
+        }
+
+        if (tags.includes(query) || title.includes(query) || date.includes(query) || germanDate.includes(query)) {
             card.style.display = "block";
         } else {
             card.style.display = "none";
@@ -530,7 +575,7 @@ function openCssGuideView() {
     const archiveSec = document.getElementById('archiveSection');
     const cssSec = document.getElementById('cssGuideSection');
 
-    if (archiveSec) archiveSec.style.display = "none"; // Notiz-Archiv ausblenden
+    if (archiveSec) archiveSec.style.display = "none";
     if (cssSec) {
         cssSec.style.display = "block";
         renderCssGuide();
@@ -609,9 +654,138 @@ function searchCssGuide() {
 
         if (hasMatch) {
             card.style.display = "block";
-            body.style.display = "block"; // Öffnet den passenden Ordner automatisch
+            body.style.display = "block";
         } else {
             card.style.display = "none";
         }
     });
+}
+
+// =======================================================================================================================
+// 6. DYNAMISCHER KALENDER MIT KLICKBARER TAGES-DETAILANSICHT (Kalender.html)
+// =======================================================================================================================
+
+// Monats-Navigation: verschiebt den Monat um delta (+1 für weiter, -1 für zurück)
+function changeMonth(delta) {
+    currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+    renderCalendar();
+    closeDayDetail(); // Schließt offene Details beim Monatswechsel
+}
+
+// Rendert das Kalendergitter für den ausgewählten Monat
+function renderCalendar() {
+    const grid = document.getElementById('calendarGrid');
+    const monthYearTitle = document.getElementById('currentMonthYear');
+    if (!grid || !monthYearTitle) return; // Bricht ab, wenn wir nicht auf Kalender.html sind
+
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+
+    const monthNames = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember"
+    ];
+
+    monthYearTitle.innerText = `${monthNames[month]} ${year}`;
+
+    const dayLabels = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+    let htmlContent = dayLabels.map(day => `<div class="day-label">${day}</div>`).join('');
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const startOffset = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
+
+    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+
+    for (let i = 0; i < startOffset; i++) {
+        htmlContent += `<div class="calendar-day empty"></div>`;
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const formattedMonth = String(month + 1).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+        const dateString = `${year}-${formattedMonth}-${formattedDay}`;
+
+        const matchingNotes = archive.filter(item => item.date === dateString);
+        const isToday = (dateString === todayStr);
+
+        let notesHtml = '';
+        if (matchingNotes.length > 0) {
+            notesHtml = matchingNotes.map(note => `
+                <div title="${note.title}" style="background: #007bff; color: white; font-size: 11px; padding: 2px 5px; border-radius: 3px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    📝 ${note.title}
+                </div>
+            `).join('');
+        }
+
+        htmlContent += `
+            <div class="calendar-day ${isToday ? 'today' : ''}" onclick="showDayDetails('${dateString}')" style="cursor: pointer; ${isToday ? 'border: 2px solid #007bff; background: #f0f7ff;' : ''}">
+                <div class="day-num" style="${isToday ? 'color: #007bff; font-weight: bold;' : ''}">${day}</div>
+                ${notesHtml}
+            </div>
+        `;
+    }
+
+    grid.innerHTML = htmlContent;
+}
+
+// Öffnet die Detailansicht der Notizen für den geklickten Kalendertag
+function showDayDetails(dateString) {
+    const detailSection = document.getElementById('dayDetailSection');
+    const title = document.getElementById('selectedDateTitle');
+    const container = document.getElementById('dayDetailContainer');
+
+    if (!detailSection || !container) return;
+
+    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+    const dayNotes = archive.filter(item => item.date === dateString);
+
+    // Wandelt das ISO-Datum ins deutsche Format um
+    const parts = dateString.split('-');
+    const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+
+    title.innerText = `Notizen am ${germanDate}`;
+
+    if (dayNotes.length === 0) {
+        container.innerHTML = `<p style="color: #666; margin: 0;">An diesem Tag wurden keine Notizen angelegt.</p>`;
+    } else {
+        container.innerHTML = dayNotes.map(note => `
+            <div style="background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h4 style="margin: 0; color: #222; font-size: 16px;">${note.title}</h4>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${note.tags || 'Keine Tags'}</span>
+                        <button onclick="editEntry(${note.id})" title="Notiz bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
+                        <button onclick="deleteEntryFromCalendar(${note.id}, '${dateString}')" title="Notiz löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
+                    </div>
+                </div>
+                <div style="font-size: 14px; color: #333; line-height: 1.5; border-top: 1px solid #eee; padding-top: 8px;">
+                    ${note.content}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    detailSection.style.display = "block";
+    detailSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Schließt die Tages-Detailansicht auf Kalender.html
+function closeDayDetail() {
+    const detailSection = document.getElementById('dayDetailSection');
+    if (detailSection) detailSection.style.display = "none";
+}
+
+// Löscht eine Notiz direkt aus der Kalender-Detailansicht
+function deleteEntryFromCalendar(id, dateString) {
+    if (confirm("Eintrag wirklich löschen?")) {
+        let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+        archive = archive.filter(item => item.id !== id);
+        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
+        
+        renderCalendar(); // Rendert den Kalender neu
+        showDayDetails(dateString); // Aktualisiert die Tagesdetails
+    }
 }

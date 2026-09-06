@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NN.Kalender</title>
+    <title>Kalender - NoteNest</title>
 
     <!-- Google Font Lobster -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <!-- Externe JavaScript-Datei eingebunden -->
+    <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -32,71 +33,30 @@
 
     <!-- Hauptbereich -->
     <main class="content-area">
-
-        <!-- Monats-Kopfzeile -->
+        
+        <!-- Kalender-Kopfzeile für Monatsnavigation -->
         <div class="calendar-header">
-            <button type="button" class="cal-nav-btn">&laquo; Vorheriger Monat</button>
-            <h3 class="current-month">September 2026</h3>
-            <button type="button" class="cal-nav-btn">Nächster Monat &raquo;</button>
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">◀ Vorheriger Monat</button>
+            <h2 id="currentMonthYear" class="current-month">Monat Jahr</h2>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">Nächster Monat ▶</button>
         </div>
 
-        <!-- Kalender-Grid (7 Spalten) -->
-        <div class="calendar-grid">
-            
-            <!-- Spaltenüberschriften für die Wochentage -->
-            <div class="day-label">Mo</div>
-            <div class="day-label">Di</div>
-            <div class="day-label">Mi</div>
-            <div class="day-label">Do</div>
-            <div class="day-label">Fr</div>
-            <div class="day-label">Sa</div>
-            <div class="day-label">So</div>
-
-            <!-- Platzhalter für Tage des Vormonats -->
-            <div class="calendar-day empty"></div>
-
-            <!-- Die eigentlichen Monatstage (1 bis 30) -->
-            <div class="calendar-day"><span class="day-num">1</span></div>
-            <div class="calendar-day"><span class="day-num">2</span></div>
-            <div class="calendar-day"><span class="day-num">3</span></div>
-            <div class="calendar-day"><span class="day-num">4</span></div>
-            <div class="calendar-day"><span class="day-num">5</span></div>
-            <div class="calendar-day"><span class="day-num">6</span></div>
-
-            <div class="calendar-day"><span class="day-num">7</span></div>
-            <div class="calendar-day"><span class="day-num">8</span></div>
-            <div class="calendar-day"><span class="day-num">9</span></div>
-            <div class="calendar-day"><span class="day-num">10</span></div>
-            <div class="calendar-day"><span class="day-num">11</span></div>
-            <div class="calendar-day"><span class="day-num">12</span></div>
-            <div class="calendar-day"><span class="day-num">13</span></div>
-
-            <div class="calendar-day"><span class="day-num">14</span></div>
-            <div class="calendar-day"><span class="day-num">15</span></div>
-            <div class="calendar-day"><span class="day-num">16</span></div>
-            <div class="calendar-day"><span class="day-num">17</span></div>
-            <div class="calendar-day"><span class="day-num">18</span></div>
-            <div class="calendar-day"><span class="day-num">19</span></div>
-            <div class="calendar-day"><span class="day-num">20</span></div>
-
-            <div class="calendar-day"><span class="day-num">21</span></div>
-            <div class="calendar-day"><span class="day-num">22</span></div>
-            <div class="calendar-day"><span class="day-num">23</span></div>
-            <div class="calendar-day"><span class="day-num">24</span></div>
-            <div class="calendar-day"><span class="day-num">25</span></div>
-            <div class="calendar-day"><span class="day-num">26</span></div>
-            <div class="calendar-day"><span class="day-num">27</span></div>
-
-            <div class="calendar-day"><span class="day-num">28</span></div>
-            <div class="calendar-day"><span class="day-num">29</span></div>
-            <div class="calendar-day"><span class="day-num">30</span></div>
-
-            <!-- Platzhalter für Tage des Folgemonats -->
-            <div class="calendar-day empty"></div>
-            <div class="calendar-day empty"></div>
-            <div class="calendar-day empty"></div>
-            <div class="calendar-day empty"></div>
+        <!-- Kalender-Grid (7 Spalten für Mo-So) -->
+        <div id="calendarGrid" class="calendar-grid">
+            <!-- Wochentage & Tage werden dynamisch per script.js generiert -->
         </div>
+
+        <!-- Tages-Detailansicht (wird eingeblendet, wenn ein Tag angeklickt wird) -->
+        <div id="dayDetailSection" style="margin-top: 25px; display: none; background: #fff; border: 1px solid #007bff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e9f2ff; padding-bottom: 10px; margin-bottom: 15px;">
+                <h3 id="selectedDateTitle" style="margin: 0; color: #007bff;">Notizen am Tag</h3>
+                <button onclick="closeDayDetail()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">✖ Schließen</button>
+            </div>
+            <div id="dayDetailContainer">
+                <!-- Hier werden die Notizen des geklickten Tages dynamically geladen -->
+            </div>
+        </div>
+
     </main>
 
 </body>
