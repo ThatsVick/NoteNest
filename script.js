@@ -470,7 +470,7 @@ function editEntry(id) {
 }
 
 // =======================================================================================================================
-// 5. CSS-HANDBUCH UND LERNDATENBANK (VOLLSTÄNDIGER KATALOG EXAKT WIE IM SCREENSHOT)
+// 5. CSS-HANDBUCH UND LERNDATENBANK (MIT KATAGORIE-SYMBOLEN)
 // =======================================================================================================================
 
 const cssDatabase = [
@@ -611,7 +611,7 @@ function openCssGuideView() {
     }
 }
 
-// Rendert die Ordner und Befehle im CSS-Handbuch (Mit Icon, ohne das Wort "Ordner:")
+// Rendert die Ordner und Befehle im CSS-Handbuch (Mit Symbol-Icon, ohne das Wort "Ordner:")
 function renderCssGuide() {
     const container = document.getElementById('cssGuideContainer');
     if (!container) return;
@@ -619,7 +619,7 @@ function renderCssGuide() {
     container.innerHTML = cssDatabase.map((cat, catIdx) => `
         <div class="css-category-card" style="background: #fff; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <div onclick="toggleCssCategory(${catIdx})" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
-                <h3 style="margin: 0; font-size: 16px; color: #007bff;">${cat.icon} ${cat.category}</h3>
+                <h3 style="margin: 0; font-size: 16px; color: #007bff;">${cat.icon || '📁'} ${cat.category}</h3>
                 <span id="css-cat-icon-${catIdx}" style="font-size: 12px; color: #666;">▼ (${cat.commands.length} Befehle)</span>
             </div>
             
