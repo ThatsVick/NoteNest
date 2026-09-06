@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NN.Ordner</title>
+    <title>Ordner - NoteNest</title>
 
     <!-- Google Font Lobster -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,21 +39,31 @@
             <button type="button" class="add-folder-btn">+ Ordner hinzufügen</button>
         </div>
 
-        <!-- Rasteransicht für die Ordner -->
+        <!-- Rasteransicht für die Ordner-Kacheln -->
         <div class="folder-grid">
             
+            <!-- Datums-Archiv Kachel -->
             <div class="folder-card system-folder" onclick="openArchiveView()">
                 <div class="folder-icon">📅</div>
                 <div class="folder-name">Datums-Archiv</div>
                 <div class="folder-info" id="archiveCountInfo">Lädt...</div>
             </div>
 
+            <!-- Interaktives CSS Handbuch Kachel -->
+            <div class="folder-card" onclick="openCssGuideView()">
+                <div class="folder-icon">🎨</div>
+                <div class="folder-name">CSS Handbuch</div>
+                <div class="folder-info">Befehle & Nachschlagewerk</div>
+            </div>
+
+            <!-- Bilder Kachel -->
             <div class="folder-card">
                 <div class="folder-icon">🖼️</div>
                 <div class="folder-name">Bilder</div>
                 <div class="folder-info">Alle Medien</div>
             </div>
 
+            <!-- Projekte Kachel -->
             <div class="folder-card">
                 <div class="folder-icon">📁</div>
                 <div class="folder-name">Projekte</div>
@@ -85,6 +95,18 @@
 
             <div id="archiveContainer" class="archive-list">
                 <!-- Hier werden die gespeicherten Einträge geladen -->
+            </div>
+        </div>
+
+        <!-- CSS Handbuch Bereich (Wird bei Klick auf "CSS Handbuch" eingeblendet) -->
+        <div id="cssGuideSection" style="margin-top: 30px; display: none; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+                <h2 style="margin: 0; color: #222;">🎨 CSS Befehle & Handbuch</h2>
+                <input type="text" id="cssSearchInput" placeholder="CSS Befehl suchen (z.B. border, flex, margin)..." onkeyup="searchCssGuide()" style="padding: 8px 14px; border: 1px solid #007bff; border-radius: 6px; width: 300px; font-size: 14px;">
+            </div>
+
+            <div id="cssGuideContainer">
+                <!-- Hier werden die CSS-Ordner und Befehle geladen -->
             </div>
         </div>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NN.Start</title>
+    <title>Start - NoteNest</title>
     
     <!-- Google Font "Lobster" einbinden -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <!-- Externe JavaScript-Datei mit defer eingebunden -->
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -38,9 +39,9 @@
         <section class="welcome-section">
             <h2>Was ist NoteNest</h2>
             <p class="info-text">
-                Es soll einfach gesagt Daten verwalten, Notizen aus dem Unterricht speichern die man später ansehen, bearbeiten und zum üben benutzen kann.
-                Ich mache gerade eine Umschulung zum Fachinformatiker für Anwendungsentwicklung und NoteNest ist ein kleines Projekt woran ich bastle, um erste Erfahrung im Bereich Programmieren mit HTML, css, und Java zu sammeln. </p>
-
+                Es soll einfach gesagt Daten verwalten, Notizen aus dem Unterricht speichern, die man später ansehen, bearbeiten und zum Üben benutzen kann.
+                Ich mache gerade eine Umschulung zum Fachinformatiker für Anwendungsentwicklung und NoteNest ist ein kleines Projekt, woran ich bastle, um erste Erfahrung im Bereich Programmieren mit HTML, CSS und JavaScript zu sammeln.
+            </p>
         </section>
 
         <!-- Dashboard: Neuigkeiten & Letzte Aktivitäten -->
@@ -51,27 +52,22 @@
                 <h3>📢 News & Updates</h3>
                 <ul class="dashboard-list">
                     <li>
-                        <span class="list-date">Heute</span>
-                        <p>Das Dashboard und die Kalenderstruktur wurden erfolgreich angelegt.</p>
+                        <span class="list-date">Aktuell</span>
+                        <p><strong>CSS-Handbuch:</strong> Interaktives Nachschlagewerk für CSS-Befehle eingebaut.</p>
                     </li>
                     <li>
-                        <span class="list-date">Gestern</span>
-                        <p>Die Ordner-Übersicht und Navigation wurden auf das neue Design angepasst.</p>
+                        <span class="list-date">Kürzlich</span>
+                        <p><strong>Archiv-Sortierung:</strong> Filter für Datum, Name und Tags hinzugefügt.</p>
                     </li>
                 </ul>
             </div>
 
-            <!-- Karte 2: Zuletzt bearbeitet & gespeichert -->
+            <!-- Karte 2: Zuletzt bearbeitet & gespeichert (Dynamisch per JavaScript geladen) -->
             <div class="dashboard-card">
                 <h3>🕒 Letzte Aktivitäten</h3>
-                <ul class="dashboard-list">
+                <ul id="recentNotesList" class="dashboard-list">
                     <li>
-                        <span class="list-date">06.09.2026</span>
-                        <p><strong>Projektstart MOF</strong> – Erstes Layout und Styling erstellt</p>
-                    </li>
-                    <li>
-                        <span class="list-date">05.09.2026</span>
-                        <p><strong>Hauptseite</strong> – Infotext und Willkommens-Sektion eingefügt</p>
+                        <p style="color: #666;">Lädt die neuesten Notizen...</p>
                     </li>
                 </ul>
             </div>
