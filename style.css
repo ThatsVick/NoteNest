@@ -45,7 +45,7 @@
 /*------------------------------------- Effekt beim Drüberfahren mit der Maus----------------------------------------- */
 
 .willkommen-btn:hover {
-    background-color: #0c327c; /* Dunkleres Blau beim Mouseover */
+    background-color: #0c47be; /* Dunkleres Blau beim Mouseover */
     color: white;
     transition: background 1s; /* Sanfter Farbübergang */
 }
@@ -106,14 +106,14 @@ body {
 }
 
 .navbar li a:hover {
-    background-color: #0c327c; /* Dunkleres Blau beim Mouseover */
+    background-color: #0c47be; /* Dunkleres Blau beim Mouseover */
     color: white;
     transition: background 1s; /* Sanfter Farbübergang */
     
 }
 
 .navbar li a.active {
-    background-color: #0c327c; /* Dunkelblau */
+    background-color: #0c47be; /* Dunkelblau */
     color: white;              /* Weiße Schrift */
 }
 
@@ -163,6 +163,7 @@ body {
 
 .input-group input {
     border: 1px solid #000;
+    border-radius: 5px;
     padding: 8px;
     font-size: 14px;
     background-color: #fff;
@@ -188,7 +189,7 @@ body {
 
 
 .save-btn:hover {
-    background-color: #0c327c; /* Dunkleres Blau beim Mouseover */
+    background-color: #0c47be; /* Dunkleres Blau beim Mouseover */
     color: white;
     transition: background 1s; /* Sanfter Farbübergang */
 }
@@ -278,7 +279,7 @@ body {
 }
 
 .add-folder-btn:hover {
-    background-color: #0c327c;
+    background-color: #0c47be;
     color: white;
     transition: background 0.3s;
 }
@@ -354,7 +355,7 @@ body {
 }
 
 .cal-nav-btn:hover {
-    background-color: #0c327c;
+    background-color: #0c47be;
     color: white;
     transition: background 0.3s;
 }
@@ -398,7 +399,7 @@ body {
 /* Hover-Effekt beim Drüberfahren (Signalisiert Klickbarkeit) */
 .calendar-day:hover:not(.empty) {
     background-color: #e6f0ff;
-    border-color: #0c327c;
+    border-color: #0c47be;
 }
 
 /* Ausgegraute Felder für Vor-/Folgemonate */

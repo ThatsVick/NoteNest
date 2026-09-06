@@ -53,7 +53,7 @@
 
                 <div class="input-group save-group">
                     <label>&nbsp;</label> <!-- Leeres Label für gleiche Ausrichtung -->
-                    <button type="button" class="save-btn">Speichern</button>
+                    <button type="button" class="save-btn" onclick="saveToArchive()">Speichern</button>
                 </div>
             </div>
 
@@ -76,11 +76,55 @@
 
             <!-- Dritte Zeile: Großer Schreibbereich -->
             <div class="editor-body">
-                <textarea class="editor-textarea" placeholder="Hier soll ein Feld zum Schreiben kommen..."></textarea>
+                <textarea id="editorText" class="editor-textarea" placeholder="Hier soll ein Feld zum Schreiben kommen..."></textarea>
             </div>
 
         </form>
     </main>
+
+    <!-- Speicherskript für das Datumsarchiv -->
+    <script>
+    // Setzt beim Laden automatisch das heutige Datum in das Datum-Feld
+    document.addEventListener("DOMContentLoaded", function() {
+        const datumInput = document.getElementById('datum');
+        if (datumInput && !datumInput.value) {
+            datumInput.value = new Date().toISOString().split('T')[0];
+        }
+    });
+
+    function saveToArchive() {
+        const datum = document.getElementById('datum').value;
+        const thema = document.getElementById('thema').value.trim() || 'Unbenanntes Thema';
+        const tags = document.getElementById('tags').value.trim();
+        const inhalt = document.getElementById('editorText').value;
+
+        if (!inhalt) {
+            alert("Bitte schreibe zuerst einen Text!");
+            return;
+        }
+
+        // Objekt für den neuen Eintrag erstellen
+        const newEntry = {
+            id: Date.now(),
+            date: datum,
+            title: thema,
+            tags: tags,
+            content: inhalt
+        };
+
+        // Bisherige Einträge aus dem Browser-Speicher laden
+        let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+        
+        // Neuen Eintrag hinzufügen
+        archive.push(newEntry);
+
+        // Im Speicher ablegen
+        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
+
+        alert("Eintrag erfolgreich im Datumsarchiv gespeichert!");
+        
+    }
+    </script>
 
 </body>
 </html>

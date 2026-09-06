@@ -16,7 +16,7 @@
 
     <!-- Header -->
     <header class="main-header">
-        <h1 class="header-title">MoteNest</h1>
+        <h1 class="header-title">NoteNest</h1>
     </header>
 
     <!-- Navbar  -->
@@ -30,44 +30,126 @@
     </nav>
 
     <!-- Hauptbereich für die Ordner-Übersicht -->
-<main class="content-area">
-    
-
-    <!-- Zeile für den Button oben rechts -->
-    <div class="top-action-row">
-        <button type="button" class="add-folder-btn">+ Ordner hinzufügen</button>
-    </div>
-
-    <!-- Rasteransicht für die Ordner (zentriert ausgerichtet) -->
-    <div class="folder-grid">
+    <main class="content-area">
         
-        <div class="folder-card system-folder">
-            <div class="folder-icon">📅</div>
-            <div class="folder-name">Datums-Archiv</div>
-            <div class="folder-info">Jahr / Monat / Tag</div>
+        <!-- Zeile für den Button oben rechts -->
+        <div class="top-action-row">
+            <button type="button" class="add-folder-btn">+ Ordner hinzufügen</button>
         </div>
 
-        <div class="folder-card">
-            <div class="folder-icon">🖼️</div>
-            <div class="folder-name">Bilder</div>
-            <div class="folder-info">Alle Medien</div>
+        <!-- Rasteransicht für die Ordner -->
+        <div class="folder-grid">
+            
+            <div class="folder-card system-folder" onclick="openArchiveView()">
+                <div class="folder-icon">📅</div>
+                <div class="folder-name">Datums-Archiv</div>
+                <div class="folder-info" id="archiveCountInfo">Lädt...</div>
+            </div>
+
+            <div class="folder-card">
+                <div class="folder-icon">🖼️</div>
+                <div class="folder-name">Bilder</div>
+                <div class="folder-info">Alle Medien</div>
+            </div>
+
+            <div class="folder-card">
+                <div class="folder-icon">📁</div>
+                <div class="folder-name">Projekte</div>
+                <div class="folder-info">0 Dateien</div>
+            </div>
+
         </div>
 
-        <div class="folder-card">
-            <div class="folder-icon">📁</div>
-            <div class="folder-name">Notizen</div>
-            <div class="folder-info">0 Dateien</div>
+        <!-- Datumsarchiv-Ansicht (Wird eingeblendet) -->
+        <div id="archiveSection" style="margin-top: 30px; display: none;">
+            <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2>Gespeicherte Einträge</h2>
+                <input type="text" id="tagSearchInput" placeholder="Nach Tags oder Thema suchen..." onkeyup="filterArchive()" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; width: 250px;">
+            </div>
+
+            <div id="archiveContainer" class="archive-list">
+                <!-- Hier werden die gespeicherten Einträge geladen -->
+            </div>
         </div>
 
-        <div class="folder-card">
-            <div class="folder-icon">📁</div>
-            <div class="folder-name">Projekte</div>
-            <div class="folder-info">0 Dateien</div>
-        </div>
+    </main>
 
-    </div>
+    <!-- Skript für das Archiv -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        updateArchiveCount();
+    });
 
-</main>
+    // Zählt die gespeicherten Notizen für die Ordner-Kachel
+    function updateArchiveCount() {
+        const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+        const countInfo = document.getElementById('archiveCountInfo');
+        if (countInfo) {
+            countInfo.innerText = archive.length + (archive.length === 1 ? " Eintrag" : " Einträge");
+        }
+    }
+
+    // Blendet die Notizen beim Klick auf die Datums-Archiv-Kachel ein
+    function openArchiveView() {
+        const section = document.getElementById('archiveSection');
+        section.style.display = "block";
+        loadArchive();
+        section.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Lädt die gespeicherten Daten aus dem Browser-Speicher
+    function loadArchive() {
+        const container = document.getElementById('archiveContainer');
+        const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+
+        if (archive.length === 0) {
+            container.innerHTML = "<p style='color: #666;'>Noch keine Einträge im Archiv vorhanden.</p>";
+            return;
+        }
+
+        archive.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        container.innerHTML = archive.map(item => `
+            <div class="archive-card" data-tags="${item.tags || ''}" data-title="${item.title}" style="background: #fff; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="font-size: 12px; color: #777; display: flex; justify-content: space-between;">
+                    <span><b>Datum:</b> ${item.date}</span>
+                    <span><b>Tags:</b> ${item.tags || 'keine'}</span>
+                </div>
+                <h3 style="margin: 8px 0;">${item.title}</h3>
+                <p style="white-space: pre-wrap; font-size: 14px; color: #333;">${item.content}</p>
+                <button onclick="deleteEntry(${item.id})" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Löschen</button>
+            </div>
+        `).join('');
+    }
+
+    // Suchfunktion für die Notizen
+    function filterArchive() {
+        const query = document.getElementById('tagSearchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.archive-card');
+
+        cards.forEach(card => {
+            const tags = card.getAttribute('data-tags').toLowerCase();
+            const title = card.getAttribute('data-title').toLowerCase();
+
+            if (tags.includes(query) || title.includes(query)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // Löschfunktion für einzelne Notizen
+    function deleteEntry(id) {
+        if (confirm("Eintrag wirklich löschen?")) {
+            let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+            archive = archive.filter(item => item.id !== id);
+            localStorage.setItem('myFolderArchive', JSON.stringify(archive));
+            loadArchive();
+            updateArchiveCount();
+        }
+    }
+    </script>
 
 </body>
 </html>
