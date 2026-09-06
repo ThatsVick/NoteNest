@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ordner - MyOnlineFolder</title>
+    <title>Ordner - NoteNest</title>
 
     <!-- Google Font Lobster -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+    <!-- Externe JavaScript-Datei eingebunden -->
+    <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -19,7 +21,7 @@
         <h1 class="header-title">NoteNest</h1>
     </header>
 
-    <!-- Navbar  -->
+    <!-- Navbar -->
     <nav class="navbar">
         <ul>
             <li><a href="Start.html">Start</a></li>
@@ -60,11 +62,25 @@
 
         </div>
 
-        <!-- Datumsarchiv-Ansicht (Wird eingeblendet) -->
+        <!-- Datumsarchiv-Ansicht (inkl. Filter & Sortierung) -->
         <div id="archiveSection" style="margin-top: 30px; display: none;">
-            <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div class="top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h2>Gespeicherte Einträge</h2>
-                <input type="text" id="tagSearchInput" placeholder="Nach Tags oder Thema suchen..." onkeyup="filterArchive()" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; width: 250px;">
+                
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <!-- Dropdown für Sortierung (auf- / absteigend) -->
+                    <select id="sortSelect" onchange="loadArchive()" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; background: white; cursor: pointer;">
+                        <option value="date-desc">Datum: Neueste zuerst</option>
+                        <option value="date-asc">Datum: Älteste zuerst</option>
+                        <option value="title-asc">Name: A ➔ Z</option>
+                        <option value="title-desc">Name: Z ➔ A</option>
+                        <option value="tags-asc">Tags: A ➔ Z</option>
+                        <option value="tags-desc">Tags: Z ➔ A</option>
+                    </select>
+
+                    <!-- Suchfeld für Tags und Thema -->
+                    <input type="text" id="tagSearchInput" placeholder="Nach Tags oder Thema suchen..." onkeyup="filterArchive()" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; width: 220px;">
+                </div>
             </div>
 
             <div id="archiveContainer" class="archive-list">
@@ -73,83 +89,6 @@
         </div>
 
     </main>
-
-    <!-- Skript für das Archiv -->
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        updateArchiveCount();
-    });
-
-    // Zählt die gespeicherten Notizen für die Ordner-Kachel
-    function updateArchiveCount() {
-        const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
-        const countInfo = document.getElementById('archiveCountInfo');
-        if (countInfo) {
-            countInfo.innerText = archive.length + (archive.length === 1 ? " Eintrag" : " Einträge");
-        }
-    }
-
-    // Blendet die Notizen beim Klick auf die Datums-Archiv-Kachel ein
-    function openArchiveView() {
-        const section = document.getElementById('archiveSection');
-        section.style.display = "block";
-        loadArchive();
-        section.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // Lädt die gespeicherten Daten aus dem Browser-Speicher
-    function loadArchive() {
-        const container = document.getElementById('archiveContainer');
-        const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
-
-        if (archive.length === 0) {
-            container.innerHTML = "<p style='color: #666;'>Noch keine Einträge im Archiv vorhanden.</p>";
-            return;
-        }
-
-        archive.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        container.innerHTML = archive.map(item => `
-            <div class="archive-card" data-tags="${item.tags || ''}" data-title="${item.title}" style="background: #fff; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <div style="font-size: 12px; color: #777; display: flex; justify-content: space-between;">
-                    <span><b>Datum:</b> ${item.date}</span>
-                    <span><b>Tags:</b> ${item.tags || 'keine'}</span>
-                </div>
-                <h3 style="margin: 8px 0;">${item.title}</h3>
-                <p style="white-space: pre-wrap; font-size: 14px; color: #333;">${item.content}</p>
-                <button onclick="deleteEntry(${item.id})" style="background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">Löschen</button>
-            </div>
-        `).join('');
-    }
-
-    // Suchfunktion für die Notizen
-    function filterArchive() {
-        const query = document.getElementById('tagSearchInput').value.toLowerCase();
-        const cards = document.querySelectorAll('.archive-card');
-
-        cards.forEach(card => {
-            const tags = card.getAttribute('data-tags').toLowerCase();
-            const title = card.getAttribute('data-title').toLowerCase();
-
-            if (tags.includes(query) || title.includes(query)) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
-    }
-
-    // Löschfunktion für einzelne Notizen
-    function deleteEntry(id) {
-        if (confirm("Eintrag wirklich löschen?")) {
-            let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
-            archive = archive.filter(item => item.id !== id);
-            localStorage.setItem('myFolderArchive', JSON.stringify(archive));
-            loadArchive();
-            updateArchiveCount();
-        }
-    }
-    </script>
 
 </body>
 </html>

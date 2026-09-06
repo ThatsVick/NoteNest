@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neu - MyOnlineFolder</title>
+    <title>Neu - NoteNest</title>
 
     <!-- Google Font Lobster -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+    <!-- Externe JavaScript-Datei -->
+    <script src="script.js" defer></script>
 </head>
 
 <body>
@@ -30,9 +32,9 @@
         </ul>
     </nav>
 
-    <!-- Inhaltsbereich laut deiner Skizze -->
+    <!-- Inhaltsbereich -->
     <main class="content-area">
-        <form class="editor-form">
+        <form class="editor-form" onsubmit="return false;">
             
             <!-- Oberste Leiste: Datum, Thema, Tags, Speichern-Button -->
             <div class="top-inputs-row">
@@ -52,79 +54,43 @@
                 </div>
 
                 <div class="input-group save-group">
-                    <label>&nbsp;</label> <!-- Leeres Label für gleiche Ausrichtung -->
+                    <label>&nbsp;</label>
                     <button type="button" class="save-btn" onclick="saveToArchive()">Speichern</button>
                 </div>
             </div>
 
-            <!-- Zweite Zeile: Word-Einstellungen (Werkzeugleiste) -->
+            <!-- Zweite Zeile: Werkzeugleiste -->
             <div class="toolbar-row">
-
-                <select class="toolbar-select">
-                    <option>12pt</option>
-                    <option>14pt</option>
-                    <option>16pt</option>
+                <!-- Schriftgröße -->
+                <select class="toolbar-select" onchange="changeFontSize(this.value)">
+                    <option value="12px">12pt</option>
+                    <option value="14px">14pt</option>
+                    <option value="16px" selected>16pt</option>
+                    <option value="18px">18pt</option>
+                    <option value="20px">20pt</option>
+                    <option value="24px">24pt</option>
                 </select>
 
-                <button type="button" class="toolbar-btn"><b>B</b></button>
-                <button type="button" class="toolbar-btn"><i>I</i></button>
-                <button type="button" class="toolbar-btn"><u>U</u></button>
-                
-                <input type="color" class="toolbar-color" value="#000000">
-                <span class="toolbar-text">Weitere Einstellungen...</span>
+                <!-- Text-Formatierungen (Fett, Kursiv, Unterstrichen) -->
+                <button type="button" class="toolbar-btn" onclick="execCmd('bold')" title="Fett"><b>B</b></button>
+                <button type="button" class="toolbar-btn" onclick="execCmd('italic')" title="Kursiv"><i>I</i></button>
+                <button type="button" class="toolbar-btn" onclick="execCmd('underline')" title="Unterstrichen"><u>U</u></button>
+
+                <!-- Textfarbe -->
+                <input type="color" class="toolbar-color" value="#000000" onchange="changeTextColor(this.value)" title="Textfarbe">
+
+                <!-- Verstecktes Datei-Eingabefeld für Bilder -->
+                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="insertImage(this)">
+                <button type="button" class="toolbar-btn" onclick="document.getElementById('imageInput').click()" title="Bild einfügen">🖼️ Bild einfügen</button>
             </div>
 
-            <!-- Dritte Zeile: Großer Schreibbereich -->
+            <!-- Dritte Zeile: Schreibbereich (Dauerhaft linksbündig) -->
             <div class="editor-body">
-                <textarea id="editorText" class="editor-textarea" placeholder="Hier soll ein Feld zum Schreiben kommen..."></textarea>
+                <div id="editorText" class="editor-textarea" contenteditable="true" placeholder="Hier schreiben und Bilder einfügen..."></div>
             </div>
 
         </form>
     </main>
-
-    <!-- Speicherskript für das Datumsarchiv -->
-    <script>
-    // Setzt beim Laden automatisch das heutige Datum in das Datum-Feld
-    document.addEventListener("DOMContentLoaded", function() {
-        const datumInput = document.getElementById('datum');
-        if (datumInput && !datumInput.value) {
-            datumInput.value = new Date().toISOString().split('T')[0];
-        }
-    });
-
-    function saveToArchive() {
-        const datum = document.getElementById('datum').value;
-        const thema = document.getElementById('thema').value.trim() || 'Unbenanntes Thema';
-        const tags = document.getElementById('tags').value.trim();
-        const inhalt = document.getElementById('editorText').value;
-
-        if (!inhalt) {
-            alert("Bitte schreibe zuerst einen Text!");
-            return;
-        }
-
-        // Objekt für den neuen Eintrag erstellen
-        const newEntry = {
-            id: Date.now(),
-            date: datum,
-            title: thema,
-            tags: tags,
-            content: inhalt
-        };
-
-        // Bisherige Einträge aus dem Browser-Speicher laden
-        let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
-        
-        // Neuen Eintrag hinzufügen
-        archive.push(newEntry);
-
-        // Im Speicher ablegen
-        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
-
-        alert("Eintrag erfolgreich im Datumsarchiv gespeichert!");
-        
-    }
-    </script>
 
 </body>
 </html>

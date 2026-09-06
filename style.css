@@ -7,240 +7,249 @@
                                      Zentriert den gesamten Inhalt auf der Willkommensseite 
 ----------------------------------------------------------------------------------------------------------------------- */
 .welcome-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;        /* Nutzt die volle Bildschirmhöhe */
-    margin: 0;
-    background-color: #f4f4f4;
+    display: flex;             /* Aktiviert das Flexbox-Layout für einfache Ausrichtung */
+    justify-content: center;   /* Zentriert den Inhalt waagerecht */
+    align-items: center;       /* Zentriert den Inhalt senkrecht */
+    min-height: 100vh;         /* Nutzt mindestens die volle Höhe des Fensters */
+    margin: 0;                 /* Entfernt den Standard-Außenabstand des Browsers */
+    background-color: #f4f4f4; /* Hellgrauer Hintergrund */
 }
 
 .welcome-container {
-    text-align: center;
+    text-align: center;        /* Richtet enthaltenen Text und Buttons mittig aus */
 }
 
 /*---------------------------------------------- 1. Bildgröße anpassen------------------------------------------------ */
 
 .logo-img {
-    display: block;           /* Zwingt das Bild in eine eigene Zeile */
-    width: 700px;             /* Hier kannst du die Breite anpassen (z. B. 150px oder 300px) */
-    height: auto;             /* Behält das richtige Seitenverhältnis bei */
-    margin: 0 auto 20px auto; /* Zentriert das Bild und gibt 20px Abstand nach unten */
-    border-radius: 8px;       /* Optional: Leicht abgerundete Ecken beim Bild */
+    display: block;            /* Zwingt das Bild in eine eigene Zeile */
+    width: 700px;              /* Setzt eine feste Breite für das Logo */
+    height: auto;              /* Berechnet die Höhe automatisch (keine Verzerrung) */
+    margin: 0 auto 20px auto;  /* Zentriert das Bild und gibt 20px Abstand nach unten */
+    border-radius: 8px;        /* Ründet die Ecken des Bildes leicht ab */
 }
 
 /*------------------------------- 2. Link wie einen echten Button aussehen lassen------------------------------------- */
 
 .willkommen-btn {
-    display: inline-block;
-    padding: 12px 24px;         /* Innenabstand (macht den Button größer) */
-    color: black;               /* Textfarbe */
-    text-decoration: none;      /* Entfernt den Unterstrich vom Link */
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 5px;         /* Abgerundete Ecken */
-    cursor: pointer;            /* Zeigt die Klick-Hand beim Drüberfahren */
+    display: inline-block;     /* Erlaubt Innenabstände und Höhen für normale Links */
+    padding: 12px 24px;        /* Innenabstand: 12px oben/unten, 24px links/rechts */
+    color: black;              /* Textfarbe Schwarz */
+    text-decoration: none;     /* Entfernt den typischen Link-Unterstrich */
+    font-size: 20px;           /* Textgröße */
+    font-weight: bold;         /* Fette Schrift */
+    border-radius: 5px;        /* Abgerundete Ecken */
+    cursor: pointer;           /* Ändert den Mauszeiger beim Drüberfahren zur Hand */
 }
 
 /*------------------------------------- Effekt beim Drüberfahren mit der Maus----------------------------------------- */
 
 .willkommen-btn:hover {
-    background-color: #0c47be; /* Dunkleres Blau beim Mouseover */
-    color: white;
-    transition: background 1s; /* Sanfter Farbübergang */
+    background-color: #0c47be; /* Färbt den Hintergrund beim Drüberfahren blau */
+    color: white;              /* Wechselt die Textfarbe auf Weiß */
+    transition: background 1s;  /* Lässt den Farbwechsel über 1 Sekunde sanft übergehen */
 }
 
 
 /*-----------------------------------------------------------------------------------------------------------------------
-                                         Grundlegende Einstellungen Hauptseite
+                                           Grundlegende Einstellungen
 ------------------------------------------------------------------------------------------------------------------------*/
 
 body {
-    font-family: Arial, Helvetica, sans-serif; 
-    Margin: 0;
-    padding: 20px;
-    background-color: white;
+    font-family: Arial, Helvetica, sans-serif; /* Standard-Schriftartenkombination */
+    margin: 0;                 /* Entfernt Außenabstände des Dokuments */
+    padding: 20px;             /* 20px Abstand zum Bildschirmrand überall */
+    background-color: white;   /* Weißer Hintergrund für das Gesamtdokument */
+}
+
+/* Ändert die Rahmenfarbe aller Eingabefelder im aktiven Zustand */
+.top-inputs-row input:focus,
+.editor-textarea:focus,
+.toolbar-select:focus {
+    border-color: #007bff !important;           /* Färbt den Rahmen beim Anklicken blau */
+    outline: none !important;                  /* Deaktiviert den Standard-Fokusrahmen des Browsers */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);  /* Fügt einen blauen, weichen Leuchteffekt hinzu */
 }
 
 /*----------------------------------------------- Header Styling------------------------------------------------------- */
 
 .main-header {
-    padding: 10px;
-    text-align: center;
-    margin-bottom: 10px;
-    background-color: #fff;
+    padding: 10px;             /* Innenabstand um den Kopfbereich */
+    text-align: center;        /* Zentriert den Titel */
+    margin-bottom: 10px;       /* Abstand zum nachfolgenden Element nach unten */
+    background-color: #fff;    /* Weißer Hintergrund */
 }
 
 .header-title {
-    font-family: 'Lobster', cursive; /* Wendet die geschwungene Schriftart an */
-    font-size: 50px;                 /* Schriftgröße */
-    margin: 0;
-    font-weight: normal;             /* Normales Gewicht für sauberen Schriftfluss */
+    font-family: 'Lobster', cursive; /* Bindet die spezielle Google-Schriftart ein */
+    font-size: 50px;           /* Sehr große Schrift für den Seitentitel */
+    margin: 0;                 /* Entfernt unbewusste Standardabstände der Überschrift */
+    font-weight: normal;       /* Verhindert zusätzliche künstliche Fettung */
 }
 
 
 /*----------------------------------------------- Navbar Styling------------------------------------------------------- */
 
 .navbar {
-    background-color: #fff;
-    margin-bottom: 10px;
-    margin-top: 10px;
+    background-color: #fff;    /* Weißer Hintergrund der Navigationsleiste */
+    margin-bottom: 10px;       /* Abstand nach unten */
+    margin-top: 10px;          /* Abstand nach oben */
 }
 
 .navbar ul {
-    list-style: none; /* Entfernt die Listenpunkte */
-    display: flex; /* Richtet die Punkte nebeneinander aus */
-    justify-content: space-around; /* Verteilt die Punkte gleichmäßig */
+    list-style: none;          /* Entfernt Aufzählungspunkte der ungeordneten Liste */
+    display: flex;             /* Ordnet die Listenpunkte in einer Reihe nebeneinander an */
+    justify-content: space-around; /* Verteilt die Menüpunkte mit gleichem Abstand */
+    padding: 0;                /* Entfernt Einrückungen der Liste */
+    margin: 0;                 /* Entfernt Liste-Außenabstände */
 }
 
 .navbar li a {
-    display: inline-block;
-    padding: 12px 24px;         /* Innenabstand (macht den Button größer) */
-    color: black;               /* Textfarbe */
-    text-decoration: none;      /* Entfernt den Unterstrich vom Link */
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;         /* Abgerundete Ecken */
-    border: none;
-    cursor: pointer;            /* Zeigt die Klick-Hand beim Drüberfahren */
+    display: inline-block;     /* Macht Links zu gestaltbaren Blöcken */
+    padding: 12px 24px;        /* Innenabstand für klickbare Fläche */
+    color: black;              /* Schwarzen Text festlegen */
+    text-decoration: none;     /* Unterstreichung entfernen */
+    font-size: 16px;           /* Schriftgröße der Menüpunkte */
+    font-weight: bold;         /* Fette Schrift */
+    border-radius: 5px;        /* Leicht abgerundete Ecken */
+    border: none;              /* Keine Linienränder */
+    cursor: pointer;           /* Hand-Symbol beim Drüberfahren */
 }
 
 .navbar li a:hover {
-    background-color: #0c47be; /* Dunkleres Blau beim Mouseover */
-    color: white;
-    transition: background 1s; /* Sanfter Farbübergang */
-    
+    background-color: #0c47be; /* Blaues Feld beim Drüberfahren */
+    color: white;              /* Weiße Schrift beim Drüberfahren */
+    transition: background 1s;  /* Sanfter Farbübergang innerhalb von 1 Sekunde */
 }
 
 .navbar li a.active {
-    background-color: #0c47be; /* Dunkelblau */
-    color: white;              /* Weiße Schrift */
+    background-color: #0c47be; /* Blaues Feld für den aktuell aktiven Reiter */
+    color: white;              /* Weiße Schrift auf aktivem Reiter */
 }
-
-
 
 
 /*----------------------------------------- Inhaltsbereich (Body) Styling----------------------------------------------- */
 
 .content-area {
-    border-top: 1px solid black;
-    border-radius: 10px;
-    min-height: 300px; /* Gibt dem Bereich eine fest festgelegte Grundhöhe */
-    padding: 20px;
-    background-color: #fff;
-    text-align: center;
+    border-top: 1px solid black;/* Schmale schwarze Linie oben zur Abgrenzung */
+    border-radius: 10px;        /* Abgerundete Gesamtecken */
+    min-height: 300px;          /* Erzwingt eine Mindesthöhe für das Layout */
+    padding: 20px;              /* Innenabstand für Inhalte */
+    background-color: #fff;     /* Weißer Hintergrund */
+    text-align: center;         /* Zentriert Inhalte standardmäßig */
 }
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                         Styling für die Neu-Seite (Formular & Editor) 
+                                          Styling für die Neu-Seite (Formular & Editor) 
 ------------------------------------------------------------------------------------------------------------------------*/
 
 .editor-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: flex;              /* Nutzt Flexbox zum Untereinander-Anordnen */
+    flex-direction: column;     /* Richtet die Elemente von oben nach unten aus */
+    gap: 15px;                  /* Automatische 15px Lücke zwischen allen Elementen */
 }
 
 /*-------------------------------- Oberste Zeile mit Datum, Thema, Tags, Speichern-------------------------------------- */
 
 .top-inputs-row {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+    display: flex;              /* Ordnet Eingabefelder nebeneinander an */
+    gap: 15px;                  /* Abstand zwischen den Feldern */
+    flex-wrap: wrap;            /* Bricht Felder bei kleinen Bildschirmen um */
 }
 
 .input-group {
-    display: flex;
-    flex-direction: column;
+    display: flex;              /* Stapelt Beschriftung und Feld untereinander */
+    flex-direction: column;     /* Ausrichtung vertikal */
 }
 
 .input-group label {
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 14px;            /* Kleine Beschriftungsgröße */
+    font-weight: bold;          /* Fette Beschriftung */
+    margin-bottom: 5px;         /* Abstand nach unten zum Eingabefeld */
 }
 
 .input-group input {
-    border: 1px solid #000;
-    border-radius: 5px;
-    padding: 8px;
-    font-size: 14px;
-    background-color: #fff;
+    border: 1px solid #000;     /* Schwarzer Randeinfassung */
+    border-radius: 5px;         /* Abgerundete Ecken */
+    padding: 8px;               /* Textinnenabstand im Feld */
+    font-size: 14px;            /* Textgröße im Feld */
+    background-color: #fff;     /* Weißer Feld-Hintergrund */
 }
 
 .tags-group {
-    flex-grow: 1; /* Gibt dem Tags-Feld etwas mehr Breite */
+    flex-grow: 1;               /* Dehnt das Tag-Feld aus, um freien Platz zu füllen */
 }
 
 /*------------------------------------------- Speichern-Button Styling-------------------------------------------------- */
 
 .save-btn {
-    display: inline-block;
-    padding: 6px 24px;         /* Innenabstand (macht den Button größer) */
-    color: black;               /* Textfarbe */
-    text-decoration: none;      /* Entfernt den Unterstrich vom Link */
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;         /* Abgerundete Ecken */
-    cursor: pointer;            /* Zeigt die Klick-Hand beim Drüberfahren */
-    background-color: white;    
+    display: inline-block;     /* Macht den Button formbar */
+    padding: 6px 24px;          /* Innenabstand */
+    color: black;              /* Schwarze Schriftfarbe */
+    text-decoration: none;     /* Keine Unterstreichung */
+    font-size: 16px;           /* Schriftgröße */
+    font-weight: bold;         /* Fette Schrift */
+    border-radius: 5px;        /* Abgerundete Ecken */
+    border: 1px solid #000;    /* Schwarze Randlinie */
+    cursor: pointer;           /* Klick-Zeiger */
+    background-color: white;    /* Weißer Hintergrund */
 }
 
-
 .save-btn:hover {
-    background-color: #0c47be; /* Dunkleres Blau beim Mouseover */
-    color: white;
-    transition: background 1s; /* Sanfter Farbübergang */
+    background-color: #0c47be; /* Blau beim Mouseover */
+    color: white;              /* Weiße Schrift beim Mouseover */
+    transition: background 1s;  /* Sanfter Farbübergang */
 }
 
 /*------------------------------------- Werkzeugleiste (Word-Einstellungen)-------------------------------------------- */
 
 .toolbar-row {
-    border: 1px solid #000;
-    padding: 8px 12px;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    border: 1px solid #000;     /* Schwarze Außeneinfassung der Leiste */
+    padding: 8px 12px;          /* Innenabstand der Werkzeugleiste */
+    background-color: #fff;     /* Weißer Hintergrund */
+    display: flex;              /* Nebeneinander-Anordnung aller Werkzeuge */
+    align-items: center;        /* Richtet Buttons mittig auf gleicher Höhe aus */
+    gap: 10px;                  /* Abstand zwischen einzelnen Buttons */
+    flex-wrap: wrap;            /* Ermöglicht Umbruch auf Mobilgeräten */
     border-radius: 5px;         /* Abgerundete Ecken */
 }
 
-.toolbar-select, .toolbar-btn {
-    border: 1px solid #000;
-    background-color: #fff;
-    padding: 4px 8px;
-    cursor: pointer;
+.toolbar-select, 
+.toolbar-btn {
+    border: 1px solid #000;     /* Schwarzer Rahmen für Leisten-Buttons */
+    background-color: #fff;     /* Weißer Hintergrund */
+    padding: 4px 8px;           /* Kompakter Innenabstand */
+    cursor: pointer;           /* Hand-Symbol */
+    border-radius: 4px;        /* Leicht abgerundete Ecken */
 }
 
 .toolbar-color {
-    border: 1px solid #000;
-    height: 28px;
-    width: 35px;
-    padding: 0;
-    cursor: pointer;
+    border: 1px solid #000;     /* Schwarzer Rahmen um die Farbauswahl */
+    height: 28px;               /* Feste Höhe passend zu Buttons */
+    width: 35px;                /* Feste Breite */
+    padding: 0;                 /* Entfernt innere Abstände des Farbfeldes */
+    cursor: pointer;           /* Hand-Symbol */
 }
 
 .toolbar-text {
-    font-size: 13px;
-    color: #555;
-    margin-left: auto;
+    font-size: 13px;            /* Kleinere Schrift */
+    color: #555;                /* Grauer Text */
+    margin-left: auto;          /* Schiebt den Text ganz nach rechts in der Leiste */
 }
 
 /*--------------------------------------------- Großer Schreibbereich------------------------------------------------- */
 
 .editor-textarea {
-    width: 100%;
-    min-height: 350px;
-    border: 1px solid #000;
-    padding: 15px;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    box-sizing: border-box; /* Verhindert, dass das Feld über den Rand hinausragt */
-    resize: vertical;
-    border-radius: 5px;         /* Abgerundete Ecken */
-
+    text-align: left !important;/* Erzwingt zwingend den Textbeginn oben links */
+    min-height: 250px;          /* Mindesthöhe des Schreibfeldes */
+    background: #ffffff;        /* Weißer Hintergrund */
+    border: 1px solid #ccc;     /* Hellgrauer dezent rahmen */
+    border-radius: 8px;         /* Abgerundete Ecken */
+    padding: 15px;              /* Innenabstand beim Tippen */
+    overflow-y: auto;           /* Erzeugt bei langer Notiz automatisch einen Scrollbalken */
+    box-sizing: border-box;     /* Schließt Rahmen/Padding in die Breitenberechnung ein */
+    font-size: 16px;            /* Standard-Schriftgröße beim Schreiben */
 }
 
 
@@ -250,79 +259,156 @@ body {
 
 /* Zentrierte Hauptüberschrift */
 .page-title {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 28px;
+    text-align: center;         /* Zentriert den Titel */
+    margin-top: 0;              /* Entfernt oberen Abstand */
+    margin-bottom: 15px;        /* Abstand nach unten */
+    font-size: 28px;            /* Schriftgröße der Überschrift */
 }
 
-/* Zeile für den Button in der mitte */
+/* Zeile für den Button in der Mitte */
 .top-action-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #000;
+    display: flex;              /* Flexbox-Steuerung */
+    justify-content: center;    /* Zentriert den Button waagerecht */
+    align-items: center;        /* Zentriert vertikal */
+    margin-bottom: 20px;        /* Abstand nach unten */
+    padding-bottom: 10px;       /* Innenabstand vor der Trennlinie */
+    border-bottom: 1px solid #000; /* Untere schwarze Abgrenzungslinie */
 }
 
 /* "Ordner hinzufügen"-Button */
 .add-folder-btn {
-    margin: 0;
-    padding: 8px 16px;
-    background-color: #fff;
-    border-radius: 5px;
-    border: none;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
+    margin: 0;                  /* Kein zusätzlicher Außenabstand */
+    padding: 8px 16px;          /* Innenabstand des Buttons */
+    background-color: #fff;     /* Weißer Hintergrund */
+    border-radius: 5px;         /* Abgerundete Ecken */
+    border: 1px solid #000;     /* Schwarzer Rahmen */
+    font-size: 14px;            /* Schriftgröße */
+    font-weight: bold;          /* Fette Schrift */
+    cursor: pointer;           /* Hand-Symbol */
 }
 
 .add-folder-btn:hover {
-    background-color: #0c47be;
-    color: white;
-    transition: background 0.3s;
+    background-color: #0c47be; /* Blaue Hintergrundfarbe bei Klick/Hover */
+    color: white;              /* Weiße Schriftfarbe */
+    transition: background 0.3s;/* Schneller Übergang */
 }
 
 /* Zentriertes Raster für die Ordner-Karten */
 .folder-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center; /* Zentriert alle Karten waagerecht */
-    gap: 20px;
+    display: flex;              /* Raster als Flexbox-Layout */
+    flex-wrap: wrap;            /* Karten brechen bei Platzmangel in neue Zeile um */
+    justify-content: center;    /* Zentriert alle Karten waagerecht */
+    gap: 20px;                  /* Abstand zwischen den Karten */
 }
 
 /* Eine einzelne Ordner-Karte */
 .folder-card {
-    border: 1px solid #000;
-    border-radius: 8px;
-    padding: 20px 15px;
-    background-color: #fff;
-    text-align: center;
-    cursor: pointer;
-    width: 180px; /* Feste Breite für gleichmäßige Zentrierung */
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #000;     /* Schwarze Rahmeneinfassung */
+    border-radius: 8px;         /* Abgerundete Ecken */
+    padding: 20px 15px;         /* Innenabstand in der Karte */
+    background-color: #fff;     /* Weißer Hintergrund */
+    text-align: center;         /* Zentriert Icon und Text */
+    cursor: pointer;           /* Signalisiert Klickbarkeit */
+    width: 180px;               /* Feste Breite für gleichmäßige Ausrichtung */
+    transition: transform 0.2s, box-shadow 0.2s; /* Glatte Animation bei Schwebeeffekt */
 }
 
 .folder-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);/* Hebt die Karte leicht nach oben an */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Erzeugt einen leichten Schattenwurf */
 }
 
 .folder-icon {
-    font-size: 40px;
-    margin-bottom: 10px;
+    font-size: 40px;            /* Großes Symbol für Ordner/Kacheln */
+    margin-bottom: 10px;        /* Abstand nach unten zum Namen */
 }
 
 .folder-name {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 5px;
+    font-weight: bold;          /* Fetter Ordnername */
+    font-size: 16px;            /* Textgröße */
+    margin-bottom: 5px;         /* Abstand zur Infozeile */
 }
 
 .folder-info {
-    font-size: 12px;
-    color: #666;
+    font-size: 12px;            /* Kleine Zusatzinfo */
+    color: #666;                /* Dezent graue Textfarbe */
+}
+
+/* ---------------------------------------------Aufklappbare Archiv-Karten ----------------------------------------------*/
+.archive-card {
+    background: #ffffff;        /* Weißer Karten-Hintergrund */
+    border-left: 4px solid #007bff; /* Blaue Akzentleiste an der linken Seite */
+    border-radius: 8px;         /* Abgerundete Ecken */
+    margin-bottom: 12px;        /* Abstand zur nächsten Notizkarte */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sehr dezenter Schatten */
+    overflow: hidden;           /* Verhindert Überstehen von Ecken beim Aufklappen */
+}
+
+.archive-card-header {
+    padding: 15px;              /* Innenabstand der Kopfzeile */
+    display: flex;              /* Elemente nebeneinander */
+    justify-content: space-between; /* Verteilt Inhalt nach links und rechts */
+    align-items: center;        /* Zentriert vertikal auf gleicher Linie */
+    cursor: pointer;           /* Zeigt Klickbarkeit an */
+    background-color: #fafafa;  /* Leicht grauer Ton für Kopfzeile */
+    transition: background 0.2s ease; /* Weicher Farbwechsel beim Hovern */
+}
+
+.archive-card-header:hover {
+    background-color: #f0f4f8;  /* Etwas dunkleres Blau-Grau beim Drüberfahren */
+}
+
+.header-left {
+    display: flex;              /* Datum und Titel nebeneinander */
+    align-items: center;        /* Mittige vertikale Ausrichtung */
+    gap: 15px;                  /* Abstand zwischen Datum und Titel */
+}
+
+.archive-date {
+    font-size: 13px;            /* Textgröße des Datums */
+    font-weight: 600;           /* Halbfette Schrift */
+    color: #666;                /* Graue Textfarbe */
+}
+
+.archive-title {
+    margin: 0;                  /* Entfernt Überschriften-Standards */
+    font-size: 16px;            /* Schriftgröße des Notiz-Themas */
+    color: #333;                /* Dunkler Text */
+}
+
+.header-right {
+    display: flex;              /* Tags und Pfeil nebeneinander */
+    align-items: center;        /* Vertikale Ausrichtung */
+    gap: 15px;                  /* Abstand zwischen den Bausteinen */
+}
+
+.archive-tags {
+    font-size: 13px;            /* Tag-Schriftgröße */
+    color: #007bff;             /* Blaue Schriftfarbe für Tags */
+    background: #e9f2ff;        /* Hellblauer Tag-Hintergrund */
+    padding: 4px 8px;           /* Kompakter Innenabstand um das Tag */
+    border-radius: 4px;         /* Leicht abgerundete Ecken */
+}
+
+.toggle-icon {
+    font-size: 12px;            /* Pfeilsymbol-Größe */
+    color: #888;                /* Grauer Pfeil */
+}
+
+/* Versteckter Inhaltsbereich */
+.archive-card-body {
+    display: none;              /* Blendet den Inhalt standardmäßig aus */
+    padding: 15px;              /* Innenabstand für Text/Bilder */
+    border-top: 1px solid #eee; /* Trennlinie zur Kopfzeile */
+    background: #ffffff;        /* Weißer Notizhintergrund */
+}
+
+.archive-text {
+    white-space: pre-wrap;      /* Behält Zeilenumbrüche im Text bei */
+    font-size: 14px;            /* Textgröße der Notiz */
+    color: #444;                /* Dunkelgraue gut lesbare Schrift */
+    line-height: 1.5;           /* Angenehmer Zeilenabstand */
+    margin-top: 0;              /* Entfernt oberen Abstand */
 }
 
 
@@ -332,81 +418,81 @@ body {
 
 /* Kopfleiste für die Monatsnavigation */
 .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #000;
+    display: flex;              /* Ausrichtung nebeneinander */
+    justify-content: space-between; /* Verteilt Buttons nach links/rechts, Monat mittig */
+    align-items: center;        /* Zentriert auf gleicher Höhe */
+    margin-bottom: 20px;        /* Abstand zum Kalendergitter */
+    padding-bottom: 10px;       /* Innenabstand */
+    border-bottom: 1px solid #000; /* Abgrenzungslinie unten */
 }
 
 .current-month {
-    margin: 0;
-    font-size: 22px;
+    margin: 0;                  /* Entfernt Standard-Abstände */
+    font-size: 22px;            /* Monatsüberschrift-Größe */
 }
 
 .cal-nav-btn {
-    padding: 6px 14px;
-    background-color: #fff;
-    border: 1px solid #000;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
+    padding: 6px 14px;          /* Innenabstand der Navigationspfeile */
+    background-color: #fff;     /* Weißer Hintergrund */
+    border: 1px solid #000;     /* Schwarzer Rahmen */
+    border-radius: 5px;         /* Abgerundete Ecken */
+    cursor: pointer;           /* Hand-Symbol */
+    font-weight: bold;          /* Fette Beschriftung */
 }
 
 .cal-nav-btn:hover {
-    background-color: #0c47be;
-    color: white;
-    transition: background 0.3s;
+    background-color: #0c47be; /* Blau bei Klick/Hover */
+    color: white;              /* Weiße Schrift */
+    transition: background 0.3s;/* Sanfter Übergang */
 }
 
 /* Hauptnetzwerk mit genau 7 Spalten */
 .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    max-width: 900px;
-    margin: 0 auto;
+    display: grid;              /* Aktiviert CSS Grid */
+    grid-template-columns: repeat(7, 1fr); /* Erstellt genau 7 gleich große Spalten (Mo–So) */
+    gap: 8px;                   /* Lücke zwischen den Tagesfeldern */
+    max-width: 900px;           /* Begrenzt Gesamtbreite des Kalenders */
+    margin: 0 auto;             /* Zentriert den Kalender auf der Seite */
 }
 
 /* Beschriftungen der Wochentage (Mo - So) */
 .day-label {
-    font-weight: bold;
-    padding: 10px 0;
-    background-color: #eee;
-    border: 1px solid #000;
-    border-radius: 4px;
-    text-align: center;
+    font-weight: bold;          /* Fette Tageskürzel */
+    padding: 10px 0;            /* Innenabstand oben/unten */
+    background-color: #eee;     /* Hellgraue Hintergrundfarbe */
+    border: 1px solid #000;     /* Schwarzer Rahmen */
+    border-radius: 4px;         /* Leicht abgerundet */
+    text-align: center;         /* Zentrierte Beschriftung */
 }
 
 /* Einzelnes Tageskästchen */
 .calendar-day {
-    min-height: 80px;
-    border: 1px solid #000;
-    border-radius: 4px;
-    padding: 6px;
-    text-align: left;
-    background-color: #fff;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+    min-height: 80px;           /* Mindesthöhe jedes Kalendertags */
+    border: 1px solid #000;     /* Schwarze Rahmeneinfassung */
+    border-radius: 4px;         /* Leicht abgerundete Ecken */
+    padding: 6px;               /* Innenabstand für Tageszahl */
+    text-align: left;           /* Tageszahl oben links platzieren */
+    background-color: #fff;     /* Weißer Hintergrund */
+    cursor: pointer;           /* Hand-Symbol */
+    transition: background 0.2s, border-color 0.2s; /* Übergang bei Interaktion */
 }
 
 .day-num {
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: bold;          /* Fette Tageszahl */
+    font-size: 14px;            /* Größe der Zahl */
 }
 
 /* Hover-Effekt beim Drüberfahren (Signalisiert Klickbarkeit) */
 .calendar-day:hover:not(.empty) {
-    background-color: #e6f0ff;
-    border-color: #0c47be;
+    background-color: #e6f0ff; /* Hellblaue Einfärbung aktiver Tage */
+    border-color: #0c47be;     /* Dunkelblauer Rahmen */
 }
 
 /* Ausgegraute Felder für Vor-/Folgemonate */
 .calendar-day.empty {
-    background-color: #f9f9f9;
-    border-color: #eee;
-    cursor: default;
+    background-color: #f9f9f9; /* Ausgegrauter Hintergrund */
+    border-color: #eee;         /* Sehr schwacher Rahmen */
+    cursor: default;           /* Normaler Zeiger (nicht klickbar) */
 }
 
 
@@ -415,69 +501,68 @@ body {
 ----------------------------------------------------------------------------------------------------------------------- */
 
 .welcome-section {
-    margin-bottom: 30px;
-    text-align: center;
+    margin-bottom: 30px;        /* Abstand nach unten zum Grid */
+    text-align: center;         /* Zentrierter Text */
 }
 
 .info-text {
-    font-size: 16px;
-    max-width: 700px;
-    margin: 10px auto 0 auto;
-    line-height: 1.5;
+    font-size: 16px;            /* Textgröße der Einleitung */
+    max-width: 700px;           /* Verhindert zu breite Textzeilen */
+    margin: 10px auto 0 auto;   /* Zentriert den Textbereich horizontal */
+    line-height: 1.5;           /* Angenehmer Zeilenabstand */
 }
 
 .dashboard-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 25px;
+    display: flex;              /* Flexbox für Kacheln */
+    flex-wrap: wrap;            /* Bricht Kacheln bei Bedarf um */
+    gap: 20px;                  /* Lücke zwischen den Dashboard-Karten */
+    justify-content: center;    /* Zentriert die Kacheln */
+    margin-top: 25px;           /* Abstand nach oben */
 }
 
 .dashboard-card {
-    flex: 1;
-    min-width: 280px;
-    max-width: 450px;
-    background-color: #fff;
-    border: 1px solid #000;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: left;
+    flex: 1;                    /* Kacheln teilen sich verfügbaren Platz */
+    min-width: 280px;           /* Mindestbreite pro Kachel auf Mobilgeräten */
+    max-width: 450px;           /* Maximale Breite */
+    background-color: #fff;     /* Weißer Hintergrund */
+    border: 1px solid #000;     /* Schwarze Außeneinfassung */
+    border-radius: 8px;         /* Abgerundete Ecken */
+    padding: 20px;              /* Innenabstand */
+    text-align: left;           /* Linksbündiger Inhalt */
 }
 
 .dashboard-card h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #000;
-    padding-bottom: 8px;
-    font-size: 18px;
+    margin-top: 0;              /* Entfernt oberen Abstand */
+    margin-bottom: 15px;        /* Abstand zur Liste darunter */
+    border-bottom: 1px solid #000; /* Trennlinie unter Kachel-Titel */
+    padding-bottom: 8px;        /* Innenabstand vor Trennlinie */
+    font-size: 18px;            /* Schriftgröße */
 }
 
 .dashboard-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    list-style: none;          /* Entfernt Standard-Listenpunkte */
+    padding: 0;                 /* Entfernt Listen-Einrückung */
+    margin: 0;                  /* Entfernt Außenabstände */
 }
 
 .dashboard-list li {
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    padding: 10px 0;            /* Abstand oben/unten für Listenelemente */
+    border-bottom: 1px solid #eee; /* Trennlinie zwischen Einträgen */
 }
 
 .dashboard-list li:last-child {
-    border-bottom: none;
+    border-bottom: none;        /* Entzieht dem letzten Element die Trennlinie */
 }
 
 .list-date {
-    font-size: 12px;
-    color: #666;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 3px;
+    font-size: 12px;            /* Kleine Datumsgröße */
+    color: #666;                /* Graue Schriftfarbe */
+    font-weight: bold;          /* Fettes Datum */
+    display: block;             /* Erzwingt eine eigene Zeile für das Datum */
+    margin-bottom: 3px;         /* Abstand zum darunterliegenden Text */
 }
 
 .dashboard-list p {
-    margin: 0;
-    font-size: 14px;
-
+    margin: 0;                  /* Entfernt Absatzaußenabstand */
+    font-size: 14px;            /* Textgröße der Vorschau */
 }
