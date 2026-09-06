@@ -52,8 +52,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Falls wir auf Ordner.html sind, Anzahl der Notizen laden
+    // Falls wir auf Ordner.html sind, Anzahl der Notizen und CSS-Handbuch laden
     updateArchiveCount();
+    renderCssGuide();
 
     // Falls wir auf Start.html sind, die letzten Aktivitäten rendern
     renderStartDashboard();
@@ -640,6 +641,8 @@ function toggleCssCategory(idx) {
     const body = document.getElementById(`css-cat-body-${idx}`);
     const icon = document.getElementById(`css-cat-icon-${idx}`);
 
+    if (!body) return;
+
     if (body.style.display === "none") {
         body.style.display = "block";
         if (icon) icon.innerText = "▲ Einklappen";
@@ -651,16 +654,11 @@ function toggleCssCategory(idx) {
 
 // Echtzeit-Suche im CSS-Handbuch
 function searchCssGuide() {
-    const query = document.getElementById('cssSearchInput').value.toLowerCase();
-    const categoryCards = document.querySelectorAll('.css-category-card');
+    const searchInput = document.getElementById('cssSearchInput');
+    if (!searchInput) return;
 
-    if (query.trim() === '') {
-        categoryCards.forEach((card, idx) => {
-            card.style.display = "block";
-            document.getElementById(`css-cat-body-${idx}`).style.display = "none";
-        });
-        return;
-    }
+    const query = searchInput.value.toLowerCase().trim();
+    const categoryCards = document.querySelectorAll('.css-category-card');
 
     categoryCards.forEach((card, idx) => {
         let hasMatch = false;
@@ -668,22 +666,27 @@ function searchCssGuide() {
         const items = card.querySelectorAll('.css-command-item');
 
         items.forEach(item => {
-            const name = item.getAttribute('data-name');
-            const desc = item.getAttribute('data-desc');
+            const name = item.getAttribute('data-name') || '';
+            const desc = item.getAttribute('data-desc') || '';
 
-            if (name.includes(query) || desc.includes(query)) {
+            if (!query || name.includes(query) || desc.includes(query)) {
                 item.style.display = "block";
-                hasMatch = true;
+                if (query) hasMatch = true;
             } else {
                 item.style.display = "none";
             }
         });
 
-        if (hasMatch) {
-            card.style.display = "block";
-            body.style.display = "block";
+        if (query) {
+            if (hasMatch) {
+                card.style.display = "block";
+                if (body) body.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
         } else {
-            card.style.display = "none";
+            card.style.display = "block";
+            if (body) body.style.display = "none";
         }
     });
 }
