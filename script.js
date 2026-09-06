@@ -373,12 +373,14 @@ function toggleMonthFolder(idx) {
     const body = document.getElementById(`month-folder-body-${idx}`);
     const icon = document.getElementById(`month-folder-icon-${idx}`);
 
+    if (!body) return;
+
     if (body.style.display === "none") {
         body.style.display = "block";
-        if (icon) icon.innerText = icon.innerText.replace("▲", "▼");
+        if (icon) icon.innerText = icon.innerText.replace("▼", "▲");
     } else {
         body.style.display = "none";
-        if (icon) icon.innerText = icon.innerText.replace("▼", "▲");
+        if (icon) icon.innerText = icon.innerText.replace("▲", "▼");
     }
 }
 
@@ -389,38 +391,63 @@ function toggleContent(id) {
 
     if (body.style.display === "none") {
         body.style.display = "block";
-        icon.innerText = "▲";
+        if (icon) icon.innerText = "▲";
     } else {
         body.style.display = "none";
-        icon.innerText = "▼";
+        if (icon) icon.innerText = "▼";
     }
 }
 
-// Echtzeit-Suchfunktion für das Notiz-Archiv (Durchsucht Tags, Thema UND Datum)
+// Echtzeit-Suchfunktion für das Notiz-Archiv (Klappt Ordner mit Treffern automatisch auf)
 function filterArchive() {
     const searchInput = document.getElementById('tagSearchInput');
     if (!searchInput) return;
 
     const query = searchInput.value.toLowerCase().trim();
-    const cards = document.querySelectorAll('.archive-card');
+    const folderCards = document.querySelectorAll('.month-folder-card');
 
-    cards.forEach(card => {
-        const tags = card.getAttribute('data-tags').toLowerCase();
-        const title = card.getAttribute('data-title').toLowerCase();
-        const date = card.getAttribute('data-date').toLowerCase();
+    folderCards.forEach((folderCard, idx) => {
+        const body = folderCard.querySelector('.month-folder-body');
+        const icon = document.getElementById(`month-folder-icon-${idx + 1}`);
+        const cards = folderCard.querySelectorAll('.archive-card');
+        let hasMatchInFolder = false;
 
-        let germanDate = "";
-        if (date && date.includes('-')) {
-            const parts = date.split('-');
-            if (parts.length === 3) {
-                germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+        cards.forEach(card => {
+            const tags = (card.getAttribute('data-tags') || '').toLowerCase();
+            const title = (card.getAttribute('data-title') || '').toLowerCase();
+            const date = (card.getAttribute('data-date') || '').toLowerCase();
+
+            let germanDate = "";
+            if (date && date.includes('-')) {
+                const parts = date.split('-');
+                if (parts.length === 3) {
+                    germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+                }
             }
-        }
 
-        if (tags.includes(query) || title.includes(query) || date.includes(query) || germanDate.includes(query)) {
-            card.style.display = "block";
+            // Prüft, ob der Suchbegriff in Tags, Titel oder Datum vorkommt
+            if (!query || tags.includes(query) || title.includes(query) || date.includes(query) || germanDate.includes(query)) {
+                card.style.display = "block";
+                if (query) hasMatchInFolder = true;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        if (query) {
+            // Wenn gesucht wird: Ordner mit Treffern anzeigen & automatisch aufklappen
+            if (hasMatchInFolder) {
+                folderCard.style.display = "block";
+                if (body) body.style.display = "block";
+                if (icon) icon.innerText = icon.innerText.replace("▼", "▲");
+            } else {
+                folderCard.style.display = "none";
+            }
         } else {
-            card.style.display = "none";
+            // Wenn das Suchfeld leer ist: Alle Ordner anzeigen & wieder zuklappen
+            folderCard.style.display = "block";
+            if (body) body.style.display = "none";
+            if (icon) icon.innerText = icon.innerText.replace("▲", "▼");
         }
     });
 }
@@ -676,6 +703,7 @@ function changeMonth(delta) {
 function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
     const monthYearTitle = document.getElementById('currentMonthYear');
+
     if (!grid || !monthYearTitle) return; // Bricht ab, wenn wir nicht auf Kalender.html sind
 
     const year = currentCalendarDate.getFullYear();
@@ -708,9 +736,12 @@ function renderCalendar() {
         const formattedDay = String(day).padStart(2, '0');
         const dateString = `${year}-${formattedMonth}-${formattedDay}`;
 
+        // Notizen für diesen Tag ermitteln
         const matchingNotes = archive.filter(item => item.date === dateString);
+
         const isToday = (dateString === todayStr);
 
+        // HTML für Notiz-Badges
         let notesHtml = '';
         if (matchingNotes.length > 0) {
             notesHtml = matchingNotes.map(note => `
