@@ -790,7 +790,7 @@ function renderCalendar() {
     grid.innerHTML = htmlContent;
 }
 
-// Öffnet die Detailansicht der Notizen für den geklickten Kalendertag
+// Öffnet die Detailansicht der Notizen für den geklickten Kalendertag (standardmäßig zugeklappt)
 function showDayDetails(dateString) {
     const detailSection = document.getElementById('dayDetailSection');
     const title = document.getElementById('selectedDateTitle');
@@ -811,17 +811,21 @@ function showDayDetails(dateString) {
         container.innerHTML = `<p style="color: #666; margin: 0;">An diesem Tag wurden keine Notizen angelegt.</p>`;
     } else {
         container.innerHTML = dayNotes.map(note => `
-            <div style="background: #f8f9fa; border-left: 4px solid #007bff; border-radius: 6px; padding: 12px; margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h4 style="margin: 0; color: #222; font-size: 16px;">${note.title}</h4>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${note.tags || 'Keine Tags'}</span>
-                        <button onclick="editEntry(${note.id})" title="Notiz bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
-                        <button onclick="deleteEntryFromCalendar(${note.id}, '${dateString}')" title="Notiz löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
+            <div class="archive-card" style="background: #fff; border-left: 4px solid #007bff; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                <div style="padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div onclick="toggleContent(${note.id})" style="cursor: pointer; display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+                        <span style="font-size: 12px; font-weight: bold; color: #555;">📅 ${note.date}</span>
+                        <h4 style="margin: 0; font-size: 15px; color: #222;">${note.title}</h4>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span onclick="toggleContent(${note.id})" style="cursor: pointer; font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${note.tags || 'Keine Tags'}</span>
+                        <button onclick="event.stopPropagation(); editEntry(${note.id});" title="Bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
+                        <button onclick="event.stopPropagation(); deleteEntryFromCalendar(${note.id}, '${dateString}');" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
+                        <span onclick="toggleContent(${note.id})" id="icon-${note.id}" style="cursor: pointer; font-size: 12px; color: #888; width: 15px; text-align: center;">▼</span>
                     </div>
                 </div>
-                <div style="font-size: 14px; color: #333; line-height: 1.5; border-top: 1px solid #eee; padding-top: 8px;">
-                    ${note.content}
+                <div id="body-${note.id}" style="display: none; padding: 12px; border-top: 1px solid #eee; background: #fff;">
+                    <div style="font-size: 14px; color: #333; line-height: 1.5;">${note.content}</div>
                 </div>
             </div>
         `).join('');
