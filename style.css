@@ -242,9 +242,11 @@ body {
 
 .editor-textarea {
     text-align: left !important;/* Erzwingt zwingend den Textbeginn oben links */
-    min-height: 250px;          /* Mindesthöhe des Schreibfeldes */
+    width: 100%;                /* Feste Breite (füllt den verfügbaren Platz aus) */
+    height: 350px;              /* Feste Höhe setzen (Wert nach Wunsch anpassen, z. B. 250px oder 400px) */
+    resize: none;               /* Verhindert das manuelle Ziehen/Skalieren unten rechts */
     background: #ffffff;        /* Weißer Hintergrund */
-    border: 1px solid #ccc;     /* Hellgrauer dezent rahmen */
+    border: 1px solid #ccc;     /* Hellgrauer dezenter Rahmen */
     border-radius: 8px;         /* Abgerundete Ecken */
     padding: 15px;              /* Innenabstand beim Tippen */
     overflow-y: auto;           /* Erzeugt bei langer Notiz automatisch einen Scrollbalken */

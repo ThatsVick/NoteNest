@@ -2,7 +2,7 @@ let currentEditId = null; // Speichert die ID der Notiz, wenn ein bestehender Ei
 let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angezeigte Datum (Standard: Heute)
 
 // =======================================================================================================================
-// 1. INITIALISIERUNG BEIM LADEN DER SEITE
+// 1. INITIALISIERUNG BEIM LADEN DER SEITE & OVERLAY FÜR BILDER
 // =======================================================================================================================
 document.addEventListener("DOMContentLoaded", function() {
     const datumInput = document.getElementById('datum'); // Holt das Datums-Eingabefeld aus Neu.html
@@ -17,6 +17,37 @@ document.addEventListener("DOMContentLoaded", function() {
     } else if (datumInput && !datumInput.value) {
         datumInput.value = new Date().toISOString().split('T')[0]; // Setzt automatisch das heutige Datum
     }
+
+    // Erzeugt das Modal-Fenster für die Großansicht von Bildern (falls noch nicht vorhanden)
+    if (!document.getElementById('imageModalOverlay')) {
+        const modal = document.createElement('div');
+        modal.id = 'imageModalOverlay';
+        modal.style.cssText = 'display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; cursor:pointer;';
+        modal.innerHTML = '<img id="imageModalImg" style="max-width:90%; max-height:90%; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.5); cursor:default;" onclick="event.stopPropagation();">';
+        modal.onclick = function() { modal.style.display = 'none'; };
+        document.body.appendChild(modal);
+    }
+
+    // Globale Klick-Steuerung für Bild-Badges (funktioniert auch nach dem Speichern/Laden)
+    document.addEventListener('click', function(e) {
+        // Wenn auf den Löschen-Button geklickt wird
+        if (e.target && e.target.classList.contains('delete-img-btn')) {
+            e.stopPropagation();
+            const badge = e.target.closest('.img-preview-badge');
+            if (badge) badge.remove();
+            return;
+        }
+
+        // Wenn auf das Bild-Badge geklickt wird
+        const badge = e.target.closest('.img-preview-badge');
+        if (badge) {
+            e.stopPropagation();
+            const imgSrc = badge.getAttribute('data-src');
+            if (imgSrc) {
+                openImageModal(imgSrc);
+            }
+        }
+    });
 
     // Drag-and-Drop-Unterstützung für das Schreibfeld auf Neu.html einrichten
     const editor = document.getElementById('editorText');
@@ -62,6 +93,16 @@ document.addEventListener("DOMContentLoaded", function() {
     // Falls wir auf Kalender.html sind, den Kalender rendern
     renderCalendar();
 });
+
+// Öffnet ein Bild in der Großansicht
+function openImageModal(src) {
+    const modal = document.getElementById('imageModalOverlay');
+    const modalImg = document.getElementById('imageModalImg');
+    if (modal && modalImg) {
+        modalImg.src = src;
+        modal.style.display = 'flex';
+    }
+}
 
 // =======================================================================================================================
 // 2. DASHBOARD-FUNKTIONEN (Start.html)
@@ -121,57 +162,41 @@ function changeTextColor(color) {
     document.execCommand('foreColor', false, color);
 }
 
-// Fügt ein Bild ein, das skaliert (per Ziehen) und gelöscht werden kann
+// Fügt ein kleines Inline-Badge im Textfluss ein, das erst bei Klick das Bild groß anzeigt
 function insertImageFile(file) {
     const reader = new FileReader();
     reader.onload = function(e) {
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'relative';
-        wrapper.style.display = 'inline-block';
-        wrapper.style.resize = 'both';
-        wrapper.style.overflow = 'hidden';
-        wrapper.style.maxWidth = '100%';
-        wrapper.style.width = '300px';
-        wrapper.style.margin = '10px 0';
-        wrapper.style.border = '1px dashed #bbb';
-        wrapper.style.borderRadius = '6px';
-        wrapper.contentEditable = 'false';
+        const imgSrc = e.target.result;
 
-        const img = document.createElement('img');
-        img.src = e.target.result;
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'contain';
-        img.style.display = 'block';
+        // Erstellt das kleine Inline-Badge mit gespeichertem data-src Attribut
+        const badge = document.createElement('span');
+        badge.contentEditable = 'false';
+        badge.className = 'img-preview-badge';
+        badge.setAttribute('data-src', imgSrc);
+        badge.style.cssText = 'display:inline-flex; align-items:center; gap:4px; background:#e9f2ff; border:1px solid #007bff; color:#007bff; padding:2px 8px; border-radius:12px; font-size:12px; margin:0 4px; cursor:pointer; user-select:none; vertical-align:middle;';
+        
+        // Fügt das Mini-Vorschaubild + Text ein
+        badge.innerHTML = `
+            <img src="${imgSrc}" style="width:16px; height:16px; object-fit:cover; border-radius:3px; pointer-events:none;">
+            <span style="font-weight:bold;">🖼️ Bild</span>
+            <span class="delete-img-btn" title="Bild entfernen" style="color:#dc3545; font-weight:bold; margin-left:4px; padding:0 2px; cursor:pointer;">✖</span>
+        `;
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerHTML = '✖';
-        deleteBtn.title = 'Bild löschen';
-        deleteBtn.style.position = 'absolute';
-        deleteBtn.style.top = '5px';
-        deleteBtn.style.right = '5px';
-        deleteBtn.style.background = 'rgba(220, 53, 69, 0.85)';
-        deleteBtn.style.color = 'white';
-        deleteBtn.style.border = 'none';
-        deleteBtn.style.borderRadius = '50%';
-        deleteBtn.style.width = '24px';
-        deleteBtn.style.height = '24px';
-        deleteBtn.style.cursor = 'pointer';
-        deleteBtn.style.fontSize = '12px';
-        deleteBtn.style.display = 'flex';
-        deleteBtn.style.alignItems = 'center';
-        deleteBtn.style.justifyContent = 'center';
-
-        deleteBtn.addEventListener('click', function(event) {
-            event.stopPropagation();
-            wrapper.remove();
-        });
-
-        wrapper.appendChild(img);
-        wrapper.appendChild(deleteBtn);
-
+        // Fügt das Badge genau an der aktuellen Cursor-Position oder am Ende des Editors ein
         const editor = document.getElementById('editorText');
-        if (editor) editor.appendChild(wrapper);
+        if (editor) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+                const range = selection.getRangeAt(0);
+                range.insertNode(badge);
+                range.setStartAfter(badge);
+                range.setEndAfter(badge);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                editor.appendChild(badge);
+            }
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -470,7 +495,7 @@ function editEntry(id) {
 }
 
 // =======================================================================================================================
-// 5. CSS-HANDBUCH UND LERNDATENBANK (MIT KATAGORIE-SYMBOLEN)
+// 5. CSS-HANDBUCH UND LERNDATENBANK (MIT KATEGORIE-SYMBOLEN)
 // =======================================================================================================================
 
 const cssDatabase = [
