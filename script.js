@@ -4,7 +4,7 @@ let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angez
 // =======================================================================================================================
 // 1. INITIALISIERUNG BEIM LADEN DER SEITE & OVERLAY FÜR BILDER
 // =======================================================================================================================
-document.addEventListener("DOMContentLoaded", function() {
+function initApp() {
     const datumInput = document.getElementById('datum'); // Holt das Datums-Eingabefeld aus Neu.html
     
     // Prüft, ob eine ID zum Bearbeiten in der URL übergeben wurde (?edit=ID)
@@ -28,45 +28,21 @@ document.addEventListener("DOMContentLoaded", function() {
         document.body.appendChild(modal);
     }
 
-    // Globale Klick-Steuerung für Bild-Badges (funktioniert auch nach dem Speichern/Laden)
-    document.addEventListener('click', function(e) {
-        // Wenn auf den Löschen-Button geklickt wird
-        if (e.target && e.target.classList.contains('delete-img-btn')) {
-            e.stopPropagation();
-            const badge = e.target.closest('.img-preview-badge');
-            if (badge) badge.remove();
-            return;
-        }
-
-        // Wenn auf das Bild-Badge geklickt wird
-        const badge = e.target.closest('.img-preview-badge');
-        if (badge) {
-            e.stopPropagation();
-            const imgSrc = badge.getAttribute('data-src');
-            if (imgSrc) {
-                openImageModal(imgSrc);
-            }
-        }
-    });
-
     // Drag-and-Drop-Unterstützung für das Schreibfeld auf Neu.html einrichten
     const editor = document.getElementById('editorText');
     if (editor) {
-        // Blauer Rahmen beim Drüberziehen eines Bildes
         editor.addEventListener('dragover', function(e) {
             e.preventDefault();
             e.stopPropagation();
             editor.style.borderColor = '#007bff';
         });
 
-        // Setzt den Rahmen zurück, wenn das Bild den Bereich verlässt
         editor.addEventListener('dragleave', function(e) {
             e.preventDefault();
             e.stopPropagation();
             editor.style.borderColor = '#ccc';
         });
 
-        // Verarbeitet das abgelegte Bild
         editor.addEventListener('drop', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -83,15 +59,36 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Falls wir auf Ordner.html sind, Anzahl der Notizen und CSS-Handbuch laden
+    // Lädt die relevanten Inhalte je nach geöffneter Seite
     updateArchiveCount();
     renderCssGuide();
-
-    // Falls wir auf Start.html sind, die letzten Aktivitäten rendern
     renderStartDashboard();
-
-    // Falls wir auf Kalender.html sind, den Kalender rendern
     renderCalendar();
+}
+
+// Führt die Initialisierung beim Laden und beim Wechseln der Seite aus
+document.addEventListener("DOMContentLoaded", initApp);
+window.addEventListener("pageshow", function() {
+    renderStartDashboard(); // Garantiert stets frische Notizen auf der Startseite
+});
+
+// Globale Klick-Steuerung für Bild-Badges
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('delete-img-btn')) {
+        e.stopPropagation();
+        const badge = e.target.closest('.img-preview-badge');
+        if (badge) badge.remove();
+        return;
+    }
+
+    const badge = e.target.closest('.img-preview-badge');
+    if (badge) {
+        e.stopPropagation();
+        const imgSrc = badge.getAttribute('data-src');
+        if (imgSrc) {
+            openImageModal(imgSrc);
+        }
+    }
 });
 
 // Öffnet ein Bild in der Großansicht
@@ -263,6 +260,7 @@ function saveToArchive() {
 
     try {
         localStorage.setItem('myFolderArchive', JSON.stringify(archive));
+        renderStartDashboard(); // Aktualisiert das Dashboard sofort
         alert(currentEditId ? "Änderung erfolgreich gespeichert!" : "Eintrag erfolgreich im Datumsarchiv gespeichert!");
     } catch (e) {
         alert("Der Inhalt ist zu groß für den Speicher. Bitte reduziere die Bildgrößen.");
@@ -486,6 +484,7 @@ function deleteEntry(id) {
         localStorage.setItem('myFolderArchive', JSON.stringify(archive));
         loadArchive();
         updateArchiveCount();
+        renderStartDashboard();
     }
 }
 
@@ -636,7 +635,7 @@ function openCssGuideView() {
     }
 }
 
-// Rendert die Ordner und Befehle im CSS-Handbuch (Mit Symbol-Icon, ohne das Wort "Ordner:")
+// Rendert die Ordner und Befehle im CSS-Handbuch
 function renderCssGuide() {
     const container = document.getElementById('cssGuideContainer');
     if (!container) return;
@@ -850,5 +849,6 @@ function deleteEntryFromCalendar(id, dateString) {
         
         renderCalendar(); // Rendert den Kalender neu
         showDayDetails(dateString); // Aktualisiert die Tagesdetails
+        renderStartDashboard(); // Aktualisiert die Startseite im Hintergrund
     }
 }
