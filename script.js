@@ -238,7 +238,7 @@ function changeTextColor(color) {
     document.execCommand('foreColor', false, color);
 }
 
-// BILD-KOMPRIMIERUNG: Skaliert große Bilder per Canvas herunter (Spart ~90% Speicherplatz)
+// BILD-KOMPRIMIERUNG: Skaliert große Bilder per Canvas herunter
 function compressImage(file, maxWidth, quality, callback) {
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -268,7 +268,7 @@ function compressImage(file, maxWidth, quality, callback) {
     reader.readAsDataURL(file);
 }
 
-// Fügt ein kleines Inline-Badge im Textfluss ein (mit automatischer Komprimierung)
+// Fügt ein kleines Inline-Badge im Textfluss ein (mit automatischer Komprimierung auf 1500px)
 function insertImageFile(file) {
     // Komprimiert das Bild: max. 1500px Breite, 75% Qualität
     compressImage(file, 1500, 0.75, function(imgSrc) {
@@ -337,36 +337,37 @@ async function saveToArchive() {
         return;
     }
 
-    let archive = await getArchiveData();
+    try {
+        let archive = await getArchiveData();
 
-    if (currentEditId) {
-        const index = archive.findIndex(item => item.id === currentEditId);
-        if (index !== -1) {
-            archive[index] = {
-                id: currentEditId,
+        if (currentEditId) {
+            const index = archive.findIndex(item => item.id === currentEditId);
+            if (index !== -1) {
+                archive[index] = {
+                    id: currentEditId,
+                    date: datum,
+                    title: thema,
+                    tags: tags,
+                    content: inhalt
+                };
+            }
+        } else {
+            const newEntry = {
+                id: Date.now(),
                 date: datum,
                 title: thema,
                 tags: tags,
                 content: inhalt
             };
+            archive.push(newEntry);
         }
-    } else {
-        const newEntry = {
-            id: Date.now(),
-            date: datum,
-            title: thema,
-            tags: tags,
-            content: inhalt
-        };
-        archive.push(newEntry);
-    }
 
-    try {
         await setArchiveData(archive);
         await renderStartDashboard();
         alert(currentEditId ? "Änderung erfolgreich gespeichert!" : "Eintrag erfolgreich im Datumsarchiv gespeichert!");
     } catch (e) {
-        alert("Fehler beim Speichern der Daten.");
+        console.error("Speicherfehler:", e);
+        alert("Fehler beim Speichern: " + e.message);
     }
 }
 
