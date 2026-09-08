@@ -2,9 +2,9 @@ let currentEditId = null; // Speichert die ID der Notiz, wenn ein bestehender Ei
 let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angezeigte Datum (Standard: Heute)
 
 // =======================================================================================================================
-// 1. INITIALISIERUNG BEIM LADEN DER SEITE & OVERLAY FÜR BILDER
+// 1. INITIALISIERUNG BEIM LADEN DER SEITE & OVERLAY FÜR BILDER (MIT LUPEN-ZOOM)
 // =======================================================================================================================
-function initApp() {
+async function initApp() {
     const datumInput = document.getElementById('datum'); // Holt das Datums-Eingabefeld aus Neu.html
     
     // Prüft, ob eine ID zum Bearbeiten in der URL übergeben wurde (?edit=ID)
@@ -13,19 +13,44 @@ function initApp() {
 
     if (editId) {
         currentEditId = parseInt(editId); // Wandelt die gefundene ID in eine Zahl um
-        loadEntryForEditing(currentEditId); // Lädt die Notiz in die Formularfelder
+        await loadEntryForEditing(currentEditId); // Lädt die Notiz in die Formularfelder
     } else if (datumInput && !datumInput.value) {
         datumInput.value = new Date().toISOString().split('T')[0]; // Setzt automatisch das heutige Datum
     }
 
-    // Erzeugt das Modal-Fenster für die Großansicht von Bildern (falls noch nicht vorhanden)
+    // Erzeugt das Modal-Fenster inklusive Lupe (falls noch nicht vorhanden)
     if (!document.getElementById('imageModalOverlay')) {
         const modal = document.createElement('div');
         modal.id = 'imageModalOverlay';
-        modal.style.cssText = 'display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; cursor:pointer;';
-        modal.innerHTML = '<img id="imageModalImg" style="max-width:90%; max-height:90%; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.5); cursor:default;" onclick="event.stopPropagation();">';
-        modal.onclick = function() { modal.style.display = 'none'; };
+        modal.style.cssText = 'display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; cursor:pointer;';
+        
+        modal.innerHTML = `
+            <div class="modal-image-container" onclick="event.stopPropagation();">
+                <div id="imageMagnifierGlass" class="image-magnifier-glass"></div>
+                <img id="imageModalImg" style="max-width:85vh; max-height:85vh; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.5); display:block;">
+            </div>
+        `;
+        
+        // Beim Klick außerhalb des Bildes wird das Modal geschlossen
+        modal.onclick = function() { 
+            modal.style.display = 'none'; 
+            const glass = document.getElementById('imageMagnifierGlass');
+            if (glass) glass.style.display = 'none';
+        };
+        
         document.body.appendChild(modal);
+
+        // Event-Listener für die Lupen-Bewegung auf dem Bild
+        const img = document.getElementById('imageModalImg');
+        const glass = document.getElementById('imageMagnifierGlass');
+
+        if (img && glass) {
+            img.addEventListener('mousemove', moveMagnifier);
+            glass.addEventListener('mousemove', moveMagnifier);
+
+            img.addEventListener('mouseenter', function() { glass.style.display = 'block'; });
+            img.addEventListener('mouseleave', function() { glass.style.display = 'none'; });
+        }
     }
 
     // Drag-and-Drop-Unterstützung für das Schreibfeld auf Neu.html einrichten
@@ -60,10 +85,28 @@ function initApp() {
     }
 
     // Lädt die relevanten Inhalte je nach geöffneter Seite
-    updateArchiveCount();
+    await updateArchiveCount();
     renderCssGuide();
-    renderStartDashboard();
-    renderCalendar();
+    await renderStartDashboard();
+    await renderCalendar();
+}
+
+// Helper: Holt das Archiv asynchron aus localForage (IndexedDB) oder als Fallback localStorage
+async function getArchiveData() {
+    if (typeof localforage !== 'undefined') {
+        const data = await localforage.getItem('myFolderArchive');
+        return data || [];
+    }
+    return JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+}
+
+// Helper: Speichert das Archiv asynchron in localForage
+async function setArchiveData(archive) {
+    if (typeof localforage !== 'undefined') {
+        await localforage.setItem('myFolderArchive', archive);
+    } else {
+        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
+    }
 }
 
 // Führt die Initialisierung beim Laden und beim Wechseln der Seite aus
@@ -91,12 +134,48 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Steuert die Bewegung der Lupe und berechnet die Vergrößerung
+function moveMagnifier(e) {
+    const img = document.getElementById('imageModalImg');
+    const glass = document.getElementById('imageMagnifierGlass');
+    if (!img || !glass) return;
+
+    const zoom = 2.5; // Vergrößerungsfaktor (2.5x)
+    const rect = img.getBoundingClientRect();
+
+    // Berechnung der Position der Maus relativ zum Bild
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+
+    // Verhinderung, dass die Lupe außerhalb des Bildes rechnet
+    if (x > img.width) x = img.width;
+    if (x < 0) x = 0;
+    if (y > img.height) y = img.height;
+    if (y < 0) y = 0;
+
+    // Positionierung der Lupe mittig unter dem Zeiger
+    const bw = 3; // Randdicke der Lupe
+    const w = glass.offsetWidth / 2;
+    const h = glass.offsetHeight / 2;
+
+    glass.style.left = (x - w) + "px";
+    glass.style.top = (y - h) + "px";
+
+    // Berechnet das Hintergrundbild und die Position innerhalb der Lupe
+    glass.style.backgroundImage = "url('" + img.src + "')";
+    glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
+    glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
+}
+
 // Öffnet ein Bild in der Großansicht
 function openImageModal(src) {
     const modal = document.getElementById('imageModalOverlay');
     const modalImg = document.getElementById('imageModalImg');
+    const glass = document.getElementById('imageMagnifierGlass');
+    
     if (modal && modalImg) {
         modalImg.src = src;
+        if (glass) glass.style.display = 'none'; // Schaltet die Lupe beim Öffnen kurz aus
         modal.style.display = 'flex';
     }
 }
@@ -105,12 +184,12 @@ function openImageModal(src) {
 // 2. DASHBOARD-FUNKTIONEN (Start.html)
 // =======================================================================================================================
 
-// Lädt die 3 neuesten Notizen aus dem localStorage und zeigt sie im Dashboard auf Start.html an
-function renderStartDashboard() {
+// Lädt die 3 neuesten Notizen aus der Datenbank und zeigt sie im Dashboard auf Start.html an
+async function renderStartDashboard() {
     const listContainer = document.getElementById('recentNotesList');
     if (!listContainer) return; // Bricht ab, falls wir nicht auf Start.html sind
 
-    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+    const archive = await getArchiveData();
 
     if (archive.length === 0) {
         listContainer.innerHTML = '<li><p style="color: #666;">Noch keine Notizen im Archiv vorhanden.</p></li>';
@@ -159,27 +238,52 @@ function changeTextColor(color) {
     document.execCommand('foreColor', false, color);
 }
 
-// Fügt ein kleines Inline-Badge im Textfluss ein, das erst bei Klick das Bild groß anzeigt
-function insertImageFile(file) {
+// BILD-KOMPRIMIERUNG: Skaliert große Bilder per Canvas herunter (Spart ~90% Speicherplatz)
+function compressImage(file, maxWidth, quality, callback) {
     const reader = new FileReader();
     reader.onload = function(e) {
-        const imgSrc = e.target.result;
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
 
-        // Erstellt das kleine Inline-Badge mit gespeichertem data-src Attribut
+            if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Export als komprimiertes JPEG Data-URL
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+            callback(compressedDataUrl);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+// Fügt ein kleines Inline-Badge im Textfluss ein (mit automatischer Komprimierung)
+function insertImageFile(file) {
+    // Komprimiert das Bild: max. 1500px Breite, 75% Qualität
+    compressImage(file, 1500, 0.75, function(imgSrc) {
         const badge = document.createElement('span');
         badge.contentEditable = 'false';
         badge.className = 'img-preview-badge';
         badge.setAttribute('data-src', imgSrc);
         badge.style.cssText = 'display:inline-flex; align-items:center; gap:4px; background:#e9f2ff; border:1px solid #007bff; color:#007bff; padding:2px 8px; border-radius:12px; font-size:12px; margin:0 4px; cursor:pointer; user-select:none; vertical-align:middle;';
         
-        // Fügt das Mini-Vorschaubild + Text ein
         badge.innerHTML = `
             <img src="${imgSrc}" style="width:16px; height:16px; object-fit:cover; border-radius:3px; pointer-events:none;">
             <span style="font-weight:bold;">🖼️ Bild</span>
             <span class="delete-img-btn" title="Bild entfernen" style="color:#dc3545; font-weight:bold; margin-left:4px; padding:0 2px; cursor:pointer;">✖</span>
         `;
 
-        // Fügt das Badge genau an der aktuellen Cursor-Position oder am Ende des Editors ein
         const editor = document.getElementById('editorText');
         if (editor) {
             const selection = window.getSelection();
@@ -194,8 +298,7 @@ function insertImageFile(file) {
                 editor.appendChild(badge);
             }
         }
-    };
-    reader.readAsDataURL(file);
+    });
 }
 
 // Nimmt Bildauswahl über den Datei-Button entgegen
@@ -206,8 +309,8 @@ function insertImage(input) {
 }
 
 // Lädt eine bestehende Notiz anhand der ID zurück in den Editor
-function loadEntryForEditing(id) {
-    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+async function loadEntryForEditing(id) {
+    const archive = await getArchiveData();
     const entry = archive.find(item => item.id === id);
 
     if (entry) {
@@ -221,8 +324,8 @@ function loadEntryForEditing(id) {
     }
 }
 
-// Speichert oder überschreibt Notizen im Browser-Speicher
-function saveToArchive() {
+// Speichert oder überschreibt Notizen in der IndexedDB-Datenbank
+async function saveToArchive() {
     const datum = document.getElementById('datum').value;
     const thema = document.getElementById('thema').value.trim() || 'Unbenanntes Thema';
     const tags = document.getElementById('tags').value.trim();
@@ -234,7 +337,7 @@ function saveToArchive() {
         return;
     }
 
-    let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+    let archive = await getArchiveData();
 
     if (currentEditId) {
         const index = archive.findIndex(item => item.id === currentEditId);
@@ -259,11 +362,11 @@ function saveToArchive() {
     }
 
     try {
-        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
-        renderStartDashboard(); // Aktualisiert das Dashboard sofort
+        await setArchiveData(archive);
+        await renderStartDashboard();
         alert(currentEditId ? "Änderung erfolgreich gespeichert!" : "Eintrag erfolgreich im Datumsarchiv gespeichert!");
     } catch (e) {
-        alert("Der Inhalt ist zu groß für den Speicher. Bitte reduziere die Bildgrößen.");
+        alert("Fehler beim Speichern der Daten.");
     }
 }
 
@@ -272,8 +375,8 @@ function saveToArchive() {
 // =======================================================================================================================
 
 // Aktualisiert den Zähler auf der Archiv-Kachel
-function updateArchiveCount() {
-    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+async function updateArchiveCount() {
+    const archive = await getArchiveData();
     const countInfo = document.getElementById('archiveCountInfo');
     if (countInfo) {
         countInfo.innerText = archive.length + (archive.length === 1 ? " Eintrag" : " Einträge");
@@ -281,14 +384,14 @@ function updateArchiveCount() {
 }
 
 // Öffnet die Notiz-Archiv Ansicht
-function openArchiveView() {
+async function openArchiveView() {
     const archiveSec = document.getElementById('archiveSection');
     const cssSec = document.getElementById('cssGuideSection');
 
     if (cssSec) cssSec.style.display = "none";
     if (archiveSec) {
         archiveSec.style.display = "block";
-        loadArchive();
+        await loadArchive();
         archiveSec.scrollIntoView({ behavior: 'smooth' });
     }
 }
@@ -309,19 +412,18 @@ function getMonthYearLabel(dateString) {
     return `${monthNames[monthIndex] || 'Unbekannt'} ${year}`;
 }
 
-// Lädt das Archiv und gruppiert alle Notizen automatisch in Monats-Ordner (standardmäßig zugeklappt)
-function loadArchive() {
+// Lädt das Archiv und gruppiert alle Notizen automatisch in Monats-Ordner
+async function loadArchive() {
     const container = document.getElementById('archiveContainer');
     if (!container) return;
 
-    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+    const archive = await getArchiveData();
 
     if (archive.length === 0) {
         container.innerHTML = "<p style='color: #666;'>Noch keine Einträge im Archiv vorhanden.</p>";
         return;
     }
 
-    // Sortierung anwenden
     const sortSelect = document.getElementById('sortSelect');
     const sortValue = sortSelect ? sortSelect.value : 'date-desc';
 
@@ -337,7 +439,6 @@ function loadArchive() {
         }
     });
 
-    // Gruppierung nach Monat und Jahr
     const monthGroups = {};
     archive.forEach(item => {
         const label = getMonthYearLabel(item.date);
@@ -347,7 +448,6 @@ function loadArchive() {
         monthGroups[label].push(item);
     });
 
-    // Rendert jeden Monats-Ordner als aufklappbare Karte (standardmäßig zugeklappt)
     let folderIdx = 0;
     container.innerHTML = Object.keys(monthGroups).map(monthLabel => {
         const items = monthGroups[monthLabel];
@@ -392,7 +492,6 @@ function loadArchive() {
     }
 }
 
-// Auf- und Zuklappen der Monats-Ordner
 function toggleMonthFolder(idx) {
     const body = document.getElementById(`month-folder-body-${idx}`);
     const icon = document.getElementById(`month-folder-icon-${idx}`);
@@ -408,7 +507,6 @@ function toggleMonthFolder(idx) {
     }
 }
 
-// Blendet Notiz-Inhalt im Archiv auf oder zu
 function toggleContent(id) {
     const body = document.getElementById(`body-${id}`);
     const icon = document.getElementById(`icon-${id}`);
@@ -422,7 +520,6 @@ function toggleContent(id) {
     }
 }
 
-// Echtzeit-Suchfunktion für das Notiz-Archiv (Klappt Ordner mit Treffern automatisch auf)
 function filterArchive() {
     const searchInput = document.getElementById('tagSearchInput');
     if (!searchInput) return;
@@ -449,7 +546,6 @@ function filterArchive() {
                 }
             }
 
-            // Prüft, ob der Suchbegriff in Tags, Titel oder Datum vorkommt
             if (!query || tags.includes(query) || title.includes(query) || date.includes(query) || germanDate.includes(query)) {
                 card.style.display = "block";
                 if (query) hasMatchInFolder = true;
@@ -459,7 +555,6 @@ function filterArchive() {
         });
 
         if (query) {
-            // Wenn gesucht wird: Ordner mit Treffern anzeigen & automatisch aufklappen
             if (hasMatchInFolder) {
                 folderCard.style.display = "block";
                 if (body) body.style.display = "block";
@@ -468,7 +563,6 @@ function filterArchive() {
                 folderCard.style.display = "none";
             }
         } else {
-            // Wenn das Suchfeld leer ist: Alle Ordner anzeigen & wieder zuklappen
             folderCard.style.display = "block";
             if (body) body.style.display = "none";
             if (icon) icon.innerText = icon.innerText.replace("▲", "▼");
@@ -476,25 +570,23 @@ function filterArchive() {
     });
 }
 
-// Löscht eine Notiz aus dem Archiv
-function deleteEntry(id) {
+async function deleteEntry(id) {
     if (confirm("Eintrag wirklich löschen?")) {
-        let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+        let archive = await getArchiveData();
         archive = archive.filter(item => item.id !== id);
-        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
-        loadArchive();
-        updateArchiveCount();
-        renderStartDashboard();
+        await setArchiveData(archive);
+        await loadArchive();
+        await updateArchiveCount();
+        await renderStartDashboard();
     }
 }
 
-// Leitet zum Bearbeiten zurück in den Editor auf Neu.html
 function editEntry(id) {
     window.location.href = `Neu.html?edit=${id}`;
 }
 
 // =======================================================================================================================
-// 5. CSS-HANDBUCH UND LERNDATENBANK (MIT KATEGORIE-SYMBOLEN)
+// 5. CSS-HANDBUCH UND LERNDATENBANK
 // =======================================================================================================================
 
 const cssDatabase = [
@@ -622,7 +714,6 @@ const cssDatabase = [
     }
 ];
 
-// Öffnet die Ansicht des CSS-Handbuchs
 function openCssGuideView() {
     const archiveSec = document.getElementById('archiveSection');
     const cssSec = document.getElementById('cssGuideSection');
@@ -635,7 +726,6 @@ function openCssGuideView() {
     }
 }
 
-// Rendert die Ordner und Befehle im CSS-Handbuch
 function renderCssGuide() {
     const container = document.getElementById('cssGuideContainer');
     if (!container) return;
@@ -660,7 +750,6 @@ function renderCssGuide() {
     `).join('');
 }
 
-// Auf- und Zuklappen einzelner Ordner im CSS-Handbuch
 function toggleCssCategory(idx) {
     const body = document.getElementById(`css-cat-body-${idx}`);
     const icon = document.getElementById(`css-cat-icon-${idx}`);
@@ -676,7 +765,6 @@ function toggleCssCategory(idx) {
     }
 }
 
-// Echtzeit-Suche im CSS-Handbuch
 function searchCssGuide() {
     const searchInput = document.getElementById('cssSearchInput');
     if (!searchInput) return;
@@ -719,19 +807,17 @@ function searchCssGuide() {
 // 6. DYNAMISCHER KALENDER MIT KLICKBARER TAGES-DETAILANSICHT (Kalender.html)
 // =======================================================================================================================
 
-// Monats-Navigation: verschiebt den Monat um delta (+1 für weiter, -1 für zurück)
 function changeMonth(delta) {
     currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
     renderCalendar();
-    closeDayDetail(); // Schließt offene Details beim Monatswechsel
+    closeDayDetail();
 }
 
-// Rendert das Kalendergitter für den ausgewählten Monat
-function renderCalendar() {
+async function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
     const monthYearTitle = document.getElementById('currentMonthYear');
 
-    if (!grid || !monthYearTitle) return; // Bricht ab, wenn wir nicht auf Kalender.html sind
+    if (!grid || !monthYearTitle) return;
 
     const year = currentCalendarDate.getFullYear();
     const month = currentCalendarDate.getMonth();
@@ -750,7 +836,7 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const startOffset = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
 
-    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+    const archive = await getArchiveData();
 
     for (let i = 0; i < startOffset; i++) {
         htmlContent += `<div class="calendar-day empty"></div>`;
@@ -763,12 +849,9 @@ function renderCalendar() {
         const formattedDay = String(day).padStart(2, '0');
         const dateString = `${year}-${formattedMonth}-${formattedDay}`;
 
-        // Notizen für diesen Tag ermitteln
         const matchingNotes = archive.filter(item => item.date === dateString);
-
         const isToday = (dateString === todayStr);
 
-        // HTML für Notiz-Badges
         let notesHtml = '';
         if (matchingNotes.length > 0) {
             notesHtml = matchingNotes.map(note => `
@@ -789,18 +872,16 @@ function renderCalendar() {
     grid.innerHTML = htmlContent;
 }
 
-// Öffnet die Detailansicht der Notizen für den geklickten Kalendertag (standardmäßig zugeklappt)
-function showDayDetails(dateString) {
+async function showDayDetails(dateString) {
     const detailSection = document.getElementById('dayDetailSection');
     const title = document.getElementById('selectedDateTitle');
     const container = document.getElementById('dayDetailContainer');
 
     if (!detailSection || !container) return;
 
-    const archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+    const archive = await getArchiveData();
     const dayNotes = archive.filter(item => item.date === dateString);
 
-    // Wandelt das ISO-Datum ins deutsche Format um
     const parts = dateString.split('-');
     const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
 
@@ -834,21 +915,19 @@ function showDayDetails(dateString) {
     detailSection.scrollIntoView({ behavior: 'smooth' });
 }
 
-// Schließt die Tages-Detailansicht auf Kalender.html
 function closeDayDetail() {
     const detailSection = document.getElementById('dayDetailSection');
     if (detailSection) detailSection.style.display = "none";
 }
 
-// Löscht eine Notiz direkt aus der Kalender-Detailansicht
-function deleteEntryFromCalendar(id, dateString) {
+async function deleteEntryFromCalendar(id, dateString) {
     if (confirm("Eintrag wirklich löschen?")) {
-        let archive = JSON.parse(localStorage.getItem('myFolderArchive')) || [];
+        let archive = await getArchiveData();
         archive = archive.filter(item => item.id !== id);
-        localStorage.setItem('myFolderArchive', JSON.stringify(archive));
+        await setArchiveData(archive);
         
-        renderCalendar(); // Rendert den Kalender neu
-        showDayDetails(dateString); // Aktualisiert die Tagesdetails
-        renderStartDashboard(); // Aktualisiert die Startseite im Hintergrund
+        await renderCalendar();
+        await showDayDetails(dateString);
+        await renderStartDashboard();
     }
 }
