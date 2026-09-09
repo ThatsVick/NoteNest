@@ -231,7 +231,7 @@ body {
     height: 350px;              /* Feste Höhe setzen */
     resize: none;               /* Verhindert das manuelle Ziehen/Skalieren unten rechts */
     background: #ffffff;        /* Weißer Hintergrund */
-    border: 1px solid #ccc;     /* Hellgrauer dezenter Rahmen */
+    border: 1px solid black;     /* Hellgrauer dezenter Rahmen */
     border-radius: 8px;         /* Abgerundete Ecken */
     padding: 15px;              /* Innenabstand beim Tippen */
     overflow-y: auto;           /* Erzeugt bei langer Notiz automatisch einen Scrollbalken */
