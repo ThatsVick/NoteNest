@@ -241,7 +241,8 @@ body {
 .editor-textarea {
     text-align: left !important;/* Erzwingt zwingend den Textbeginn oben links */
     width: 100%;                /* Feste Breite (füllt den verfügbaren Platz aus) */
-    height: 60vh;              /* Feste Höhe setzen */
+    height: 60vh;               /* Dynamische Höhe: 60% der Bildschirmhöhe */
+    min-height: 250px;          /* Mindesthöhe für kleine Bildschirme */
     resize: none;               /* Verhindert das manuelle Ziehen/Skalieren unten rechts */
     background: #ffffff;        /* Weißer Hintergrund */
     border: 1px solid black;     /* Hellgrauer dezenter Rahmen */
