@@ -46,7 +46,7 @@
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                            Grundlegende Einstellungen
+                                            Grundlegende Einstellungen & Header/Navbar
 ------------------------------------------------------------------------------------------------------------------------*/
 
 body {
@@ -65,57 +65,70 @@ body {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);  /* Fügt einen blauen, weichen Leuchteffekt hinzu */
 }
 
-/* Header Styling */
+/* Haupt-Header: Ermöglicht das Ankerzentrum für die absolute Navbar */
 .main-header {
-    padding: 10px;             /* Innenabstand um den Kopfbereich */
-    text-align: center;        /* Zentriert den Titel */
-    margin-bottom: 10px;       /* Abstand zum nachfolgenden Element nach unten */
-    background-color: #fff;    /* Weißer Hintergrund */
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #000;
+    border-radius: 5px;
+    position: relative;        /* Essentiell: Macht den Header zum Bezugspunkt für die Zentrierung */
 }
 
-.header-title {
-    font-family: 'Lobster', cursive; /* Bindet die spezielle Google-Schriftart ein */
-    font-size: 50px;           /* Sehr große Schrift für den Seitentitel */
-    margin: 0;                 /* Entfernt unbewusste Standardabstände der Überschrift */
-    font-weight: normal;       /* Verhindert zusätzliche künstliche Fettung */
+/* Logo-Container fest auf der linken Seite verankert */
+.logo-container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 2;                /* Garantiert Klickbarkeit über dem Header-Hintergrund */
 }
 
-/* Navbar Styling */
+.header-logo {
+    height: 48px;              /* Feste Höhe für das Header-Logo */
+    width: auto;               /* Verhindert ein Verzerren des Bildes */
+    display: block;
+    object-fit: contain;
+}
+
+/* Navbar: Exakt in der waagerechten Mitte der Seite zentriert */
 .navbar {
-    background-color: #fff;    /* Weißer Hintergrund der Navigationsleiste */
-    margin-bottom: 10px;       /* Abstand nach unten */
-    margin-top: 10px;          /* Abstand nach oben */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);/* Verschiebt die Leiste um genau die Hälfte ihrer eigenen Breite nach links */
+    display: flex;
+    justify-content: center;
 }
 
 .navbar ul {
-    list-style: none;          /* Entfernt Aufzählungspunkte der ungeordneten Liste */
-    display: flex;             /* Ordnet die Listenpunkte in einer Reihe nebeneinander an */
-    justify-content: space-around; /* Verteilt die Menüpunkte mit gleichem Abstand */
-    padding: 0;                /* Entfernt Einrückungen der Liste */
-    margin: 0;                 /* Entfernt Liste-Außenabstände */
+    list-style: none;          /* Entfernt Aufzählungspunkte */
+    display: flex;             /* Ordnet die Listenpunkte waagerecht an */
+    gap: 12px;                 /* Abstand zwischen den Menüpunkten */
+    padding: 0;
+    margin: 0;
 }
 
 .navbar li a {
-    display: inline-block;     /* Macht Links zu gestaltbaren Blöcken */
-    padding: 12px 24px;        /* Innenabstand für klickbare Fläche */
-    color: black;              /* Schwarzen Text festlegen */
-    text-decoration: none;     /* Unterstreichung entfernen */
-    font-size: 16px;           /* Schriftgröße der Menüpunkte */
-    font-weight: bold;         /* Fette Schrift */
-    border-radius: 5px;        /* Leicht abgerundete Ecken */
-    border: none;              /* Keine Linienränder */
-    cursor: pointer;           /* Hand-Symbol beim Drüberfahren */
+    display: inline-block;
+    padding: 8px 16px;
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
 }
 
 .navbar li a:hover {
     background-color: #0c47be; /* Blaues Feld beim Drüberfahren */
-    color: white;              /* Weiße Schrift beim Drüberfahren */
-    transition: background 1s;  /* Sanfter Farbübergang innerhalb von 1 Sekunde */
+    color: white;              /* Weiße Schrift */
+    transition: background 0.3s;
 }
 
 .navbar li a.active {
-    background-color: #0c47be; /* Blaues Feld für den aktuell aktiven Reiter */
-    color: white;              /* Weiße Schrift auf aktivem Reiter */
+    background-color: #0c47be; /* Blaues Feld für den aktiven Reiter */
+    color: white;
 }
 
 /* Inhaltsbereich (Body) Styling */
@@ -228,7 +241,7 @@ body {
 .editor-textarea {
     text-align: left !important;/* Erzwingt zwingend den Textbeginn oben links */
     width: 100%;                /* Feste Breite (füllt den verfügbaren Platz aus) */
-    height: 350px;              /* Feste Höhe setzen */
+    height: 420px;              /* Feste Höhe setzen */
     resize: none;               /* Verhindert das manuelle Ziehen/Skalieren unten rechts */
     background: #ffffff;        /* Weißer Hintergrund */
     border: 1px solid black;     /* Hellgrauer dezenter Rahmen */
@@ -400,7 +413,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                            Styling für die Kalender-Seite (kalender.html) 
+                                           Styling für die Kalender-Seite (kalender.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Kopfleiste für die Monatsnavigation */
@@ -452,9 +465,9 @@ body {
     text-align: center;         /* Zentrierte Beschriftung */
 }
 
-/* Einzelnes Tageskästchen */
+/* Einzelnes Tageskästchen - Feste Höhe garantiert gleich große Kacheln */
 .calendar-day {
-    min-height: 80px;           /* Mindesthöhe jedes Kalendertags */
+    height: 95px;               /* Feste Höhe für starr gleich große Kacheln */
     border: 1px solid #000;     /* Schwarze Rahmeneinfassung */
     border-radius: 4px;         /* Leicht abgerundete Ecken */
     padding: 6px;               /* Innenabstand für Tageszahl */
@@ -462,6 +475,8 @@ body {
     background-color: #fff;     /* Weißer Hintergrund */
     cursor: pointer;           /* Hand-Symbol */
     transition: background 0.2s, border-color 0.2s; /* Übergang bei Interaktion */
+    box-sizing: border-box;     /* Rechnet Rahmendicke sauber in die Höhe ein */
+    overflow-y: auto;           /* Scrollbalken bei vielen Notizen an einem Tag */
 }
 
 .day-num {
@@ -469,7 +484,7 @@ body {
     font-size: 14px;            /* Größe der Zahl */
 }
 
-/* Hover-Effekt beim Drüberfahren (Signalisiert Klickbarkeit) */
+/* Hover-Effekt beim Drüberfahren */
 .calendar-day:hover:not(.empty) {
     background-color: #e6f0ff; /* Hellblaue Einfärbung aktiver Tage */
     border-color: #0c47be;     /* Dunkelblauer Rahmen */
@@ -484,7 +499,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                            Styling für das Startseiten-Dashboard
+                                           Styling für das Startseiten-Dashboard
 ----------------------------------------------------------------------------------------------------------------------- */
 
 .welcome-section {
@@ -507,7 +522,7 @@ body {
 
 .dashboard-card {
     width: 100%;                /* Nutzt verfügbare Breite */
-    max-width: 600px;           /* Schöne, ausgewogene Maximalbreite für eine einzelne Karte */
+    max-width: 600px;           /* Schöne, ausgewogene Maximalbreite */
     background-color: #fff;     /* Weißer Hintergrund */
     border: 1px solid #000;     /* Schwarze Außeneinfassung */
     border-radius: 8px;         /* Abgerundete Ecken */
