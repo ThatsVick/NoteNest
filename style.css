@@ -12,6 +12,7 @@
     background-color: #f4f4f4; /* Hellgrauer Hintergrund */
 }
 
+/* Container für Logo und Start-Button */
 .welcome-container {
     text-align: center;        /* Richtet enthaltenen Text und Buttons mittig aus */
 }
@@ -46,7 +47,7 @@
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                            Grundlegende Einstellungen & Header/Navbar
+                                           Grundlegende Einstellungen & Header/Navbar
 ------------------------------------------------------------------------------------------------------------------------*/
 
 body {
@@ -58,7 +59,6 @@ body {
 
 /* Ändert die Rahmenfarbe aller Eingabefelder im aktiven Zustand */
 .top-inputs-row input:focus,
-.editor-textarea:focus,
 .toolbar-select:focus {
     border-color: #007bff !important;           /* Färbt den Rahmen beim Anklicken blau */
     outline: none !important;                  /* Deaktiviert den Standard-Fokusrahmen des Browsers */
@@ -67,68 +67,68 @@ body {
 
 /* Haupt-Header: Ermöglicht das Ankerzentrum für die absolute Navbar */
 .main-header {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #000;
-    border-radius: 5px;
-    position: relative;        /* Essentiell: Macht den Header zum Bezugspunkt für die Zentrierung */
+    display: flex;             /* Aktiviert Flexbox-Layout im Header */
+    align-items: center;       /* Zentriert Logo und Navigation vertikal */
+    padding: 10px 15px;        /* Innenabstand für den Header */
+    margin-bottom: 20px;       /* Abstand nach unten zum Inhaltsbereich */
+    border-bottom: 1px solid #000; /* Schwarze Trennlinie unten */
+    border-radius: 5px;        /* Leicht abgerundete Ecken */
+    position: relative;        /* Essentiell: Macht den Header zum Bezugspunkt für die Zentrierung der Navbar */
 }
 
 /* Logo-Container fest auf der linken Seite verankert */
 .logo-container {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
+    display: flex;             /* Vertikales Zentrieren der Bildinhalte */
+    align-items: center;       /* Richtet das Logo mittig aus */
+    text-decoration: none;     /* Entfernt Unterstreichung bei Verlinkung */
     z-index: 2;                /* Garantiert Klickbarkeit über dem Header-Hintergrund */
 }
 
 .header-logo {
     height: 48px;              /* Feste Höhe für das Header-Logo */
     width: auto;               /* Verhindert ein Verzerren des Bildes */
-    display: block;
-    object-fit: contain;
+    display: block;            /* Eigene Zeile für Bildblock */
+    object-fit: contain;       /* Behält das Seitenverhältnis des Logos bei */
 }
 
 /* Navbar: Exakt in der waagerechten Mitte der Seite zentriert */
 .navbar {
-    position: absolute;
-    left: 50%;
+    position: absolute;        /* Losgelöst vom Dokumentfluss für exakte Positionierung */
+    left: 50%;                 /* Platziert den Startpunkt der Leiste in der Mitte */
     transform: translateX(-50%);/* Verschiebt die Leiste um genau die Hälfte ihrer eigenen Breite nach links */
-    display: flex;
-    justify-content: center;
+    display: flex;             /* Aktiviert Flexbox-Verhalten */
+    justify-content: center;   /* Zentriert die Menüpunkte waagerecht */
 }
 
 .navbar ul {
     list-style: none;          /* Entfernt Aufzählungspunkte */
     display: flex;             /* Ordnet die Listenpunkte waagerecht an */
     gap: 12px;                 /* Abstand zwischen den Menüpunkten */
-    padding: 0;
-    margin: 0;
+    padding: 0;                /* Entfernt Standard-Innenabstände der Liste */
+    margin: 0;                 /* Entfernt Außenabstände der Liste */
 }
 
 .navbar li a {
-    display: inline-block;
-    padding: 8px 16px;
-    color: black;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
+    display: inline-block;     /* Macht Links formbar für Abstände und Abrundungen */
+    padding: 8px 16px;         /* Innenabstand der Navigationsbuttons */
+    color: black;              /* Textfarbe Schwarz */
+    text-decoration: none;     /* Entfernt Unterstreichungen */
+    font-size: 16px;           /* Schriftgröße der Links */
+    font-weight: bold;         /* Fette Schriftart */
+    border-radius: 5px;        /* Abgerundete Ecken */
+    border: none;              /* Kein Rahmen */
+    cursor: pointer;           /* Hand-Symbol beim Mouseover */
 }
 
 .navbar li a:hover {
     background-color: #0c47be; /* Blaues Feld beim Drüberfahren */
     color: white;              /* Weiße Schrift */
-    transition: background 0.3s;
+    transition: background 0.3s;/* Sanfter Übergang beim Hovern */
 }
 
 .navbar li a.active {
     background-color: #0c47be; /* Blaues Feld für den aktiven Reiter */
-    color: white;
+    color: white;              /* Weiße Schrift für den aktiven Reiter */
 }
 
 /* Inhaltsbereich (Body) Styling */
@@ -143,7 +143,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                          Styling für die Neu-Seite (Formular & Editor) 
+                                           Styling für die Neu-Seite (Formular & Editor) 
 ------------------------------------------------------------------------------------------------------------------------*/
 
 .editor-form {
@@ -171,7 +171,7 @@ body {
 }
 
 .input-group input {
-    border: 1px solid #000;     /* Schwarzer Randeinfassung */
+    border: 1px solid #000;     /* Schwarze Randeinfassung */
     border-radius: 5px;         /* Abgerundete Ecken */
     padding: 8px;               /* Textinnenabstand im Feld */
     font-size: 14px;            /* Textgröße im Feld */
@@ -184,8 +184,8 @@ body {
 
 /* Speichern-Button Styling */
 .save-btn {
-    display: inline-block;     /* Macht den Button formbar */
-    padding: 6px 24px;          /* Innenabstand */
+    display: inline-block;      /* Macht den Button formbar */
+    padding: 6px 24px;          /* Innenabstand des Buttons */
     color: black;              /* Schwarze Schriftfarbe */
     text-decoration: none;     /* Keine Unterstreichung */
     font-size: 16px;           /* Schriftgröße */
@@ -202,60 +202,50 @@ body {
     transition: background 1s;  /* Sanfter Farbübergang */
 }
 
-/* Werkzeugleiste (Word-Einstellungen) */
-.toolbar-row {
-    border: 1px solid #000;     /* Schwarze Außeneinfassung der Leiste */
-    padding: 8px 12px;          /* Innenabstand der Werkzeugleiste */
-    background-color: #fff;     /* Weißer Hintergrund */
-    display: flex;              /* Nebeneinander-Anordnung aller Werkzeuge */
-    align-items: center;        /* Richtet Buttons mittig auf gleicher Höhe aus */
-    gap: 10px;                  /* Abstand zwischen einzelnen Buttons */
-    flex-wrap: wrap;            /* Ermöglicht Umbruch auf Mobilgeräten */
-    border-radius: 5px;         /* Abgerundete Ecken */
+/* -----------------------------------------------------------------------------------------------------------------------
+                                           Quill.js Schreibbereich & Container-Höhen
+------------------------------------------------------------------------------------------------------------------------*/
+
+/* Der Hauptcontainer für den Quill.js Texteditor */
+#editorText {
+    height: 55vh;               /* Feste Höhe: 55% der Bildschirmhöhe */
+    min-height: 280px;          /* Mindesthöhe für kleinere Bildschirme */
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid black;    /* Schwarzer Rahmen analog zum ursprünglichen Design */
+    border-radius: 8px;
+    overflow: hidden;           /* Verhindert doppelte Ränder oder Überstehen */
 }
 
-.toolbar-select, 
-.toolbar-btn {
-    border: 1px solid #000;     /* Schwarzer Rahmen für Leisten-Buttons */
-    background-color: #fff;     /* Weißer Hintergrund */
-    padding: 4px 8px;           /* Kompakter Innenabstand */
-    cursor: pointer;           /* Hand-Symbol */
-    border-radius: 4px;        /* Leicht abgerundete Ecken */
+/* Äußeres Quill-Modul übernimmt das Flex-Layout */
+#editorText .ql-container.ql-snow {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: none !important;    /* Entfernt den Quill-Standardrand */
+    font-size: 16px;
 }
 
-.toolbar-color {
-    border: 1px solid #000;     /* Schwarzer Rahmen um die Farbauswahl */
-    height: 28px;               /* Feste Höhe passend zu Buttons */
-    width: 35px;                /* Feste Breite */
-    padding: 0;                 /* Entfernt innere Abstände des Farbfeldes */
-    cursor: pointer;           /* Hand-Symbol */
+/* Zwingt das eigentliche Schreibfeld, 100% der Höhe auszufüllen */
+#editorText .ql-editor {
+    flex: 1;
+    min-height: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    cursor: text !important;    /* Macht den Mauszeiger überall im Feld zum Text-Cursor */
 }
 
-.toolbar-text {
-    font-size: 13px;            /* Kleinere Schrift */
-    color: #555;                /* Grauer Text */
-    margin-left: auto;          /* Schiebt den Text ganz nach rechts in der Leiste */
-}
-
-/* Großer Schreibbereich */
-.editor-textarea {
-    text-align: left !important;/* Erzwingt zwingend den Textbeginn oben links */
-    width: 100%;                /* Feste Breite (füllt den verfügbaren Platz aus) */
-    height: 60vh;               /* Dynamische Höhe: 60% der Bildschirmhöhe */
-    min-height: 250px;          /* Mindesthöhe für kleine Bildschirme */
-    resize: none;               /* Verhindert das manuelle Ziehen/Skalieren unten rechts */
-    background: #ffffff;        /* Weißer Hintergrund */
-    border: 1px solid black;     /* Hellgrauer dezenter Rahmen */
-    border-radius: 8px;         /* Abgerundete Ecken */
-    padding: 15px;              /* Innenabstand beim Tippen */
-    overflow-y: auto;           /* Erzeugt bei langer Notiz automatisch einen Scrollbalken */
-    box-sizing: border-box;     /* Schließt Rahmen/Padding in die Breitenberechnung ein */
-    font-size: 16px;            /* Standard-Schriftgröße beim Schreiben */
+/* Blauer Fokus-Effekt für den gesamten Quill-Editor */
+#editorText.ql-container:focus-within,
+#editorText:focus-within {
+    border-color: #007bff !important;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
 }
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für die Ordner-Seite (ordner.html) 
+                                           Styling für die Ordner-Seite (Ordner.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Zentrierte Hauptüberschrift */
@@ -414,7 +404,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für die Kalender-Seite (kalender.html) 
+                                           Styling für die Kalender-Seite (Kalender.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Kopfleiste für die Monatsnavigation */
@@ -529,7 +519,7 @@ body {
     border-radius: 8px;         /* Abgerundete Ecken */
     padding: 20px;              /* Innenabstand */
     text-align: left;           /* Linksbündiger Inhalt */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Dezenter Schattenwurf */
 }
 
 .dashboard-card h3 {
@@ -537,7 +527,7 @@ body {
     margin-bottom: 15px;        /* Abstand zur Liste darunter */
     border-bottom: 1px solid #000; /* Trennlinie unter Kachel-Titel */
     padding-bottom: 8px;        /* Innenabstand vor Trennlinie */
-    font-size: 18px;            /* Schriftgröße */
+    font-size: 18px;            /* Schriftgröße der Überschrift */
 }
 
 .dashboard-list {
@@ -570,32 +560,51 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für das Bild-Modal mit Lupen-Funktion 
+                                           Styling für das Bild-Modal
 ----------------------------------------------------------------------------------------------------------------------- */
-
-/* Container für das Bild im Modal */
-.modal-image-container {
-    position: relative;
-    display: inline-block;
-    cursor: crosshair;          /* Zeigt ein Fadenkreuz-Symbol als Mauszeiger */
-}
-
-/* Die bewegliche Lupe */
-.image-magnifier-glass {
-    position: absolute;
-    border: 3px solid #007bff;
-    border-radius: 50%;
-    width: 150px;               /* Breite der Lupe */
-    height: 150px;              /* Höhe der Lupe */
-    display: none;              /* Standardmäßig unsichtbar */
-    pointer-events: none;       /* Verhindert, dass die Lupe Klicks blockiert */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    background-repeat: no-repeat;
-    z-index: 10001;
-}
 
 /* Erhöht die maximale Darstellungsgröße des Bildes in der Großansicht */
 #imageModalImg {
     max-width: 95vw !important;  /* Nutzt bis zu 95% der Bildschirmbreite */
     max-height: 90vh !important; /* Nutzt bis zu 90% der Bildschirmhöhe */
+}
+
+
+/* -----------------------------------------------------------------------------------------------------------------------
+                                Quill.js Formatierungen & Textausrichtungen (Archiv/Kalender)
+----------------------------------------------------------------------------------------------------------------------- */
+
+/* Allgemeine Textausrichtungen von Quill.js */
+.ql-align-center {
+    text-align: center;         /* Zentrierter Text */
+}
+
+.ql-align-right {
+    text-align: right;          /* Rechtsbündiger Text */
+}
+
+.ql-align-justify {
+    text-align: justify;        /* Blocksatz */
+}
+
+/* Stellt sicher, dass Standard-Absätze im Archiv und im Kalender-Detailbereich linksbündig bleiben */
+.archive-card div p,
+#dayDetailContainer div p {
+    text-align: left;           /* Linksbündiger Standard-Text */
+}
+
+/* Ausgenommen sind explizit von Quill formatierte Absätze */
+.archive-card div p.ql-align-center,
+#dayDetailContainer div p.ql-align-center {
+    text-align: center;         /* Behält Zentrierung bei */
+}
+
+.archive-card div p.ql-align-right,
+#dayDetailContainer div p.ql-align-right {
+    text-align: right;          /* Behält Rechtsbündigkeit bei */
+}
+
+.archive-card div p.ql-align-justify,
+#dayDetailContainer div p.ql-align-justify {
+    text-align: justify;        /* Behält Blocksatz bei */
 }

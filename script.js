@@ -1,97 +1,114 @@
-let currentEditId = null; // Speichert die ID der Notiz, wenn ein bestehender Eintrag bearbeitet wird
-let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angezeigte Datum (Standard: Heute)
+// =======================================================================================================================
+// GLOBALE VARIABLEN
+// =======================================================================================================================
+
+let currentEditId = null;            // Speichert die ID der Notiz beim Bearbeiten/Zwischenspeichern
+let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angezeigte Datum
+let quill = null;                    // Hält die globale Instanz des Quill.js Texteditors
 
 // =======================================================================================================================
-// 1. INITIALISIERUNG BEIM LADEN DER SEITE & OVERLAY FÜR BILDER (MIT LUPEN-ZOOM)
+// CUSTOM QUILL EMBEDMENT REGISTRIEREN (Erzwingt Icon-Größe für Bilder im Text)
 // =======================================================================================================================
+
+function registerQuillImageIcon() {
+    if (typeof Quill !== 'undefined') {
+        const Embed = Quill.import('blots/embed');
+
+        class InlineImageIcon extends Embed {
+            static create(value) {
+                const node = super.create();
+                node.setAttribute('src', value);
+                node.setAttribute('class', 'text-inline-icon');
+                node.style.cssText = 'height:1.2em; width:auto; vertical-align:middle; margin:0 3px; border-radius:3px; cursor:pointer; display:inline-block;';
+                node.setAttribute('title', 'Klicken für Großansicht');
+                return node;
+            }
+
+            static value(node) {
+                return node.getAttribute('src');
+            }
+        }
+
+        InlineImageIcon.blotName = 'inlineIcon';
+        InlineImageIcon.tagName = 'img';
+        Quill.register(InlineImageIcon);
+    }
+}
+
+// =======================================================================================================================
+// 1. INITIALISIERUNG BEIM LADEN DER SEITE
+// =======================================================================================================================
+
 async function initApp() {
-    const datumInput = document.getElementById('datum'); // Holt das Datums-Eingabefeld aus Neu.html
+    const datumInput = document.getElementById('datum');
+    const quillContainer = document.getElementById('editorText');
     
-    // Prüft, ob eine ID zum Bearbeiten in der URL übergeben wurde (?edit=ID)
+    registerQuillImageIcon();
+
+    if (quillContainer && typeof Quill !== 'undefined') {
+        quill = new Quill('#editorText', {
+            theme: 'snow',
+            placeholder: 'Hier schreiben...',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['image', 'clean']
+                ]
+            }
+        });
+
+        const toolbar = quill.getModule('toolbar');
+        toolbar.addHandler('image', function() {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.onchange = () => {
+                if (input.files && input.files[0]) {
+                    insertCompressedImageIcon(input.files[0]);
+                }
+            };
+            input.click();
+        });
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit');
 
     if (editId) {
-        currentEditId = parseInt(editId); // Wandelt die gefundene ID in eine Zahl um
-        await loadEntryForEditing(currentEditId); // Lädt die Notiz in die Formularfelder
+        currentEditId = parseInt(editId, 10);
+        await loadEntryForEditing(currentEditId);
     } else if (datumInput && !datumInput.value) {
-        datumInput.value = new Date().toISOString().split('T')[0]; // Setzt automatisch das heutige Datum
+        datumInput.value = new Date().toISOString().split('T')[0];
     }
 
-    // Erzeugt das Modal-Fenster inklusive Lupe (falls noch nicht vorhanden)
     if (!document.getElementById('imageModalOverlay')) {
         const modal = document.createElement('div');
         modal.id = 'imageModalOverlay';
         modal.style.cssText = 'display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; cursor:pointer;';
         
         modal.innerHTML = `
-            <div class="modal-image-container" onclick="event.stopPropagation();">
-                <div id="imageMagnifierGlass" class="image-magnifier-glass"></div>
-                <img id="imageModalImg" style="max-width:85vh; max-height:85vh; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.5); display:block;">
+            <div onclick="event.stopPropagation();">
+                <img id="imageModalImg" style="max-width:90vw; max-height:90vh; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.5); display:block;">
             </div>
         `;
         
-        // Beim Klick außerhalb des Bildes wird das Modal geschlossen
         modal.onclick = function() { 
             modal.style.display = 'none'; 
-            const glass = document.getElementById('imageMagnifierGlass');
-            if (glass) glass.style.display = 'none';
         };
         
         document.body.appendChild(modal);
-
-        // Event-Listener für die Lupen-Bewegung auf dem Bild
-        const img = document.getElementById('imageModalImg');
-        const glass = document.getElementById('imageMagnifierGlass');
-
-        if (img && glass) {
-            img.addEventListener('mousemove', moveMagnifier);
-            glass.addEventListener('mousemove', moveMagnifier);
-
-            img.addEventListener('mouseenter', function() { glass.style.display = 'block'; });
-            img.addEventListener('mouseleave', function() { glass.style.display = 'none'; });
-        }
     }
 
-    // Drag-and-Drop-Unterstützung für das Schreibfeld auf Neu.html einrichten
-    const editor = document.getElementById('editorText');
-    if (editor) {
-        editor.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            editor.style.borderColor = '#007bff';
-        });
-
-        editor.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            editor.style.borderColor = '#ccc';
-        });
-
-        editor.addEventListener('drop', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            editor.style.borderColor = '#ccc';
-
-            const files = e.dataTransfer.files;
-            if (files && files.length > 0) {
-                for (let i = 0; i < files.length; i++) {
-                    if (files[i].type.startsWith('image/')) {
-                        insertImageFile(files[i]);
-                    }
-                }
-            }
-        });
-    }
-
-    // Lädt die relevanten Inhalte je nach geöffneter Seite
     await updateArchiveCount();
     renderCssGuide();
     await renderStartDashboard();
     await renderCalendar();
 }
 
-// Helper: Holt das Archiv asynchron aus localForage (IndexedDB) oder als Fallback localStorage
 async function getArchiveData() {
     if (typeof localforage !== 'undefined') {
         const data = await localforage.getItem('myFolderArchive');
@@ -100,7 +117,6 @@ async function getArchiveData() {
     return JSON.parse(localStorage.getItem('myFolderArchive')) || [];
 }
 
-// Helper: Speichert das Archiv asynchron in localForage
 async function setArchiveData(archive) {
     if (typeof localforage !== 'undefined') {
         await localforage.setItem('myFolderArchive', archive);
@@ -109,136 +125,32 @@ async function setArchiveData(archive) {
     }
 }
 
-// Führt die Initialisierung beim Laden und beim Wechseln der Seite aus
 document.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("pageshow", function() {
-    renderStartDashboard(); // Garantiert stets frische Notizen auf der Startseite
+    renderStartDashboard();
 });
 
-// Globale Klick-Steuerung für Bild-Badges
 document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('delete-img-btn')) {
+    if (e.target && e.target.tagName === 'IMG' && (e.target.classList.contains('text-inline-icon') || e.target.style.height === '1.2em')) {
         e.stopPropagation();
-        const badge = e.target.closest('.img-preview-badge');
-        if (badge) badge.remove();
-        return;
-    }
-
-    const badge = e.target.closest('.img-preview-badge');
-    if (badge) {
-        e.stopPropagation();
-        const imgSrc = badge.getAttribute('data-src');
-        if (imgSrc) {
-            openImageModal(imgSrc);
-        }
+        openImageModal(e.target.src);
     }
 });
 
-// Steuert die Bewegung der Lupe und berechnet die Vergrößerung
-function moveMagnifier(e) {
-    const img = document.getElementById('imageModalImg');
-    const glass = document.getElementById('imageMagnifierGlass');
-    if (!img || !glass) return;
-
-    const zoom = 2.5; // Vergrößerungsfaktor (2.5x)
-    const rect = img.getBoundingClientRect();
-
-    // Berechnung der Position der Maus relativ zum Bild
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
-
-    // Verhinderung, dass die Lupe außerhalb des Bildes rechnet
-    if (x > img.width) x = img.width;
-    if (x < 0) x = 0;
-    if (y > img.height) y = img.height;
-    if (y < 0) y = 0;
-
-    // Positionierung der Lupe mittig unter dem Zeiger
-    const bw = 3; // Randdicke der Lupe
-    const w = glass.offsetWidth / 2;
-    const h = glass.offsetHeight / 2;
-
-    glass.style.left = (x - w) + "px";
-    glass.style.top = (y - h) + "px";
-
-    // Berechnet das Hintergrundbild und die Position innerhalb der Lupe
-    glass.style.backgroundImage = "url('" + img.src + "')";
-    glass.style.backgroundSize = (img.width * zoom) + "px " + (img.height * zoom) + "px";
-    glass.style.backgroundPosition = "-" + ((x * zoom) - w + bw) + "px -" + ((y * zoom) - h + bw) + "px";
-}
-
-// Öffnet ein Bild in der Großansicht
 function openImageModal(src) {
     const modal = document.getElementById('imageModalOverlay');
     const modalImg = document.getElementById('imageModalImg');
-    const glass = document.getElementById('imageMagnifierGlass');
     
     if (modal && modalImg) {
         modalImg.src = src;
-        if (glass) glass.style.display = 'none'; // Schaltet die Lupe beim Öffnen kurz aus
         modal.style.display = 'flex';
     }
 }
 
 // =======================================================================================================================
-// 2. DASHBOARD-FUNKTIONEN (Start.html)
+// BILD-KOMPRIMIERUNG & EINFÜGEN ALS TEXT-ICON
 // =======================================================================================================================
 
-// Lädt die 3 neuesten Notizen aus der Datenbank und zeigt sie im Dashboard auf Start.html an
-async function renderStartDashboard() {
-    const listContainer = document.getElementById('recentNotesList');
-    if (!listContainer) return; // Bricht ab, falls wir nicht auf Start.html sind
-
-    const archive = await getArchiveData();
-
-    if (archive.length === 0) {
-        listContainer.innerHTML = '<li><p style="color: #666;">Noch keine Notizen im Archiv vorhanden.</p></li>';
-        return;
-    }
-
-    // Sortiert nach der neuesten ID (Zeitstempel der Erstellung)
-    const sortedNotes = [...archive].sort((a, b) => b.id - a.id);
-
-    // Holt die letzten 3 Notizen
-    const recentNotes = sortedNotes.slice(0, 3);
-
-    listContainer.innerHTML = recentNotes.map(note => `
-        <li>
-            <span class="list-date">📅 ${note.date} ${note.tags ? '• 🏷️ ' + note.tags : ''}</span>
-            <p><strong>${note.title}</strong></p>
-        </li>
-    `).join('');
-}
-
-// =======================================================================================================================
-// 3. EDITOR-FUNKTIONEN (Neu.html)
-// =======================================================================================================================
-
-// Führt Textformatierungen aus (Fett, Kursiv, Unterstrichen)
-function execCmd(command) {
-    document.execCommand(command, false, null);
-}
-
-// Ändert die Schriftgröße für den markierten Text oder den gesamten Bereich
-function changeFontSize(size) {
-    const selection = window.getSelection();
-    if (selection.rangeCount > 0 && !selection.isCollapsed) {
-        const span = document.createElement('span');
-        span.style.fontSize = size;
-        const range = selection.getRangeAt(0);
-        range.surroundContents(span);
-    } else {
-        const editor = document.getElementById('editorText');
-        if (editor) editor.style.fontSize = size;
-    }
-}
-
-// Ändert die Schriftfarbe des markierten Textes
-function changeTextColor(color) {
-    document.execCommand('foreColor', false, color);
-}
-
-// BILD-KOMPRIMIERUNG: Skaliert große Bilder per Canvas herunter
 function compressImage(file, maxWidth, quality, callback) {
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -259,7 +171,6 @@ function compressImage(file, maxWidth, quality, callback) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Export als komprimiertes JPEG Data-URL
             const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
             callback(compressedDataUrl);
         };
@@ -268,47 +179,50 @@ function compressImage(file, maxWidth, quality, callback) {
     reader.readAsDataURL(file);
 }
 
-// Fügt ein kleines Inline-Badge im Textfluss ein (mit automatischer Komprimierung auf 1500px)
-function insertImageFile(file) {
-    // Komprimiert das Bild: max. 1500px Breite, 75% Qualität
+function insertCompressedImageIcon(file) {
     compressImage(file, 1500, 0.75, function(imgSrc) {
-        const badge = document.createElement('span');
-        badge.contentEditable = 'false';
-        badge.className = 'img-preview-badge';
-        badge.setAttribute('data-src', imgSrc);
-        badge.style.cssText = 'display:inline-flex; align-items:center; gap:4px; background:#e9f2ff; border:1px solid #007bff; color:#007bff; padding:2px 8px; border-radius:12px; font-size:12px; margin:0 4px; cursor:pointer; user-select:none; vertical-align:middle;';
-        
-        badge.innerHTML = `
-            <img src="${imgSrc}" style="width:16px; height:16px; object-fit:cover; border-radius:3px; pointer-events:none;">
-            <span style="font-weight:bold;">🖼️ Bild</span>
-            <span class="delete-img-btn" title="Bild entfernen" style="color:#dc3545; font-weight:bold; margin-left:4px; padding:0 2px; cursor:pointer;">✖</span>
-        `;
-
-        const editor = document.getElementById('editorText');
-        if (editor) {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
-                const range = selection.getRangeAt(0);
-                range.insertNode(badge);
-                range.setStartAfter(badge);
-                range.setEndAfter(badge);
-                selection.removeAllRanges();
-                selection.addRange(range);
-            } else {
-                editor.appendChild(badge);
+        if (quill) {
+            let range = quill.getSelection(true);
+            if (!range) {
+                range = { index: quill.getLength(), length: 0 };
             }
+
+            quill.insertEmbed(range.index, 'inlineIcon', imgSrc, Quill.sources.USER);
+            quill.setSelection(range.index + 1, Quill.sources.SILENT);
         }
     });
 }
 
-// Nimmt Bildauswahl über den Datei-Button entgegen
-function insertImage(input) {
-    if (input.files && input.files[0]) {
-        insertImageFile(input.files[0]);
+// =======================================================================================================================
+// 2. DASHBOARD-FUNKTIONEN (Start.html)
+// =======================================================================================================================
+
+async function renderStartDashboard() {
+    const listContainer = document.getElementById('recentNotesList');
+    if (!listContainer) return;
+
+    const archive = await getArchiveData();
+
+    if (archive.length === 0) {
+        listContainer.innerHTML = '<li><p style="color: #666;">Noch keine Notizen im Archiv vorhanden.</p></li>';
+        return;
     }
+
+    const sortedNotes = [...archive].sort((a, b) => b.id - a.id);
+    const recentNotes = sortedNotes.slice(0, 3);
+
+    listContainer.innerHTML = recentNotes.map(note => `
+        <li>
+            <span class="list-date">📅 ${note.date} ${note.tags ? '• 🏷️ ' + note.tags : ''}</span>
+            <p><strong>${note.title}</strong></p>
+        </li>
+    `).join('');
 }
 
-// Lädt eine bestehende Notiz anhand der ID zurück in den Editor
+// =======================================================================================================================
+// 3. EDITOR-FUNKTIONEN & SPEICHERN MIT ZWISCHENSPEICHERUNG (Neu.html)
+// =======================================================================================================================
+
 async function loadEntryForEditing(id) {
     const archive = await getArchiveData();
     const entry = archive.find(item => item.id === id);
@@ -317,22 +231,24 @@ async function loadEntryForEditing(id) {
         if (document.getElementById('datum')) document.getElementById('datum').value = entry.date;
         if (document.getElementById('thema')) document.getElementById('thema').value = entry.title;
         if (document.getElementById('tags')) document.getElementById('tags').value = entry.tags;
-        if (document.getElementById('editorText')) document.getElementById('editorText').innerHTML = entry.content;
+        
+        if (quill) {
+            quill.root.innerHTML = entry.content;
+        }
 
         const saveBtn = document.querySelector('.save-btn');
         if (saveBtn) saveBtn.innerText = "Änderung speichern";
     }
 }
 
-// Speichert oder überschreibt Notizen in der IndexedDB-Datenbank
 async function saveToArchive() {
     const datum = document.getElementById('datum').value;
     const thema = document.getElementById('thema').value.trim() || 'Unbenanntes Thema';
     const tags = document.getElementById('tags').value.trim();
-    const editor = document.getElementById('editorText');
-    const inhalt = editor ? editor.innerHTML : '';
+    
+    const inhalt = quill ? quill.root.innerHTML : '';
 
-    if (!inhalt || inhalt.trim() === '') {
+    if (!quill || quill.getText().trim().length === 0) {
         alert("Bitte schreibe zuerst einen Text!");
         return;
     }
@@ -352,8 +268,9 @@ async function saveToArchive() {
                 };
             }
         } else {
+            currentEditId = Date.now();
             const newEntry = {
-                id: Date.now(),
+                id: currentEditId,
                 date: datum,
                 title: thema,
                 tags: tags,
@@ -364,7 +281,13 @@ async function saveToArchive() {
 
         await setArchiveData(archive);
         await renderStartDashboard();
-        alert(currentEditId ? "Änderung erfolgreich gespeichert!" : "Eintrag erfolgreich im Datumsarchiv gespeichert!");
+
+        const saveBtn = document.querySelector('.save-btn');
+        if (saveBtn) {
+            saveBtn.innerText = "Änderung speichern";
+        }
+
+        alert("Erfolgreich gespeichert!");
     } catch (e) {
         console.error("Speicherfehler:", e);
         alert("Fehler beim Speichern: " + e.message);
@@ -375,7 +298,6 @@ async function saveToArchive() {
 // 4. ARCHIV-FUNKTIONEN MIT AUTOMATISCHEN MONATS-ORDNERN (Ordner.html)
 // =======================================================================================================================
 
-// Aktualisiert den Zähler auf der Archiv-Kachel
 async function updateArchiveCount() {
     const archive = await getArchiveData();
     const countInfo = document.getElementById('archiveCountInfo');
@@ -384,7 +306,6 @@ async function updateArchiveCount() {
     }
 }
 
-// Öffnet die Notiz-Archiv Ansicht
 async function openArchiveView() {
     const archiveSec = document.getElementById('archiveSection');
     const cssSec = document.getElementById('cssGuideSection');
@@ -397,7 +318,18 @@ async function openArchiveView() {
     }
 }
 
-// Wandelt ein Datum (YYYY-MM-DD) in einen Monatsnamen um (z. B. "September 2026")
+function openCssGuideView() {
+    const archiveSec = document.getElementById('archiveSection');
+    const cssSec = document.getElementById('cssGuideSection');
+
+    if (archiveSec) archiveSec.style.display = "none";
+    if (cssSec) {
+        cssSec.style.display = "block";
+        renderCssGuide();
+        cssSec.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
 function getMonthYearLabel(dateString) {
     if (!dateString) return "Unbekannter Monat";
     const parts = dateString.split('-');
@@ -413,7 +345,6 @@ function getMonthYearLabel(dateString) {
     return `${monthNames[monthIndex] || 'Unbekannt'} ${year}`;
 }
 
-// Lädt das Archiv und gruppiert alle Notizen automatisch in Monats-Ordner
 async function loadArchive() {
     const container = document.getElementById('archiveContainer');
     if (!container) return;
@@ -715,18 +646,6 @@ const cssDatabase = [
     }
 ];
 
-function openCssGuideView() {
-    const archiveSec = document.getElementById('archiveSection');
-    const cssSec = document.getElementById('cssGuideSection');
-
-    if (archiveSec) archiveSec.style.display = "none";
-    if (cssSec) {
-        cssSec.style.display = "block";
-        renderCssGuide();
-        cssSec.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
 function renderCssGuide() {
     const container = document.getElementById('cssGuideContainer');
     if (!container) return;
@@ -814,6 +733,7 @@ function changeMonth(delta) {
     closeDayDetail();
 }
 
+// Rendert das Monatsraster im Kalender (Neueste Notizen stehen auch in den Kacheln oben)
 async function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
     const monthYearTitle = document.getElementById('currentMonthYear');
@@ -850,7 +770,11 @@ async function renderCalendar() {
         const formattedDay = String(day).padStart(2, '0');
         const dateString = `${year}-${formattedMonth}-${formattedDay}`;
 
-        const matchingNotes = archive.filter(item => item.date === dateString);
+        // Gefilterte Notizen des Tages absteigend sortieren (Neueste Notiz zuerst in der Kachel)
+        const matchingNotes = archive
+            .filter(item => item.date === dateString)
+            .sort((a, b) => b.id - a.id);
+
         const isToday = (dateString === todayStr);
 
         let notesHtml = '';
@@ -873,6 +797,7 @@ async function renderCalendar() {
     grid.innerHTML = htmlContent;
 }
 
+// Zeigt alle Notizen des angeklickten Tages an (Neueste Notizen stehen oben)
 async function showDayDetails(dateString) {
     const detailSection = document.getElementById('dayDetailSection');
     const title = document.getElementById('selectedDateTitle');
@@ -881,7 +806,11 @@ async function showDayDetails(dateString) {
     if (!detailSection || !container) return;
 
     const archive = await getArchiveData();
-    const dayNotes = archive.filter(item => item.date === dateString);
+
+    // Gefilterte Notizen absteigend nach ID sortieren (neueste Notiz zuerst)
+    const dayNotes = archive
+        .filter(item => item.date === dateString)
+        .sort((a, b) => b.id - a.id);
 
     const parts = dateString.split('-');
     const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;

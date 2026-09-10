@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NN.Neu</title>
+    <title>Neu - NoteNest</title>
 
-    <!-- Google Font Lobster -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <!-- Quill Editor CSS (Word-Style Werkzeugleiste) -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Bibliotheken -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
     <!-- Externe JavaScript-Datei -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
 
-    <!-- Header -->
+    <!-- Header mit Logo links und Navbar mittig -->
     <header class="main-header">
-        
-        <!-- Logo (Pfad an dein Bild anpassen, z.B. logo.png) -->
         <a href="Start.html" class="logo-container">
             <img src="Image/NN.logo.schrift.png" alt="NoteNest Logo" class="header-logo">
         </a>
 
-        <!-- Navigationsleiste -->
         <nav class="navbar">
             <ul>
                 <li><a href="Start.html">Start</a></li>
@@ -35,28 +34,27 @@
                 <li><a href="Kalender.html">Kalender</a></li>
             </ul>
         </nav>
-
     </header>
 
     <!-- Inhaltsbereich -->
     <main class="content-area">
-        <form class="editor-form" onsubmit="return false;">
+        <form class="editor-form" id="noteForm" autocomplete="off" onsubmit="return false;">
             
             <!-- Oberste Leiste: Datum, Thema, Tags, Speichern-Button -->
             <div class="top-inputs-row">
                 <div class="input-group">
                     <label for="datum">Datum</label>
-                    <input type="date" id="datum" name="datum">
+                    <input type="date" id="datum" name="datum" required>
                 </div>
 
                 <div class="input-group">
                     <label for="thema">Thema</label>
-                    <input type="text" id="thema" placeholder="Thema eingeben...">
+                    <input type="text" id="thema" placeholder="Thema eingeben..." autocomplete="off" required>
                 </div>
 
                 <div class="input-group tags-group">
                     <label for="tags">Tags</label>
-                    <input type="text" id="tags" placeholder="Schlagwörter...">
+                    <input type="text" id="tags" placeholder="Schlagwörter mit Komma trennen..." autocomplete="off">
                 </div>
 
                 <div class="input-group save-group">
@@ -65,35 +63,8 @@
                 </div>
             </div>
 
-            <!-- Zweite Zeile: Werkzeugleiste -->
-            <div class="toolbar-row">
-                <!-- Schriftgröße -->
-                <select class="toolbar-select" onchange="changeFontSize(this.value)">
-                    <option value="12px">12pt</option>
-                    <option value="14px">14pt</option>
-                    <option value="16px" selected>16pt</option>
-                    <option value="18px">18pt</option>
-                    <option value="20px">20pt</option>
-                    <option value="24px">24pt</option>
-                </select>
-
-                <!-- Text-Formatierungen (Fett, Kursiv, Unterstrichen) -->
-                <button type="button" class="toolbar-btn" onclick="execCmd('bold')" title="Fett"><b>B</b></button>
-                <button type="button" class="toolbar-btn" onclick="execCmd('italic')" title="Kursiv"><i>I</i></button>
-                <button type="button" class="toolbar-btn" onclick="execCmd('underline')" title="Unterstrichen"><u>U</u></button>
-
-                <!-- Textfarbe -->
-                <input type="color" class="toolbar-color" value="#000000" onchange="changeTextColor(this.value)" title="Textfarbe">
-
-                <!-- Verstecktes Datei-Eingabefeld für Bilder -->
-                <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="insertImage(this)">
-                <button type="button" class="toolbar-btn" onclick="document.getElementById('imageInput').click()" title="Bild einfügen">🖼️ Bild einfügen</button>
-            </div>
-
-            <!-- Dritte Zeile: Schreibbereich (Dauerhaft linksbündig) -->
-            <div class="editor-body">
-                <div id="editorText" class="editor-textarea" contenteditable="true" placeholder="Hier schreiben und Bilder einfügen..."></div>
-            </div>
+            <!-- Echter Word-Schreibbereich (Quill Editor) -->
+            <div id="editorText" style="background: #ffffff; min-height: 50vh;"></div>
 
         </form>
     </main>
