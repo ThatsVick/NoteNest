@@ -6,19 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Willkommen</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
-
 
 <body class="welcome-body">
 
     <div class="welcome-container">
-        <!-- Dein Bild mit der Klasse logo-img -->
-        <img src="Image/NN.logo.groß.png" alt="Logo" class="logo-img">
+        <!-- Video-Wrapper: Clean ohne Controls, startet bei Klick neu -->
+        <div class="video-wrapper" onclick="replayVideo()">
+            <video id="welcomeVideo" class="logo-img" autoplay muted playsinline disablePictureInPicture controlsList="nodownload noplaybackrate nofullscreen noremoteplayback">
+                <source src="Image/Video/Welcome.video.mp4" type="video/mp4">
+                Ihr Browser unterstützt dieses Video nicht.
+            </video>
+        </div>
 
-        <!-- Dein Link mit der Klasse willkommen-btn -->
+        <br>
+        <!-- Link zur Startseite -->
         <a href="Start.html" class="willkommen-btn">Weiter zu NoteNest</a>
     </div>
 
 </body>
 
+</html>

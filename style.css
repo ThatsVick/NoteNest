@@ -9,7 +9,12 @@
     align-items: center;       /* Zentriert den Inhalt senkrecht */
     min-height: 100vh;         /* Nutzt mindestens die volle Höhe des Fensters */
     margin: 0;                 /* Entfernt den Standard-Außenabstand des Browsers */
-    background-color: #f4f4f4; /* Hellgrauer Hintergrund */
+    background-color: white; /* Hellgrauer Hintergrund */
+}
+
+/* Deaktiviert Browser-Gesten auf dem Video, damit Klicks direkt an den Wrapper gehen */
+#welcomeVideo {
+    pointer-events: none;
 }
 
 /* Container für Logo und Start-Button */
@@ -241,6 +246,12 @@ body {
 #editorText:focus-within {
     border-color: #007bff !important;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+}
+
+/* Passt den Rahmen der Quill-Toolbar an */
+.ql-toolbar.ql-snow {
+    border: 1px solid #000000 !important; /* Rahmendicke und -farbe */
+    border-radius: 8px !important;        /* Eckenabrundung */
 }
 
 
