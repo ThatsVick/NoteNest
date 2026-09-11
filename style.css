@@ -499,6 +499,12 @@ body {
     cursor: default;           /* Normaler Zeiger (nicht klickbar) */
 }
 
+/* Hebungs-Regel: Setzt Notizinhalte im Kalender auf linksbuendig */
+#dayDetailContainer,
+#dayDetailContainer * {
+    text-align: left !important;
+}
+
 
 /* -----------------------------------------------------------------------------------------------------------------------
                                            Styling für das Startseiten-Dashboard

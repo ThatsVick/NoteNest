@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de spellcheck="true"">
+<html lang="de" spellcheck="true">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,17 +10,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css?v=1.1">
+    <!-- Quill Editor Style (wichtig für korrekte Notiz-Formatierung) -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+    <!-- Eigenes Stylesheet mit Cache-Busting -->
+    <link rel="stylesheet" href="style.css?v=1.2">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <!-- Externe JavaScript-Datei eingebunden -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
 
     <!-- Header -->
     <header class="main-header">
         
-        <!-- Logo (Pfad an dein Bild anpassen, z.B. logo.png) -->
+        <!-- Logo -->
         <a href="Start.html" class="logo-container">
             <img src="Image/NN.logo.schrift.png" alt="NoteNest Logo" class="header-logo">
         </a>
