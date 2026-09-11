@@ -505,6 +505,20 @@ body {
     text-align: left !important;
 }
 
+/* Erzwingt Bullet-Punkte für Quill-Listen mit data-list="bullet" */
+#dayDetailContainer ol li[data-list="bullet"],
+#archiveContainer ol li[data-list="bullet"],
+.archive-card ol li[data-list="bullet"] {
+    list-style-type: disc !important;
+}
+
+/* Entfernt bei diesen Listenpunkten die automatische Nummerierung */
+#dayDetailContainer ol li[data-list="bullet"]::before,
+#archiveContainer ol li[data-list="bullet"]::before,
+.archive-card ol li[data-list="bullet"]::before {
+    content: none !important;
+}
+
 
 /* -----------------------------------------------------------------------------------------------------------------------
                                            Styling für das Startseiten-Dashboard
