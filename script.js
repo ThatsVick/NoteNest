@@ -829,7 +829,7 @@ async function renderCalendar() {
         // Notizen anzeigen
         matchingNotes.forEach(note => {
             itemsHtml += `
-                <div title="${note.title}" style="background: #0c47be; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <div title="${note.title}" style="background: #6c757d; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     📝 ${note.title}
                 </div>
             `;
