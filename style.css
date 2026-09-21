@@ -908,3 +908,7 @@ body {
 #dayDetailContainer div p.ql-align-justify {
     text-align: justify;        /* Behält Blocksatz bei */
 }
+
+#archiveContainer { 
+    text-align: left; 
+}
