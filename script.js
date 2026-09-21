@@ -7,7 +7,7 @@ let currentCalendarDate = new Date(); // Speichert das aktuell im Kalender angez
 let quill = null;                    // Hält die globale Instanz des Quill.js Texteditors
 
 // =======================================================================================================================
-// CUSTOM QUILL EMBEDMENT REGISTRIEREN (Erzwingt Icon-Größe für Bilder im Text)
+// CUSTOM QUILL EMBEDMENT REGISTRIEREN
 // =======================================================================================================================
 
 function registerQuillImageIcon() {
@@ -77,6 +77,7 @@ async function initApp() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit');
+    const targetDate = urlParams.get('date');
 
     if (editId) {
         currentEditId = parseInt(editId, 10);
@@ -106,7 +107,21 @@ async function initApp() {
     await updateArchiveCount();
     renderCssGuide();
     await renderStartDashboard();
-    await renderCalendar();
+
+    // Kalender initialisieren & bei URL-Parameter sofort zum Tag springen
+    if (document.getElementById('calendarGrid')) {
+        if (targetDate) {
+            const parts = targetDate.split('-');
+            if (parts.length === 3) {
+                currentCalendarDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1);
+            }
+        }
+        await renderCalendar();
+
+        if (targetDate) {
+            await showDayDetails(targetDate);
+        }
+    }
 }
 
 async function getArchiveData() {
@@ -211,24 +226,87 @@ function insertCompressedImageIcon(file) {
 
 async function renderStartDashboard() {
     const listContainer = document.getElementById('recentNotesList');
+    const cardTitle = document.querySelector('.dashboard-card h3');
     if (!listContainer) return;
 
-    const archive = await getArchiveData();
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
 
-    if (archive.length === 0) {
-        listContainer.innerHTML = '<li><p style="color: #666;">Noch keine Notizen im Archiv vorhanden.</p></li>';
+    const monthNames = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember"
+    ];
+
+    if (cardTitle) {
+        cardTitle.innerText = `📅 Anstehende Aufgaben / Termine (${monthNames[currentMonth]} ${currentYear})`;
+    }
+
+    const events = await getEventsData();
+    const todayStr = now.toISOString().split('T')[0];
+
+    const upcomingEvents = events.filter(evt => {
+        if (!evt.date) return false;
+        const [year, month] = evt.date.split('-').map(num => parseInt(num, 10));
+        
+        const isCurrentMonth = (year === currentYear && (month - 1) === currentMonth);
+        const isUpcomingOrToday = evt.date >= todayStr;
+
+        return isCurrentMonth && isUpcomingOrToday;
+    });
+
+    upcomingEvents.sort((a, b) => {
+        if (a.date !== b.date) {
+            return a.date.localeCompare(b.date);
+        }
+        return (a.time || '').localeCompare(b.time || '');
+    });
+
+    if (upcomingEvents.length === 0) {
+        listContainer.innerHTML = '<li><p style="color: #666;">Keine anstehenden Aufgaben oder Termine für diesen Monat.</p></li>';
         return;
     }
 
-    const sortedNotes = [...archive].sort((a, b) => b.id - a.id);
-    const recentNotes = sortedNotes.slice(0, 3);
+    listContainer.innerHTML = upcomingEvents.map(evt => {
+        const parts = evt.date.split('-');
+        const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
 
-    listContainer.innerHTML = recentNotes.map(note => `
-        <li>
-            <span class="list-date">📅 ${note.date} ${note.tags ? '• 🏷️ ' + note.tags : ''}</span>
-            <p><strong>${note.title}</strong></p>
-        </li>
-    `).join('');
+        let timeText = '📌 Ganztägig';
+        if (!evt.isAllDay && evt.time) {
+            timeText = evt.endTime ? `⏰ ${evt.time} - ${evt.endTime} Uhr` : `⏰ ${evt.time} Uhr`;
+        }
+
+        const isTask = (evt.type === 'task');
+        const badgeColor = isTask ? '#28a745' : '#0170f8';
+        const typeLabel = isTask ? '📋 Aufgabe' : '📅 Ereignis';
+
+        const urgentBadge = evt.isUrgent ? '<span style="color: #dc3545; font-weight: bold; margin-left: 8px;">⚠️ Wichtig</span>' : '';
+        const borderStyle = `border-left: 4px solid ${evt.isUrgent ? '#dc3545' : badgeColor}; padding-left: 8px;`;
+
+        return `
+            <li style="${borderStyle} display: flex; justify-content: space-between; align-items: center; padding: 8px; transition: background 0.2s;" onmouseover="this.style.background='#f0f7ff';" onmouseout="this.style.background='transparent';">
+                <div onclick="editEvent(${evt.id})" style="cursor: pointer; flex-grow: 1;">
+                    <span class="list-date">${typeLabel} • ${germanDate} • ${timeText} ${urgentBadge}</span>
+                    <p style="margin: 4px 0 0 0;"><strong>${evt.title}</strong></p>
+                    ${evt.notes ? `<p style="font-size: 12px; color: #555; margin-top: 2px;">${evt.notes}</p>` : ''}
+                </div>
+                <button onclick="event.stopPropagation(); deleteEventFromDashboard(${evt.id});" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 16px; padding: 4px 8px; margin-left: 8px;">🗑️</button>
+            </li>
+        `;
+    }).join('');
+}
+
+async function deleteEventFromDashboard(id) {
+    if (confirm("Eintrag wirklich löschen?")) {
+        let events = await getEventsData();
+        events = events.filter(evt => evt.id !== id);
+        await setEventsData(events);
+
+        await renderStartDashboard();
+        if (document.getElementById('calendarGrid')) {
+            await renderCalendar();
+        }
+    }
 }
 
 // =======================================================================================================================
@@ -292,7 +370,6 @@ async function saveToArchive() {
         }
 
         await setArchiveData(archive);
-        await renderStartDashboard();
 
         const saveBtn = document.querySelector('.save-btn');
         if (saveBtn) {
@@ -399,7 +476,6 @@ async function loadArchive() {
 
         return `
             <div class="month-folder-card" style="background: #fff; border: 1px solid #007bff; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                
                 <div onclick="toggleMonthFolder(${folderIdx})" style="padding: 12px 15px; background: #e9f2ff; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="margin: 0; font-size: 16px; color: #007bff;">📁 ${monthLabel}</h3>
                     <span id="month-folder-icon-${folderIdx}" style="font-size: 13px; color: #007bff; font-weight: bold;">▼ (${items.length} ${items.length === 1 ? 'Eintrag' : 'Einträge'})</span>
@@ -426,7 +502,6 @@ async function loadArchive() {
                         </div>
                     `).join('')}
                 </div>
-
             </div>
         `;
     }).join('');
@@ -521,7 +596,6 @@ async function deleteEntry(id) {
         await setArchiveData(archive);
         await loadArchive();
         await updateArchiveCount();
-        await renderStartDashboard();
     }
 }
 
@@ -798,17 +872,18 @@ async function renderCalendar() {
 
         let itemsHtml = '';
 
-        // Nur Titel/Name in der Kalenderkachel anzeigen
         matchingEvents.forEach(evt => {
             const urgentClass = evt.isUrgent ? 'event-urgent' : '';
+            const bgColor = (evt.type === 'task') ? '#28a745' : '#0170f8';
+            const icon = (evt.type === 'task') ? '📋 ' : '📅 ';
+
             itemsHtml += `
-                <div class="${urgentClass}" style="background: #0170f8; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ${evt.title}
+                <div class="${urgentClass}" style="background: ${bgColor}; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${icon}${evt.title}
                 </div>
             `;
         });
 
-        // Notizen anzeigen
         matchingNotes.forEach(note => {
             itemsHtml += `
                 <div style="background: #6c757d; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -828,7 +903,6 @@ async function renderCalendar() {
     grid.innerHTML = htmlContent;
 }
 
-// Zeigt Titel und Uhrzeit unten in der Tagesansicht/Vorschau an
 async function showDayDetails(dateString) {
     const detailSection = document.getElementById('dayDetailSection');
     const title = document.getElementById('selectedDateTitle');
@@ -857,29 +931,32 @@ async function showDayDetails(dateString) {
     title.innerText = `Einträge am ${germanDate}`;
 
     if (dayNotes.length === 0 && dayEvents.length === 0) {
-        container.innerHTML = `<p style="color: #666; margin: 0;">An diesem Tag gibt es keine Termine oder Notizen.</p>`;
+        container.innerHTML = `<p style="color: #666; margin: 0;">An diesem Tag gibt es keine Aufgaben, Ereignisse oder Notizen.</p>`;
     } else {
         let html = '';
 
         if (dayEvents.length > 0) {
-            html += `<h4 style="margin: 10px 0 8px 0; color: #000;">📅 Termine</h4>`;
+            html += `<h4 style="margin: 10px 0 8px 0; color: #000;">📅 Aufgaben & Ereignisse</h4>`;
             html += dayEvents.map(evt => {
                 let timeStr = '📌 Ganztägig';
                 if (!evt.isAllDay) {
                     timeStr = evt.endTime ? `⏰ ${evt.time} - ${evt.endTime} Uhr` : `⏰ ${evt.time} Uhr`;
                 }
 
+                const isTask = (evt.type === 'task');
+                const borderColor = isTask ? '#28a745' : '#0170f8';
+                const typeIcon = isTask ? '📋 [Aufgabe]' : '📅 [Ereignis]';
                 const urgentClass = evt.isUrgent ? 'event-urgent' : '';
 
                 return `
-                    <div class="event-card-item ${urgentClass}" style="border-left: 4px solid #0170f8;">
+                    <div class="event-card-item ${urgentClass}" style="border-left: 4px solid ${borderColor};">
                         <div>
-                            <strong>${timeStr} - ${evt.title}</strong>
+                            <strong>${typeIcon} ${timeStr} - ${evt.title}</strong>
                             ${evt.notes ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #555;">${evt.notes}</p>` : ''}
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button onclick="editEvent(${evt.id})" title="Termin bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 16px;">✏️</button>
-                            <button onclick="deleteEvent(${evt.id}, '${dateString}')" title="Termin löschen" style="background: transparent; border: none; cursor: pointer; font-size: 16px;">🗑️</button>
+                            <button onclick="editEvent(${evt.id})" title="Bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 16px;">✏️</button>
+                            <button onclick="deleteEvent(${evt.id}, '${dateString}')" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 16px;">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -934,7 +1011,7 @@ async function deleteEntryFromCalendar(id, dateString) {
 }
 
 // =======================================================================================================================
-// 7. TERMIN-MODAL & TERMIN-SPEICHERUNG / BEARBEITUNG
+// 7. TERMIN/AUFGABEN-MODAL & SPEICHERUNG / BEARBEITUNG
 // =======================================================================================================================
 
 function openEventModal(dateStr = '') {
@@ -942,8 +1019,14 @@ function openEventModal(dateStr = '') {
     if (form) form.reset();
 
     document.getElementById('eventId').value = '';
-    document.getElementById('modalTitle').innerText = 'Neuen Termin eintragen';
-    document.getElementById('saveEventBtn').innerText = 'Termin speichern';
+    document.getElementById('modalTitle').innerText = 'Eintrag erstellen';
+    document.getElementById('saveEventBtn').innerText = 'Speichern';
+
+    const taskRadio = document.getElementById('typeTask');
+    if (taskRadio) taskRadio.checked = true;
+
+    const calBtn = document.getElementById('goToCalendarBtn');
+    if (calBtn) calBtn.style.display = 'none';
 
     toggleAllDay(false);
     const urgentCb = document.getElementById('eventUrgent');
@@ -1019,6 +1102,17 @@ async function editEvent(id) {
         document.getElementById('eventDate').value = evt.date;
         document.getElementById('eventNotes').value = evt.notes || '';
 
+        if (evt.type === 'event') {
+            const eventRadio = document.getElementById('typeEvent');
+            if (eventRadio) eventRadio.checked = true;
+        } else {
+            const taskRadio = document.getElementById('typeTask');
+            if (taskRadio) taskRadio.checked = true;
+        }
+
+        const calBtn = document.getElementById('goToCalendarBtn');
+        if (calBtn) calBtn.style.display = 'inline-block';
+
         const urgentCb = document.getElementById('eventUrgent');
         if (urgentCb) urgentCb.checked = !!evt.isUrgent;
 
@@ -1031,11 +1125,18 @@ async function editEvent(id) {
             if (endTimeInput) endTimeInput.value = evt.endTime || '';
         }
 
-        document.getElementById('modalTitle').innerText = 'Termin bearbeiten';
+        document.getElementById('modalTitle').innerText = 'Eintrag bearbeiten';
         document.getElementById('saveEventBtn').innerText = 'Änderungen speichern';
 
         const modal = document.getElementById('eventModal');
         if (modal) modal.style.display = 'flex';
+    }
+}
+
+function goToCalendarDate() {
+    const dateVal = document.getElementById('eventDate').value;
+    if (dateVal) {
+        window.location.href = `Kalender.html?date=${dateVal}`;
     }
 }
 
@@ -1046,9 +1147,12 @@ async function saveEvent(event) {
     const isEdit = idInput !== '';
     const isAllDay = document.getElementById('eventAllDay').checked;
     const isUrgent = document.getElementById('eventUrgent')?.checked || false;
+    
+    const selectedType = document.querySelector('input[name="entryType"]:checked')?.value || 'task';
 
     const eventData = {
         id: isEdit ? parseInt(idInput, 10) : Date.now(),
+        type: selectedType,
         title: document.getElementById('eventTitle').value.trim(),
         date: document.getElementById('eventDate').value,
         time: isAllDay ? '' : document.getElementById('eventTime').value,
@@ -1073,23 +1177,32 @@ async function saveEvent(event) {
         await setEventsData(events);
 
         closeEventModal();
-        await renderCalendar();
-        await showDayDetails(eventData.date);
         
-        alert(isEdit ? "Termin erfolgreich aktualisiert!" : "Termin erfolgreich gespeichert!");
+        if (document.getElementById('calendarGrid')) {
+            await renderCalendar();
+            await showDayDetails(eventData.date);
+        }
+        
+        await renderStartDashboard();
+        
+        alert(isEdit ? "Erfolgreich aktualisiert!" : "Erfolgreich gespeichert!");
     } catch (e) {
-        console.error("Fehler beim Speichern des Termins:", e);
+        console.error("Fehler beim Speichern:", e);
         alert("Fehler beim Speichern: " + e.message);
     }
 }
 
 async function deleteEvent(id, dateString) {
-    if (confirm("Termin wirklich löschen?")) {
+    if (confirm("Eintrag wirklich löschen?")) {
         let events = await getEventsData();
         events = events.filter(evt => evt.id !== id);
         await setEventsData(events);
 
-        await renderCalendar();
-        await showDayDetails(dateString);
+        if (document.getElementById('calendarGrid')) {
+            await renderCalendar();
+            await showDayDetails(dateString);
+        }
+
+        await renderStartDashboard();
     }
 }

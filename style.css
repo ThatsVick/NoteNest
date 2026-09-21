@@ -517,7 +517,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* "+ Termin hinzufügen"-Button im NoteNest-Design */
+/* "+ Hinzufügen"-Button im NoteNest-Design */
 .add-event-btn {
     padding: 8px 16px;
     background-color: #fff;
@@ -556,21 +556,30 @@ body {
     border-radius: 50%;
     display: inline-block;
     border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
 }
 
-/* Farben für Legende & Termine */
-.color-dot.work { background-color: #0170f8; } /* Blau für Termine */
-.color-dot.note { background-color: #6c757d; } /* Grau für Notizen */
+/* Farben für Legende & Einträge */
+.color-dot.event,
+.color-dot.work { background-color: #0170f8; } /* Blau für Ereignisse */
+.color-dot.task { background-color: #28a745; }  /* Grün für Aufgaben */
+.color-dot.note { background-color: #6c757d; }  /* Grau für Notizen */
 
-/* Styling für "Wichtige" Termine (dezenter roter Rand) */
+/* Weisser Kreis mit rotem Rand für "Wichtig" in der Legende */
+.color-dot.urgent {
+    background-color: #ffffff;
+    border: 2px solid #dc3545 !important;
+}
+
+/* Styling für "Wichtige" Einträge (dezenter roter Rand) */
 .event-urgent {
-    border: 1px solid #dc3545 !important;
-    box-shadow: 0 0 3px rgba(220, 53, 69, 0.5);
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 4px rgba(220, 53, 69, 0.5);
 }
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                            Styling für das Termin-Pop-up (Modal)
+                                            Styling für das Pop-up (Modal) & Typ-Schalter
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Dunkler Hintergrund-Overlay */
@@ -627,6 +636,45 @@ body {
     color: #dc3545;
 }
 
+/* Typ-Schalter oben im Modal (Aufgabe vs. Ereignis) */
+.type-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.type-btn-label {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+    background-color: #fff;
+    color: #000;
+    transition: all 0.2s ease;
+}
+
+/* Versteckt das Standard-Radio-Icon */
+.type-selector input[type="radio"] {
+    display: none;
+}
+
+/* Aktive Einfärbung je nach Wahl */
+.type-selector input[type="radio"]#typeTask:checked + .type-btn-label {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.type-selector input[type="radio"]#typeEvent:checked + .type-btn-label {
+    background-color: #0170f8;
+    color: white;
+    border-color: #0170f8;
+}
+
 /* Aktionen/Buttons im Modal */
 .modal-actions {
     display: flex;
@@ -657,7 +705,7 @@ body {
     resize: none !important;
 }
 
-/* Bündiges Ausrichten der Eingabefelder im Termin-Pop-up */
+/* Bündiges Ausrichten der Eingabefelder im Pop-up */
 .modal-box .top-inputs-row {
     align-items: flex-end;
 }
@@ -708,7 +756,7 @@ body {
     background: #a71d2a;
 }
 
-/* Card-Item für Termine in der Tagesansicht */
+/* Card-Item für Termine/Aufgaben in der Tagesansicht */
 .event-card-item {
     background: #fff;
     padding: 10px 14px;
