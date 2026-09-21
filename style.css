@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styles für die Willkommensseite (index.html) 
+                                            Styles für die Willkommensseite (index.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Zentriert den gesamten Inhalt auf der Willkommensseite */
@@ -9,7 +9,7 @@
     align-items: center;       /* Zentriert den Inhalt senkrecht */
     min-height: 100vh;         /* Nutzt mindestens die volle Höhe des Fensters */
     margin: 0;                 /* Entfernt den Standard-Außenabstand des Browsers */
-    background-color: white; /* Hellgrauer Hintergrund */
+    background-color: white;   /* Hellgrauer Hintergrund */
 }
 
 /* Deaktiviert Browser-Gesten auf dem Video, damit Klicks direkt an den Wrapper gehen */
@@ -52,7 +52,7 @@
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Grundlegende Einstellungen & Header/Navbar
+                                            Grundlegende Einstellungen & Header/Navbar
 ------------------------------------------------------------------------------------------------------------------------*/
 
 body {
@@ -64,6 +64,9 @@ body {
 
 /* Ändert die Rahmenfarbe aller Eingabefelder im aktiven Zustand */
 .top-inputs-row input:focus,
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus,
 .toolbar-select:focus {
     border-color: #007bff !important;           /* Färbt den Rahmen beim Anklicken blau */
     outline: none !important;                  /* Deaktiviert den Standard-Fokusrahmen des Browsers */
@@ -148,7 +151,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für die Neu-Seite (Formular & Editor) 
+                                            Styling für die Neu-Seite (Formular & Editor) 
 ------------------------------------------------------------------------------------------------------------------------*/
 
 .editor-form {
@@ -167,6 +170,7 @@ body {
 .input-group {
     display: flex;              /* Stapelt Beschriftung und Feld untereinander */
     flex-direction: column;     /* Ausrichtung vertikal */
+    text-align: left;           /* Text-Ausrichtung links */
 }
 
 .input-group label {
@@ -175,12 +179,15 @@ body {
     margin-bottom: 5px;         /* Abstand nach unten zum Eingabefeld */
 }
 
-.input-group input {
+.input-group input,
+.input-group select,
+.input-group textarea {
     border: 1px solid #000;     /* Schwarze Randeinfassung */
     border-radius: 5px;         /* Abgerundete Ecken */
     padding: 8px;               /* Textinnenabstand im Feld */
     font-size: 14px;            /* Textgröße im Feld */
     background-color: #fff;     /* Weißer Feld-Hintergrund */
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .tags-group {
@@ -204,11 +211,12 @@ body {
 .save-btn:hover {
     background-color: #0c47be; /* Blau beim Mouseover */
     color: white;              /* Weiße Schrift beim Mouseover */
-    transition: background 1s;  /* Sanfter Farbübergang */
+    transition: background 0.3s;/* Sanfter Farbübergang */
 }
 
+
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Quill.js Schreibbereich & Container-Höhen
+                                            Quill.js Schreibbereich & Container-Höhen
 ------------------------------------------------------------------------------------------------------------------------*/
 
 /* Der Hauptcontainer für den Quill.js Texteditor */
@@ -256,7 +264,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für die Ordner-Seite (Ordner.html) 
+                                            Styling für die Ordner-Seite (Ordner.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Zentrierte Hauptüberschrift */
@@ -415,7 +423,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für die Kalender-Seite (Kalender.html) 
+                                            Styling für die Kalender-Seite (Kalender.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Kopfleiste für die Monatsnavigation */
@@ -499,6 +507,195 @@ body {
     cursor: default;           /* Normaler Zeiger (nicht klickbar) */
 }
 
+/* Steuerung unter dem Kalender (Button & Legende) */
+.calendar-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin: 25px auto 15px auto;
+    flex-wrap: wrap;
+}
+
+/* "+ Termin hinzufügen"-Button im NoteNest-Design */
+.add-event-btn {
+    padding: 8px 16px;
+    background-color: #fff;
+    color: black;
+    border: 1px solid #000;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+
+.add-event-btn:hover {
+    background-color: #0c47be;
+    color: white;
+}
+
+/* Farblegende */
+.legend {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.color-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Farben für Legende & Termine */
+.color-dot.work { background-color: #0170f8; }
+.color-dot.private { background-color: #28a745; }
+.color-dot.urgent { background-color: #dc3545; }
+
+/* -----------------------------------------------------------------------------------------------------------------------
+                                            Styling für das Termin-Pop-up (Modal)
+----------------------------------------------------------------------------------------------------------------------- */
+
+/* Dunkler Hintergrund-Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Pop-up Fenster im NoteNest-Stil */
+.modal-box {
+    background: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    padding: 20px 25px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #000;
+}
+
+.modal-close-icon {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+}
+
+.modal-close-icon:hover {
+    color: #dc3545;
+}
+
+/* Aktionen/Buttons im Modal */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.cancel-btn {
+    padding: 6px 18px;
+    color: black;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #dc3545;
+    color: white;
+    transition: background 0.3s;
+}
+
+/* Tages-Detailansicht Styling */
+.day-detail-section {
+    margin-top: 25px;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: left;
+}
+
+.day-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.day-detail-header h3 {
+    margin: 0;
+    color: #000;
+}
+
+.btn-close-detail {
+    background: #dc3545;
+    color: white;
+    border: 1px solid #000;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-close-detail:hover {
+    background: #a71d2a;
+}
+
+/* Card-Item für Termine in der Tagesansicht */
+.event-card-item {
+    background: #fff;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* Hebungs-Regel: Setzt Notizinhalte im Kalender auf linksbuendig */
 #dayDetailContainer,
 #dayDetailContainer * {
@@ -519,9 +716,14 @@ body {
     content: none !important;
 }
 
+/* Verhindert das Skalieren des Textfeldes AUSSCHLIESSLICH im Pop-up-Fenster */
+.modal-box textarea {
+    resize: none !important;
+}
+
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für das Startseiten-Dashboard
+                                            Styling für das Startseiten-Dashboard
 ----------------------------------------------------------------------------------------------------------------------- */
 
 .welcome-section {
@@ -591,7 +793,7 @@ body {
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
-                                           Styling für das Bild-Modal
+                                            Styling für das Bild-Modal
 ----------------------------------------------------------------------------------------------------------------------- */
 
 /* Erhöht die maximale Darstellungsgröße des Bildes in der Großansicht */

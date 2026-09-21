@@ -125,6 +125,23 @@ async function setArchiveData(archive) {
     }
 }
 
+// Speicherfunktionen für Termine
+async function getEventsData() {
+    if (typeof localforage !== 'undefined') {
+        const data = await localforage.getItem('myCalendarEvents');
+        return data || [];
+    }
+    return JSON.parse(localStorage.getItem('myCalendarEvents')) || [];
+}
+
+async function setEventsData(events) {
+    if (typeof localforage !== 'undefined') {
+        await localforage.setItem('myCalendarEvents', events);
+    } else {
+        localStorage.setItem('myCalendarEvents', JSON.stringify(events));
+    }
+}
+
 document.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("pageshow", function() {
     renderStartDashboard();
@@ -724,7 +741,7 @@ function searchCssGuide() {
 }
 
 // =======================================================================================================================
-// 6. DYNAMISCHER KALENDER MIT KLICKBARER TAGES-DETAILANSICHT (Kalender.html)
+// 6. DYNAMISCHER KALENDER MIT TERMINEN UND TAGES-DETAILANSICHT (Kalender.html)
 // =======================================================================================================================
 
 function changeMonth(delta) {
@@ -733,7 +750,17 @@ function changeMonth(delta) {
     closeDayDetail();
 }
 
-// Rendert das Monatsraster im Kalender (Neueste Notizen stehen auch in den Kacheln oben)
+// Hilfsfunktion zur Zuordnung von Kategorie-Farben
+function getCategoryColor(category) {
+    switch (category) {
+        case 'work': return '#0170f8';    // Blau
+        case 'private': return '#28a745'; // Grün
+        case 'urgent': return '#dc3545';  // Rot
+        default: return '#0170f8';
+    }
+}
+
+// Rendert das Monatsraster im Kalender (sowohl Notizen als auch farbige Termine)
 async function renderCalendar() {
     const grid = document.getElementById('calendarGrid');
     const monthYearTitle = document.getElementById('currentMonthYear');
@@ -758,6 +785,7 @@ async function renderCalendar() {
     const startOffset = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
 
     const archive = await getArchiveData();
+    const events = await getEventsData();
 
     for (let i = 0; i < startOffset; i++) {
         htmlContent += `<div class="calendar-day empty"></div>`;
@@ -770,26 +798,47 @@ async function renderCalendar() {
         const formattedDay = String(day).padStart(2, '0');
         const dateString = `${year}-${formattedMonth}-${formattedDay}`;
 
-        // Gefilterte Notizen des Tages absteigend sortieren (Neueste Notiz zuerst in der Kachel)
+        // Gefilterte Notizen & Termine des Tages
         const matchingNotes = archive
             .filter(item => item.date === dateString)
             .sort((a, b) => b.id - a.id);
 
+        const matchingEvents = events
+            .filter(evt => evt.date === dateString)
+            .sort((a, b) => {
+                if (a.isAllDay && !b.isAllDay) return -1;
+                if (!a.isAllDay && b.isAllDay) return 1;
+                return (a.time || '').localeCompare(b.time || '');
+            });
+
         const isToday = (dateString === todayStr);
 
-        let notesHtml = '';
-        if (matchingNotes.length > 0) {
-            notesHtml = matchingNotes.map(note => `
-                <div title="${note.title}" style="background: #007bff; color: white; font-size: 11px; padding: 2px 5px; border-radius: 3px; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+        let itemsHtml = '';
+
+        // Termine anzeigen (farblich sortiert nach Kategorie)
+        matchingEvents.forEach(evt => {
+            const color = getCategoryColor(evt.category);
+            const timeLabel = evt.isAllDay ? '📌 Ganztägig' : `⏰ ${evt.time}`;
+            itemsHtml += `
+                <div title="${timeLabel} - ${evt.title}" style="background: ${color}; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${timeLabel} ${evt.title}
+                </div>
+            `;
+        });
+
+        // Notizen anzeigen
+        matchingNotes.forEach(note => {
+            itemsHtml += `
+                <div title="${note.title}" style="background: #6c757d; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     📝 ${note.title}
                 </div>
-            `).join('');
-        }
+            `;
+        });
 
         htmlContent += `
             <div class="calendar-day ${isToday ? 'today' : ''}" onclick="showDayDetails('${dateString}')" style="cursor: pointer; ${isToday ? 'border: 2px solid #007bff; background: #f0f7ff;' : ''}">
                 <div class="day-num" style="${isToday ? 'color: #007bff; font-weight: bold;' : ''}">${day}</div>
-                ${notesHtml}
+                ${itemsHtml}
             </div>
         `;
     }
@@ -797,7 +846,7 @@ async function renderCalendar() {
     grid.innerHTML = htmlContent;
 }
 
-// Zeigt alle Notizen des angeklickten Tages an (Neueste Notizen stehen oben)
+// Zeigt Notizen und Termine des angeklickten Tages an
 async function showDayDetails(dateString) {
     const detailSection = document.getElementById('dayDetailSection');
     const title = document.getElementById('selectedDateTitle');
@@ -806,39 +855,76 @@ async function showDayDetails(dateString) {
     if (!detailSection || !container) return;
 
     const archive = await getArchiveData();
+    const events = await getEventsData();
 
-    // Gefilterte Notizen absteigend nach ID sortieren (neueste Notiz zuerst)
     const dayNotes = archive
         .filter(item => item.date === dateString)
         .sort((a, b) => b.id - a.id);
 
+    const dayEvents = events
+        .filter(evt => evt.date === dateString)
+        .sort((a, b) => {
+            if (a.isAllDay && !b.isAllDay) return -1;
+            if (!a.isAllDay && b.isAllDay) return 1;
+            return (a.time || '').localeCompare(b.time || '');
+        });
+
     const parts = dateString.split('-');
     const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
 
-    title.innerText = `Notizen am ${germanDate}`;
+    title.innerText = `Einträge am ${germanDate}`;
 
-    if (dayNotes.length === 0) {
-        container.innerHTML = `<p style="color: #666; margin: 0;">An diesem Tag wurden keine Notizen angelegt.</p>`;
+    if (dayNotes.length === 0 && dayEvents.length === 0) {
+        container.innerHTML = `<p style="color: #666; margin: 0;">An diesem Tag gibt es keine Termine oder Notizen.</p>`;
     } else {
-        container.innerHTML = dayNotes.map(note => `
-            <div class="archive-card" style="background: #fff; border-left: 4px solid #007bff; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
-                <div style="padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-                    <div onclick="toggleContent(${note.id})" style="cursor: pointer; display: flex; align-items: center; gap: 12px; flex-grow: 1;">
-                        <span style="font-size: 12px; font-weight: bold; color: #555;">📅 ${note.date}</span>
-                        <h4 style="margin: 0; font-size: 15px; color: #222;">${note.title}</h4>
+        let html = '';
+
+        // Termine anzeigen (mit Bearbeiten ✏️ und Löschen 🗑️)
+        if (dayEvents.length > 0) {
+            html += `<h4 style="margin: 10px 0 8px 0; color: #000;">📅 Termine</h4>`;
+            html += dayEvents.map(evt => {
+                const color = getCategoryColor(evt.category);
+                const timeStr = evt.isAllDay ? '📌 Ganztägig' : `⏰ ${evt.time} Uhr`;
+                return `
+                    <div class="event-card-item" style="border-left: 4px solid ${color};">
+                        <div>
+                            <strong>${timeStr} - ${evt.title}</strong>
+                            ${evt.notes ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #555;">${evt.notes}</p>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="editEvent(${evt.id})" title="Termin bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 16px;">✏️</button>
+                            <button onclick="deleteEvent(${evt.id}, '${dateString}')" title="Termin löschen" style="background: transparent; border: none; cursor: pointer; font-size: 16px;">🗑️</button>
+                        </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span onclick="toggleContent(${note.id})" style="cursor: pointer; font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${note.tags || 'Keine Tags'}</span>
-                        <button onclick="event.stopPropagation(); editEntry(${note.id});" title="Bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
-                        <button onclick="event.stopPropagation(); deleteEntryFromCalendar(${note.id}, '${dateString}');" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
-                        <span onclick="toggleContent(${note.id})" id="icon-${note.id}" style="cursor: pointer; font-size: 12px; color: #888; width: 15px; text-align: center;">▼</span>
+                `;
+            }).join('');
+        }
+
+        // Notizen anzeigen
+        if (dayNotes.length > 0) {
+            html += `<h4 style="margin: 15px 0 8px 0; color: #000;">📝 Notizen</h4>`;
+            html += dayNotes.map(note => `
+                <div class="archive-card" style="background: #fff; border-left: 4px solid #007bff; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                    <div style="padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div onclick="toggleContent(${note.id})" style="cursor: pointer; display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+                            <span style="font-size: 12px; font-weight: bold; color: #555;">📅 ${note.date}</span>
+                            <h4 style="margin: 0; font-size: 15px; color: #222;">${note.title}</h4>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span onclick="toggleContent(${note.id})" style="cursor: pointer; font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${note.tags || 'Keine Tags'}</span>
+                            <button onclick="event.stopPropagation(); editEntry(${note.id});" title="Bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
+                            <button onclick="event.stopPropagation(); deleteEntryFromCalendar(${note.id}, '${dateString}');" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
+                            <span onclick="toggleContent(${note.id})" id="icon-${note.id}" style="cursor: pointer; font-size: 12px; color: #888; width: 15px; text-align: center;">▼</span>
+                        </div>
+                    </div>
+                    <div id="body-${note.id}" style="display: none; padding: 12px; border-top: 1px solid #eee; background: #fff;">
+                        <div style="font-size: 14px; color: #333; line-height: 1.5;">${note.content}</div>
                     </div>
                 </div>
-                <div id="body-${note.id}" style="display: none; padding: 12px; border-top: 1px solid #eee; background: #fff;">
-                    <div style="font-size: 14px; color: #333; line-height: 1.5;">${note.content}</div>
-                </div>
-            </div>
-        `).join('');
+            `).join('');
+        }
+
+        container.innerHTML = html;
     }
 
     detailSection.style.display = "block";
@@ -859,5 +945,145 @@ async function deleteEntryFromCalendar(id, dateString) {
         await renderCalendar();
         await showDayDetails(dateString);
         await renderStartDashboard();
+    }
+}
+
+// =======================================================================================================================
+// 7. TERMIN-MODAL & TERMIN-SPEICHERUNG / BEARBEITUNG
+// =======================================================================================================================
+
+function openEventModal() {
+    const modal = document.getElementById('eventModal');
+    if (modal) {
+        document.getElementById('eventId').value = '';
+        document.getElementById('modalTitle').innerText = 'Neuen Termin eintragen';
+        document.getElementById('saveEventBtn').innerText = 'Termin speichern';
+        document.getElementById('eventForm').reset();
+
+        // Ganztägig-Status zurücksetzen
+        toggleAllDay(false);
+
+        modal.style.display = 'flex';
+        
+        const dateInput = document.getElementById('eventDate');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        }
+    }
+}
+
+function closeEventModal() {
+    const modal = document.getElementById('eventModal');
+    if (modal) {
+        modal.style.display = 'none';
+        const form = document.getElementById('eventForm');
+        if (form) form.reset();
+    }
+}
+
+function closeEventModalOnOverlay(e) {
+    if (e.target && e.target.id === 'eventModal') {
+        closeEventModal();
+    }
+}
+
+// Steuert das Deaktivieren des Uhrzeit-Feldes bei ganztägigen Terminen
+function toggleAllDay(isAllDay) {
+    const timeInput = document.getElementById('eventTime');
+    const checkbox = document.getElementById('eventAllDay');
+    
+    if (checkbox) checkbox.checked = isAllDay;
+
+    if (timeInput) {
+        if (isAllDay) {
+            timeInput.value = '';
+            timeInput.required = false;
+            timeInput.disabled = true;
+            timeInput.style.backgroundColor = '#e9ecef';
+        } else {
+            timeInput.required = true;
+            timeInput.disabled = false;
+            timeInput.style.backgroundColor = '#ffffff';
+        }
+    }
+}
+
+// Öffnet das Modal im Bearbeiten-Modus mit vorbefüllten Daten
+async function editEvent(id) {
+    const events = await getEventsData();
+    const evt = events.find(e => e.id === id);
+
+    if (evt) {
+        document.getElementById('eventId').value = evt.id;
+        document.getElementById('eventTitle').value = evt.title;
+        document.getElementById('eventDate').value = evt.date;
+        document.getElementById('eventCategory').value = evt.category;
+        document.getElementById('eventNotes').value = evt.notes || '';
+
+        if (evt.isAllDay) {
+            toggleAllDay(true);
+        } else {
+            toggleAllDay(false);
+            document.getElementById('eventTime').value = evt.time || '';
+        }
+
+        document.getElementById('modalTitle').innerText = 'Termin bearbeiten';
+        document.getElementById('saveEventBtn').innerText = 'Änderungen speichern';
+
+        const modal = document.getElementById('eventModal');
+        if (modal) modal.style.display = 'flex';
+    }
+}
+
+async function saveEvent(event) {
+    event.preventDefault();
+
+    const idInput = document.getElementById('eventId').value;
+    const isEdit = idInput !== '';
+    const isAllDay = document.getElementById('eventAllDay').checked;
+
+    const eventData = {
+        id: isEdit ? parseInt(idInput, 10) : Date.now(),
+        title: document.getElementById('eventTitle').value.trim(),
+        date: document.getElementById('eventDate').value,
+        time: isAllDay ? '' : document.getElementById('eventTime').value,
+        isAllDay: isAllDay,
+        category: document.getElementById('eventCategory').value,
+        notes: document.getElementById('eventNotes').value.trim()
+    };
+
+    try {
+        let events = await getEventsData();
+
+        if (isEdit) {
+            const index = events.findIndex(e => e.id === eventData.id);
+            if (index !== -1) {
+                events[index] = eventData;
+            }
+        } else {
+            events.push(eventData);
+        }
+
+        await setEventsData(events);
+
+        closeEventModal();
+        await renderCalendar();
+        await showDayDetails(eventData.date);
+        
+        alert(isEdit ? "Termin erfolgreich aktualisiert!" : "Termin erfolgreich gespeichert!");
+    } catch (e) {
+        console.error("Fehler beim Speichern des Termins:", e);
+        alert("Fehler beim Speichern: " + e.message);
+    }
+}
+
+async function deleteEvent(id, dateString) {
+    if (confirm("Termin wirklich löschen?")) {
+        let events = await getEventsData();
+        events = events.filter(evt => evt.id !== id);
+        await setEventsData(events);
+
+        await renderCalendar();
+        await showDayDetails(dateString);
     }
 }
