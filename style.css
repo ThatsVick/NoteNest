@@ -9,7 +9,7 @@
     align-items: center;       /* Zentriert den Inhalt senkrecht */
     min-height: 100vh;         /* Nutzt mindestens die volle Höhe des Fensters */
     margin: 0;                 /* Entfernt den Standard-Außenabstand des Browsers */
-    background-color: white;   /* Hellgrauer Hintergrund */
+    background-color: white;   /* Weißer Hintergrund */
 }
 
 /* Deaktiviert Browser-Gesten auf dem Video, damit Klicks direkt an den Wrapper gehen */
@@ -559,10 +559,15 @@ body {
 }
 
 /* Farben für Legende & Termine */
-.color-dot.work { background-color: #0170f8; }
-.color-dot.private { background-color: #28a745; }
-.color-dot.urgent { background-color: #dc3545; }
-.color-dot.note { background-color: #6c757d; } /* Grauer Punkt für Notizen */
+.color-dot.work { background-color: #0170f8; } /* Blau für Termine */
+.color-dot.note { background-color: #6c757d; } /* Grau für Notizen */
+
+/* Styling für "Wichtige" Termine (dezenter roter Rand) */
+.event-urgent {
+    border: 1px solid #dc3545 !important;
+    box-shadow: 0 0 3px rgba(220, 53, 69, 0.5);
+}
+
 
 /* -----------------------------------------------------------------------------------------------------------------------
                                             Styling für das Termin-Pop-up (Modal)
@@ -589,7 +594,7 @@ body {
     border-radius: 8px;
     padding: 20px 25px;
     width: 90%;
-    max-width: 450px;
+    max-width: 480px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
 }
@@ -647,7 +652,25 @@ body {
     transition: background 0.3s;
 }
 
-/* Tages-Detailansicht Styling */
+/* Verhindert das Skalieren des Textfeldes AUSSCHLIESSLICH im Pop-up-Fenster */
+.modal-box textarea {
+    resize: none !important;
+}
+
+/* Bündiges Ausrichten der Eingabefelder im Termin-Pop-up */
+.modal-box .top-inputs-row {
+    align-items: flex-end;
+}
+
+.modal-box .top-inputs-row .input-group:first-child {
+    margin-top: 0;
+}
+
+
+/* -----------------------------------------------------------------------------------------------------------------------
+                                            Tages-Detailansicht (Kalender.html)
+----------------------------------------------------------------------------------------------------------------------- */
+
 .day-detail-section {
     margin-top: 25px;
     background: #fff;
@@ -697,29 +720,10 @@ body {
     align-items: center;
 }
 
-/* Hebungs-Regel: Setzt Notizinhalte im Kalender auf linksbuendig */
+/* Hebungs-Regel: Setzt Notizinhalte im Kalender auf linksbündig */
 #dayDetailContainer,
 #dayDetailContainer * {
     text-align: left !important;
-}
-
-/* Erzwingt Bullet-Punkte für Quill-Listen mit data-list="bullet" */
-#dayDetailContainer ol li[data-list="bullet"],
-#archiveContainer ol li[data-list="bullet"],
-.archive-card ol li[data-list="bullet"] {
-    list-style-type: disc !important;
-}
-
-/* Entfernt bei diesen Listenpunkten die automatische Nummerierung */
-#dayDetailContainer ol li[data-list="bullet"]::before,
-#archiveContainer ol li[data-list="bullet"]::before,
-.archive-card ol li[data-list="bullet"]::before {
-    content: none !important;
-}
-
-/* Verhindert das Skalieren des Textfeldes AUSSCHLIESSLICH im Pop-up-Fenster */
-.modal-box textarea {
-    resize: none !important;
 }
 
 
@@ -807,6 +811,20 @@ body {
 /* -----------------------------------------------------------------------------------------------------------------------
                                 Quill.js Formatierungen & Textausrichtungen (Archiv/Kalender)
 ----------------------------------------------------------------------------------------------------------------------- */
+
+/* Erzwingt Bullet-Punkte für Quill-Listen mit data-list="bullet" */
+#dayDetailContainer ol li[data-list="bullet"],
+#archiveContainer ol li[data-list="bullet"],
+.archive-card ol li[data-list="bullet"] {
+    list-style-type: disc !important;
+}
+
+/* Entfernt bei diesen Listenpunkten die automatische Nummerierung */
+#dayDetailContainer ol li[data-list="bullet"]::before,
+#archiveContainer ol li[data-list="bullet"]::before,
+.archive-card ol li[data-list="bullet"]::before {
+    content: none !important;
+}
 
 /* Allgemeine Textausrichtungen von Quill.js */
 .ql-align-center {

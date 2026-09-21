@@ -14,7 +14,7 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
     <!-- Eigenes Stylesheet -->
-    <link rel="stylesheet" href="style.css?v=1.5">
+    <link rel="stylesheet" href="style.css?v=1.6">
     
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
@@ -59,9 +59,7 @@
             <button id="openModalBtn" class="add-event-btn" onclick="openEventModal()">+ Termin hinzufügen</button>
             
             <div class="legend">
-                <span class="legend-item"><span class="color-dot work"></span> Arbeit</span>
-                <span class="legend-item"><span class="color-dot private"></span> Privat</span>
-                <span class="legend-item"><span class="color-dot urgent"></span> Wichtig</span>
+                <span class="legend-item"><span class="color-dot work"></span> Termin</span>
                 <span class="legend-item"><span class="color-dot note"></span> Notiz</span>
             </div>
         </div>
@@ -100,24 +98,25 @@
                         <label for="eventDate">Datum:</label>
                         <input type="date" id="eventDate" required>
                     </div>
-                    <div class="input-group" style="flex: 1;">
+                    <div class="input-group" style="flex: 1.5;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                             <label for="eventTime" style="margin-bottom: 0;">Uhrzeit:</label>
                             <label style="font-size: 12px; font-weight: normal; cursor: pointer;">
                                 <input type="checkbox" id="eventAllDay" onchange="toggleAllDay(this.checked)"> Ganztägig
                             </label>
                         </div>
-                        <input type="time" id="eventTime" required>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <input type="time" id="eventTime" required style="flex: 1;">
+                            <span id="timeSeparator" style="font-size: 13px; font-weight: bold;">–</span>
+                            <input type="time" id="eventEndTime" style="flex: 1;">
+                        </div>
                     </div>
                 </div>
 
-                <div class="input-group">
-                    <label for="eventCategory">Kategorie (Farbe):</label>
-                    <select id="eventCategory" class="toolbar-select">
-                        <option value="work">Arbeit (Blau)</option>
-                        <option value="private">Privat (Grün)</option>
-                        <option value="urgent">Wichtig (Rot)</option>
-                    </select>
+                <!-- Zusatz Option für Wichtig -->
+                <div class="input-group" style="flex-direction: row; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="eventUrgent" style="width: 18px; height: 18px; cursor: pointer;">
+                    <label for="eventUrgent" style="margin-bottom: 0; cursor: pointer; color: #dc3545; font-weight: bold;">Als "Wichtig" markieren</label>
                 </div>
 
                 <div class="input-group">
