@@ -239,7 +239,7 @@ async function renderStartDashboard() {
     ];
 
     if (cardTitle) {
-        cardTitle.innerText = `📅 Anstehende Aufgaben / Ereignise (${monthNames[currentMonth]} ${currentYear})`;
+        cardTitle.innerText = `📅 Anstehende Aufgaben / Ereignisse (${monthNames[currentMonth]} ${currentYear})`;
     }
 
     const events = await getEventsData();
