@@ -562,6 +562,7 @@ body {
 .color-dot.work { background-color: #0170f8; }
 .color-dot.private { background-color: #28a745; }
 .color-dot.urgent { background-color: #dc3545; }
+.color-dot.note { background-color: #6c757d; } /* Grauer Punkt für Notizen */
 
 /* -----------------------------------------------------------------------------------------------------------------------
                                             Styling für das Termin-Pop-up (Modal)
