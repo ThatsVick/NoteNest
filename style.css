@@ -876,39 +876,23 @@ body {
 
 /* Allgemeine Textausrichtungen von Quill.js */
 .ql-align-center {
-    text-align: center;         /* Zentrierter Text */
+    text-align: center !important;         /* Zentrierter Text wenn explizit gewählt */
 }
 
 .ql-align-right {
-    text-align: right;          /* Rechtsbündiger Text */
+    text-align: right !important;          /* Rechtsbündiger Text */
 }
 
 .ql-align-justify {
-    text-align: justify;        /* Blocksatz */
+    text-align: justify !important;        /* Blocksatz */
 }
 
-/* Stellt sicher, dass Standard-Absätze im Archiv und im Kalender-Detailbereich linksbündig bleiben */
-.archive-card div p,
-#dayDetailContainer div p {
-    text-align: left;           /* Linksbündiger Standard-Text */
-}
-
-/* Ausgenommen sind explizit von Quill formatierte Absätze */
-.archive-card div p.ql-align-center,
-#dayDetailContainer div p.ql-align-center {
-    text-align: center;         /* Behält Zentrierung bei */
-}
-
-.archive-card div p.ql-align-right,
-#dayDetailContainer div p.ql-align-right {
-    text-align: right;          /* Behält Rechtsbündigkeit bei */
-}
-
-.archive-card div p.ql-align-justify,
-#dayDetailContainer div p.ql-align-justify {
-    text-align: justify;        /* Behält Blocksatz bei */
-}
-
-.archive-card li, .archive-card p, .archive-card div { 
-    text-align: left !important; 
+/* Standard-Ausrichtung im Archiv für Absätze, Listen und Container linksbündig zwingen */
+.archive-card div,
+.archive-card p,
+.archive-card li,
+#archiveContainer div,
+#archiveContainer p,
+#archiveContainer li {
+    text-align: left;
 }
