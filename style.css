@@ -909,6 +909,6 @@ body {
     text-align: justify;        /* Behält Blocksatz bei */
 }
 
-#archiveContainer { 
-    text-align: left; 
+.archive-card li, .archive-card p, .archive-card div { 
+    text-align: left !important; 
 }
