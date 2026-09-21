@@ -1148,7 +1148,9 @@ async function saveEvent(event) {
     const isAllDay = document.getElementById('eventAllDay').checked;
     const isUrgent = document.getElementById('eventUrgent')?.checked || false;
     
-    const selectedType = document.querySelector('input[name="entryType"]:checked')?.value || 'task';
+    // Prüft explizit den Radio-Button für Ereignis, um Fehlinterpretationen zu verhindern
+    const eventRadio = document.getElementById('typeEvent');
+    const selectedType = (eventRadio && eventRadio.checked) ? 'event' : 'task';
 
     const eventData = {
         id: isEdit ? parseInt(idInput, 10) : Date.now(),
