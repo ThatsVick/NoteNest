@@ -4,6 +4,7 @@
 
 let currentEditId = null;
 let currentCalendarDate = new Date();
+let dashboardDate = new Date();
 let quill = null;
 
 // =======================================================================================================================
@@ -165,33 +166,44 @@ function insertCompressedImageIcon(file) {
 // 2. DASHBOARD-FUNKTIONEN (Start.html)
 // =======================================================================================================================
 
+function changeDashboardMonth(delta) {
+    dashboardDate.setMonth(dashboardDate.getMonth() + delta);
+    renderStartDashboard();
+}
+
 async function renderStartDashboard() {
     const listContainer = document.getElementById('recentNotesList');
-    const cardTitle = document.querySelector('.dashboard-card h3');
+    const cardTitle = document.getElementById('dashboardTitle') || document.querySelector('.dashboard-card h3');
     if (!listContainer) return;
 
+    const targetYear = dashboardDate.getFullYear();
+    const targetMonth = dashboardDate.getMonth();
     const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth();
-    const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-
-    if (cardTitle) cardTitle.innerText = `📅 Anstehende Aufgaben / Ereignisse (${monthNames[currentMonth]} ${currentYear})`;
-
-    const events = await getEventsData();
     const todayStr = now.toISOString().split('T')[0];
 
-    const upcomingEvents = events.filter(evt => {
+    const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+
+    if (cardTitle) {
+        cardTitle.innerText = `📅 Aufgaben / Ereignisse (${monthNames[targetMonth]} ${targetYear})`;
+    }
+
+    const events = await getEventsData();
+
+    const monthlyEvents = events.filter(evt => {
         if (!evt.date) return false;
         const [year, month] = evt.date.split('-').map(num => parseInt(num, 10));
-        return (year === currentYear && (month - 1) === currentMonth) && evt.date >= todayStr;
+        const isSelectedMonth = (year === targetYear && (month - 1) === targetMonth);
+        
+        const isCurrentMonth = (now.getFullYear() === targetYear && now.getMonth() === targetMonth);
+        return isSelectedMonth && (!isCurrentMonth || evt.date >= todayStr);
     }).sort((a, b) => a.date !== b.date ? a.date.localeCompare(b.date) : (a.time || '').localeCompare(b.time || ''));
 
-    if (upcomingEvents.length === 0) {
-        listContainer.innerHTML = '<li><p style="color: #666;">Keine anstehenden Aufgaben oder Termine für diesen Monat.</p></li>';
+    if (monthlyEvents.length === 0) {
+        listContainer.innerHTML = '<li><p style="color: #666; margin: 5px 0;">Keine Aufgaben oder Termine für diesen Monat.</p></li>';
         return;
     }
 
-    listContainer.innerHTML = upcomingEvents.map(evt => {
+    listContainer.innerHTML = monthlyEvents.map(evt => {
         const parts = evt.date.split('-');
         const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
         const timeText = (!evt.isAllDay && evt.time) ? (evt.endTime ? `⏰ ${evt.time} - ${evt.endTime} Uhr` : `⏰ ${evt.time} Uhr`) : '📌 Ganztägig';
