@@ -874,19 +874,6 @@ body {
     content: none !important;
 }
 
-/* Allgemeine Textausrichtungen von Quill.js */
-.ql-align-center {
-    text-align: center !important;         /* Zentrierter Text wenn explizit gewählt */
-}
-
-.ql-align-right {
-    text-align: right !important;          /* Rechtsbündiger Text */
-}
-
-.ql-align-justify {
-    text-align: justify !important;        /* Blocksatz */
-}
-
 /* Standard-Ausrichtung im Archiv für Absätze, Listen und Container linksbündig zwingen */
 .archive-card div,
 .archive-card p,
@@ -895,4 +882,35 @@ body {
 #archiveContainer p,
 #archiveContainer li {
     text-align: left;
+}
+
+/* Quill Schriftgrößen & Ausrichtungen im Archiv und Kalender */
+#archiveContainer .ql-size-small,
+#dayDetailContainer .ql-size-small {
+    font-size: 0.75em;
+}
+
+#archiveContainer .ql-size-large,
+#dayDetailContainer .ql-size-large {
+    font-size: 1.5em;
+}
+
+#archiveContainer .ql-size-huge,
+#dayDetailContainer .ql-size-huge {
+    font-size: 2.5em;
+}
+
+#archiveContainer .ql-align-center,
+#dayDetailContainer .ql-align-center {
+    text-align: center;
+}
+
+#archiveContainer .ql-align-right,
+#dayDetailContainer .ql-align-right {
+    text-align: right;
+}
+
+#archiveContainer .ql-align-justify,
+#dayDetailContainer .ql-align-justify {
+    text-align: justify;
 }
