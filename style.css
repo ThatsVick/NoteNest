@@ -2,52 +2,46 @@
                                             Styles für die Willkommensseite (index.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
-/* Zentriert den gesamten Inhalt auf der Willkommensseite */
 .welcome-body {
-    display: flex;             /* Aktiviert das Flexbox-Layout für einfache Ausrichtung */
-    justify-content: center;   /* Zentriert den Inhalt waagerecht */
-    align-items: center;       /* Zentriert den Inhalt senkrecht */
-    min-height: 100vh;         /* Nutzt mindestens die volle Höhe des Fensters */
-    margin: 0;                 /* Entfernt den Standard-Außenabstand des Browsers */
-    background-color: white;   /* Weißer Hintergrund */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: white;
 }
 
-/* Deaktiviert Browser-Gesten auf dem Video, damit Klicks direkt an den Wrapper gehen */
 #welcomeVideo {
     pointer-events: none;
 }
 
-/* Container für Logo und Start-Button */
 .welcome-container {
-    text-align: center;        /* Richtet enthaltenen Text und Buttons mittig aus */
+    text-align: center;
 }
 
-/* Bildgröße anpassen */
 .logo-img {
-    display: block;            /* Zwingt das Bild in eine eigene Zeile */
-    width: 700px;              /* Setzt eine feste Breite für das Logo */
-    height: auto;              /* Berechnet die Höhe automatisch (keine Verzerrung) */
-    margin: 0 auto 20px auto;  /* Zentriert das Bild und gibt 20px Abstand nach unten */
-    border-radius: 8px;        /* Ründet die Ecken des Bildes leicht ab */
+    display: block;
+    width: 700px;
+    height: auto;
+    margin: 0 auto 20px;
+    border-radius: 8px;
 }
 
-/* Link wie einen echten Button aussehen lassen */
 .willkommen-btn {
-    display: inline-block;     /* Erlaubt Innenabstände und Höhen für normale Links */
-    padding: 12px 24px;        /* Innenabstand: 12px oben/unten, 24px links/rechts */
-    color: black;              /* Textfarbe Schwarz */
-    text-decoration: none;     /* Entfernt den typischen Link-Unterstrich */
-    font-size: 20px;           /* Textgröße */
-    font-weight: bold;         /* Fette Schrift */
-    border-radius: 5px;        /* Abgerundete Ecken */
-    cursor: pointer;           /* Ändert den Mauszeiger beim Drüberfahren zur Hand */
-}
+    display: inline-block;
+    padding: 12px 24px;
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 1s, color 1s;
 
-/* Effekt beim Drüberfahren mit der Maus */
-.willkommen-btn:hover {
-    background-color: #0c47be; /* Färbt den Hintergrund beim Drüberfahren blau */
-    color: white;              /* Wechselt die Textfarbe auf Weiß */
-    transition: background 1s;  /* Lässt den Farbwechsel über 1 Sekunde sanft übergehen */
+    &:hover {
+        background-color: #0c47be;
+        color: white;
+    }
 }
 
 
@@ -56,97 +50,87 @@
 ------------------------------------------------------------------------------------------------------------------------*/
 
 body {
-    font-family: Arial, Helvetica, sans-serif; /* Standard-Schriftartenkombination */
-    margin: 0;                 /* Entfernt Außenabstände des Dokuments */
-    padding: 20px;             /* 20px Abstand zum Bildschirmrand überall */
-    background-color: white;   /* Weißer Hintergrund für das Gesamtdokument */
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: white;
 }
 
-/* Ändert die Rahmenfarbe aller Eingabefelder im aktiven Zustand */
 .top-inputs-row input:focus,
 .input-group input:focus,
 .input-group select:focus,
 .input-group textarea:focus,
 .toolbar-select:focus {
-    border-color: #007bff !important;           /* Färbt den Rahmen beim Anklicken blau */
-    outline: none !important;                  /* Deaktiviert den Standard-Fokusrahmen des Browsers */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);  /* Fügt einen blauen, weichen Leuchteffekt hinzu */
+    border-color: #007bff !important;
+    outline: none !important;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
 }
 
-/* Haupt-Header: Ermöglicht das Ankerzentrum für die absolute Navbar */
 .main-header {
-    display: flex;             /* Aktiviert Flexbox-Layout im Header */
-    align-items: center;       /* Zentriert Logo und Navigation vertikal */
-    padding: 10px 15px;        /* Innenabstand für den Header */
-    margin-bottom: 20px;       /* Abstand nach unten zum Inhaltsbereich */
-    border-bottom: 1px solid #000; /* Schwarze Trennlinie unten */
-    border-radius: 5px;        /* Leicht abgerundete Ecken */
-    position: relative;        /* Essentiell: Macht den Header zum Bezugspunkt für die Zentrierung der Navbar */
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #000;
+    border-radius: 5px;
+    position: relative;
 }
 
-/* Logo-Container fest auf der linken Seite verankert */
 .logo-container {
-    display: flex;             /* Vertikales Zentrieren der Bildinhalte */
-    align-items: center;       /* Richtet das Logo mittig aus */
-    text-decoration: none;     /* Entfernt Unterstreichung bei Verlinkung */
-    z-index: 2;                /* Garantiert Klickbarkeit über dem Header-Hintergrund */
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 2;
 }
 
 .header-logo {
-    height: 48px;              /* Feste Höhe für das Header-Logo */
-    width: auto;               /* Verhindert ein Verzerren des Bildes */
-    display: block;            /* Eigene Zeile für Bildblock */
-    object-fit: contain;       /* Behält das Seitenverhältnis des Logos bei */
+    height: 48px;
+    width: auto;
+    display: block;
+    object-fit: contain;
 }
 
-/* Navbar: Exakt in der waagerechten Mitte der Seite zentriert */
 .navbar {
-    position: absolute;        /* Losgelöst vom Dokumentfluss für exakte Positionierung */
-    left: 50%;                 /* Platziert den Startpunkt der Leiste in der Mitte */
-    transform: translateX(-50%);/* Verschiebt die Leiste um genau die Hälfte ihrer eigenen Breite nach links */
-    display: flex;             /* Aktiviert Flexbox-Verhalten */
-    justify-content: center;   /* Zentriert die Menüpunkte waagerecht */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+
+    & ul {
+        list-style: none;
+        display: flex;
+        gap: 12px;
+        padding: 0;
+        margin: 0;
+    }
+
+    & li a {
+        display: inline-block;
+        padding: 8px 16px;
+        color: black;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+
+        &:hover,
+        &.active {
+            background-color: #0c47be;
+            color: white;
+        }
+    }
 }
 
-.navbar ul {
-    list-style: none;          /* Entfernt Aufzählungspunkte */
-    display: flex;             /* Ordnet die Listenpunkte waagerecht an */
-    gap: 12px;                 /* Abstand zwischen den Menüpunkten */
-    padding: 0;                /* Entfernt Standard-Innenabstände der Liste */
-    margin: 0;                 /* Entfernt Außenabstände der Liste */
-}
-
-.navbar li a {
-    display: inline-block;     /* Macht Links formbar für Abstände und Abrundungen */
-    padding: 8px 16px;         /* Innenabstand der Navigationsbuttons */
-    color: black;              /* Textfarbe Schwarz */
-    text-decoration: none;     /* Entfernt Unterstreichungen */
-    font-size: 16px;           /* Schriftgröße der Links */
-    font-weight: bold;         /* Fette Schriftart */
-    border-radius: 5px;        /* Abgerundete Ecken */
-    border: none;              /* Kein Rahmen */
-    cursor: pointer;           /* Hand-Symbol beim Mouseover */
-}
-
-.navbar li a:hover {
-    background-color: #0c47be; /* Blaues Feld beim Drüberfahren */
-    color: white;              /* Weiße Schrift */
-    transition: background 0.3s;/* Sanfter Übergang beim Hovern */
-}
-
-.navbar li a.active {
-    background-color: #0c47be; /* Blaues Feld für den aktiven Reiter */
-    color: white;              /* Weiße Schrift für den aktiven Reiter */
-}
-
-/* Inhaltsbereich (Body) Styling */
 .content-area {
-    border-top: 1px solid black;/* Schmale schwarze Linie oben zur Abgrenzung */
-    border-radius: 10px;        /* Abgerundete Gesamtecken */
-    min-height: 300px;          /* Erzwingt eine Mindesthöhe für das Layout */
-    padding: 20px;              /* Innenabstand für Inhalte */
-    background-color: #fff;     /* Weißer Hintergrund */
-    text-align: center;         /* Zentriert Inhalte standardmäßig */
+    border-top: 1px solid black;
+    border-radius: 10px;
+    min-height: 300px;
+    padding: 20px;
+    background-color: #fff;
+    text-align: center;
 }
 
 
@@ -155,63 +139,61 @@ body {
 ------------------------------------------------------------------------------------------------------------------------*/
 
 .editor-form {
-    display: flex;              /* Nutzt Flexbox zum Untereinander-Anordnen */
-    flex-direction: column;     /* Richtet die Elemente von oben nach unten aus */
-    gap: 15px;                  /* Automatische 15px Lücke zwischen allen Elementen */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-/* Oberste Zeile mit Datum, Thema, Tags, Speichern */
 .top-inputs-row {
-    display: flex;              /* Ordnet Eingabefelder nebeneinander an */
-    gap: 15px;                  /* Abstand zwischen den Feldern */
-    flex-wrap: wrap;            /* Bricht Felder bei kleinen Bildschirmen um */
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .input-group {
-    display: flex;              /* Stapelt Beschriftung und Feld untereinander */
-    flex-direction: column;     /* Ausrichtung vertikal */
-    text-align: left;           /* Text-Ausrichtung links */
-}
+    display: flex;
+    flex-direction: column;
+    text-align: left;
 
-.input-group label {
-    font-size: 14px;            /* Kleine Beschriftungsgröße */
-    font-weight: bold;          /* Fette Beschriftung */
-    margin-bottom: 5px;         /* Abstand nach unten zum Eingabefeld */
-}
+    & label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
 
-.input-group input,
-.input-group select,
-.input-group textarea {
-    border: 1px solid #000;     /* Schwarze Randeinfassung */
-    border-radius: 5px;         /* Abgerundete Ecken */
-    padding: 8px;               /* Textinnenabstand im Feld */
-    font-size: 14px;            /* Textgröße im Feld */
-    background-color: #fff;     /* Weißer Feld-Hintergrund */
-    font-family: Arial, Helvetica, sans-serif;
+    & input,
+    & select,
+    & textarea {
+        border: 1px solid #000;
+        border-radius: 5px;
+        padding: 8px;
+        font-size: 14px;
+        background-color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+    }
 }
 
 .tags-group {
-    flex-grow: 1;               /* Dehnt das Tag-Feld aus, um freien Platz zu füllen */
+    flex-grow: 1;
 }
 
-/* Speichern-Button Styling */
 .save-btn {
-    display: inline-block;      /* Macht den Button formbar */
-    padding: 6px 24px;          /* Innenabstand des Buttons */
-    color: black;              /* Schwarze Schriftfarbe */
-    text-decoration: none;     /* Keine Unterstreichung */
-    font-size: 16px;           /* Schriftgröße */
-    font-weight: bold;         /* Fette Schrift */
-    border-radius: 5px;        /* Abgerundete Ecken */
-    border: 1px solid #000;    /* Schwarze Randlinie */
-    cursor: pointer;           /* Klick-Zeiger */
-    background-color: white;    /* Weißer Hintergrund */
-}
+    display: inline-block;
+    padding: 6px 24px;
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 1px solid #000;
+    cursor: pointer;
+    background-color: white;
+    transition: background 0.3s, color 0.3s;
 
-.save-btn:hover {
-    background-color: #0c47be; /* Blau beim Mouseover */
-    color: white;              /* Weiße Schrift beim Mouseover */
-    transition: background 0.3s;/* Sanfter Farbübergang */
+    &:hover {
+        background-color: #0c47be;
+        color: white;
+    }
 }
 
 
@@ -219,47 +201,41 @@ body {
                                             Quill.js Schreibbereich & Container-Höhen
 ------------------------------------------------------------------------------------------------------------------------*/
 
-/* Der Hauptcontainer für den Quill.js Texteditor */
 #editorText {
-    height: 55vh;               /* Feste Höhe: 55% der Bildschirmhöhe */
-    min-height: 280px;          /* Mindesthöhe für kleinere Bildschirme */
+    height: 55vh;
+    min-height: 280px;
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    border: 1px solid black;    /* Schwarzer Rahmen analog zum ursprünglichen Design */
+    border: 1px solid black;
     border-radius: 8px;
-    overflow: hidden;           /* Verhindert doppelte Ränder oder Überstehen */
+    overflow: hidden;
+
+    & .ql-container.ql-snow {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border: none !important;
+        font-size: 16px;
+    }
+
+    & .ql-editor {
+        flex: 1;
+        min-height: 100%;
+        padding: 15px;
+        box-sizing: border-box;
+        cursor: text !important;
+    }
+
+    &:focus-within {
+        border-color: #007bff !important;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+    }
 }
 
-/* Äußeres Quill-Modul übernimmt das Flex-Layout */
-#editorText .ql-container.ql-snow {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border: none !important;    /* Entfernt den Quill-Standardrand */
-    font-size: 16px;
-}
-
-/* Zwingt das eigentliche Schreibfeld, 100% der Höhe auszufüllen */
-#editorText .ql-editor {
-    flex: 1;
-    min-height: 100%;
-    padding: 15px;
-    box-sizing: border-box;
-    cursor: text !important;    /* Macht den Mauszeiger überall im Feld zum Text-Cursor */
-}
-
-/* Blauer Fokus-Effekt für den gesamten Quill-Editor */
-#editorText.ql-container:focus-within,
-#editorText:focus-within {
-    border-color: #007bff !important;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
-}
-
-/* Passt den Rahmen der Quill-Toolbar an */
 .ql-toolbar.ql-snow {
-    border: 1px solid #000000 !important; /* Rahmendicke und -farbe */
-    border-radius: 8px !important;        /* Eckenabrundung */
+    border: 1px solid #000 !important;
+    border-radius: 8px !important;
 }
 
 
@@ -267,158 +243,110 @@ body {
                                             Styling für die Ordner-Seite (Ordner.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
-/* Zentrierte Hauptüberschrift */
 .page-title {
-    text-align: center;         /* Zentriert den Titel */
-    margin-top: 0;              /* Entfernt oberen Abstand */
-    margin-bottom: 15px;        /* Abstand nach unten */
-    font-size: 28px;            /* Schriftgröße der Überschrift */
+    text-align: center;
+    margin: 0 0 15px;
+    font-size: 28px;
 }
 
-/* Zeile für den Button in der Mitte */
 .top-action-row {
-    display: flex;              /* Flexbox-Steuerung */
-    justify-content: center;    /* Zentriert den Button waagerecht */
-    align-items: center;        /* Zentriert vertikal */
-    margin-bottom: 20px;        /* Abstand nach unten */
-    padding-bottom: 10px;       /* Innenabstand vor der Trennlinie */
-    border-bottom: 1px solid #000; /* Untere schwarze Abgrenzungslinie */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000;
 }
 
-/* "Ordner hinzufügen"-Button */
 .add-folder-btn {
-    margin: 0;                  /* Kein zusätzlicher Außenabstand */
-    padding: 8px 16px;          /* Innenabstand des Buttons */
-    background-color: #fff;     /* Weißer Hintergrund */
-    border-radius: 5px;         /* Abgerundete Ecken */
-    border: 1px solid #000;     /* Schwarzer Rahmen */
-    font-size: 14px;            /* Schriftgröße */
-    font-weight: bold;          /* Fette Schrift */
-    cursor: pointer;           /* Hand-Symbol */
+    margin: 0;
+    padding: 8px 16px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #000;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+
+    &:hover {
+        background-color: #0c47be;
+        color: white;
+    }
 }
 
-.add-folder-btn:hover {
-    background-color: #0c47be; /* Blaue Hintergrundfarbe bei Klick/Hover */
-    color: white;              /* Weiße Schriftfarbe */
-    transition: background 0.3s;/* Schneller Übergang */
-}
-
-/* Zentriertes Raster für die Ordner-Karten */
 .folder-grid {
-    display: flex;              /* Raster als Flexbox-Layout */
-    flex-wrap: wrap;            /* Karten brechen bei Platzmangel in neue Zeile um */
-    justify-content: center;    /* Zentriert alle Karten waagerecht */
-    gap: 20px;                  /* Abstand zwischen den Karten */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 }
 
-/* Eine einzelne Ordner-Karte */
 .folder-card {
-    border: 1px solid #000;     /* Schwarze Rahmeneinfassung */
-    border-radius: 8px;         /* Abgerundete Ecken */
-    padding: 20px 15px;         /* Innenabstand in der Karte */
-    background-color: #fff;     /* Weißer Hintergrund */
-    text-align: center;         /* Zentriert Icon und Text */
-    cursor: pointer;           /* Signalisiert Klickbarkeit */
-    width: 180px;               /* Feste Breite für gleichmäßige Ausrichtung */
-    transition: transform 0.2s, box-shadow 0.2s; /* Glatte Animation bei Schwebeeffekt */
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 20px 15px;
+    background-color: #fff;
+    text-align: center;
+    cursor: pointer;
+    width: 180px;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
 }
 
-.folder-card:hover {
-    transform: translateY(-3px);/* Hebt die Karte leicht nach oben an */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Erzeugt einen leichten Schattenwurf */
-}
+.folder-icon { font-size: 40px; margin-bottom: 10px; }
+.folder-name { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+.folder-info { font-size: 12px; color: #666; }
 
-.folder-icon {
-    font-size: 40px;            /* Großes Symbol für Ordner/Kacheln */
-    margin-bottom: 10px;        /* Abstand nach unten zum Namen */
-}
-
-.folder-name {
-    font-weight: bold;          /* Fetter Ordnername */
-    font-size: 16px;            /* Textgröße */
-    margin-bottom: 5px;         /* Abstand zur Infozeile */
-}
-
-.folder-info {
-    font-size: 12px;            /* Kleine Zusatzinfo */
-    color: #666;                /* Dezent graue Textfarbe */
-}
-
-/* Aufklappbare Archiv-Karten */
 .archive-card {
-    background: #ffffff;        /* Weißer Karten-Hintergrund */
-    border-left: 4px solid #007bff; /* Blaue Akzentleiste an der linken Seite */
-    border-radius: 8px;         /* Abgerundete Ecken */
-    margin-bottom: 12px;        /* Abstand zur nächsten Notizkarte */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sehr dezenter Schatten */
-    overflow: hidden;           /* Verhindert Überstehen von Ecken beim Aufklappen */
+    background: #ffffff;
+    border-left: 4px solid #007bff;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
 }
 
 .archive-card-header {
-    padding: 15px;              /* Innenabstand der Kopfzeile */
-    display: flex;              /* Elemente nebeneinander */
-    justify-content: space-between; /* Verteilt Inhalt nach links und rechts */
-    align-items: center;        /* Zentriert vertikal auf gleicher Linie */
-    cursor: pointer;           /* Zeigt Klickbarkeit an */
-    background-color: #fafafa;  /* Leicht grauer Ton für Kopfzeile */
-    transition: background 0.2s ease; /* Weicher Farbwechsel beim Hovern */
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: #fafafa;
+    transition: background 0.2s ease;
+
+    &:hover { background-color: #f0f4f8; }
 }
 
-.archive-card-header:hover {
-    background-color: #f0f4f8;  /* Etwas dunkleres Blau-Grau beim Drüberfahren */
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-.header-left {
-    display: flex;              /* Datum und Titel nebeneinander */
-    align-items: center;        /* Mittige vertikale Ausrichtung */
-    gap: 15px;                  /* Abstand zwischen Datum und Titel */
-}
+.archive-date { font-size: 13px; font-weight: 600; color: #666; }
+.archive-title { margin: 0; font-size: 16px; color: #333; }
+.archive-tags { font-size: 13px; color: #007bff; background: #e9f2ff; padding: 4px 8px; border-radius: 4px; }
+.toggle-icon { font-size: 12px; color: #888; }
 
-.archive-date {
-    font-size: 13px;            /* Textgröße des Datums */
-    font-weight: 600;           /* Halbfette Schrift */
-    color: #666;                /* Graue Textfarbe */
-}
-
-.archive-title {
-    margin: 0;                  /* Entfernt Überschriften-Standards */
-    font-size: 16px;            /* Schriftgröße des Notiz-Themas */
-    color: #333;                /* Dunkler Text */
-}
-
-.header-right {
-    display: flex;              /* Tags und Pfeil nebeneinander */
-    align-items: center;        /* Vertikale Ausrichtung */
-    gap: 15px;                  /* Abstand zwischen den Bausteinen */
-}
-
-.archive-tags {
-    font-size: 13px;            /* Tag-Schriftgröße */
-    color: #007bff;             /* Blaue Schriftfarbe für Tags */
-    background: #e9f2ff;        /* Hellblauer Tag-Hintergrund */
-    padding: 4px 8px;           /* Kompakter Innenabstand um das Tag */
-    border-radius: 4px;         /* Leicht abgerundete Ecken */
-}
-
-.toggle-icon {
-    font-size: 12px;            /* Pfeilsymbol-Größe */
-    color: #888;                /* Grauer Pfeil */
-}
-
-/* Versteckter Inhaltsbereich */
 .archive-card-body {
-    display: none;              /* Blendet den Inhalt standardmäßig aus */
-    padding: 15px;              /* Innenabstand für Text/Bilder */
-    border-top: 1px solid #eee; /* Trennlinie zur Kopfzeile */
-    background: #ffffff;        /* Weißer Notizhintergrund */
+    display: none;
+    padding: 15px;
+    border-top: 1px solid #eee;
+    background: #ffffff;
 }
 
 .archive-text {
-    white-space: pre-wrap;      /* Behält Zeilenumbrüche im Text bei */
-    font-size: 14px;            /* Textgröße der Notiz */
-    color: #444;                /* Dunkelgraue gut lesbare Schrift */
-    line-height: 1.5;           /* Angenehmer Zeilenabstand */
-    margin-top: 0;              /* Entfernt oberen Abstand */
+    white-space: pre-wrap;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+    margin-top: 0;
 }
 
 
@@ -426,98 +354,84 @@ body {
                                             Styling für die Kalender-Seite (Kalender.html) 
 ----------------------------------------------------------------------------------------------------------------------- */
 
-/* Kopfleiste für die Monatsnavigation */
 .calendar-header {
-    display: flex;              /* Ausrichtung nebeneinander */
-    justify-content: space-between; /* Verteilt Buttons nach links/rechts, Monat mittig */
-    align-items: center;        /* Zentriert auf gleicher Höhe */
-    margin-bottom: 20px;        /* Abstand zum Kalendergitter */
-    padding-bottom: 10px;       /* Innenabstand */
-    border-bottom: 1px solid #000; /* Abgrenzungslinie unten */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000;
 }
 
-.current-month {
-    margin: 0;                  /* Entfernt Standard-Abstände */
-    font-size: 22px;            /* Monatsüberschrift-Größe */
-}
+.current-month { margin: 0; font-size: 22px; }
 
 .cal-nav-btn {
-    padding: 6px 14px;          /* Innenabstand der Navigationspfeile */
-    background-color: #fff;     /* Weißer Hintergrund */
-    border: 1px solid #000;     /* Schwarzer Rahmen */
-    border-radius: 5px;         /* Abgerundete Ecken */
-    cursor: pointer;           /* Hand-Symbol */
-    font-weight: bold;          /* Fette Beschriftung */
+    padding: 6px 14px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s, color 0.3s;
+
+    &:hover {
+        background-color: #0c47be;
+        color: white;
+    }
 }
 
-.cal-nav-btn:hover {
-    background-color: #0c47be; /* Blau bei Klick/Hover */
-    color: white;              /* Weiße Schrift */
-    transition: background 0.3s;/* Sanfter Übergang */
-}
-
-/* Hauptnetzwerk mit genau 7 Spalten */
 .calendar-grid {
-    display: grid;              /* Aktiviert CSS Grid */
-    grid-template-columns: repeat(7, 1fr); /* Erstellt genau 7 gleich große Spalten (Mo–So) */
-    gap: 8px;                   /* Lücke zwischen den Tagesfeldern */
-    max-width: 900px;           /* Begrenzt Gesamtbreite des Kalenders */
-    margin: 0 auto;             /* Zentriert den Kalender auf der Seite */
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-/* Beschriftungen der Wochentage (Mo - So) */
 .day-label {
-    font-weight: bold;          /* Fette Tageskürzel */
-    padding: 10px 0;            /* Innenabstand oben/unten */
-    background-color: #eee;     /* Hellgraue Hintergrundfarbe */
-    border: 1px solid #000;     /* Schwarzer Rahmen */
-    border-radius: 4px;         /* Leicht abgerundet */
-    text-align: center;         /* Zentrierte Beschriftung */
+    font-weight: bold;
+    padding: 10px 0;
+    background-color: #eee;
+    border: 1px solid #000;
+    border-radius: 4px;
+    text-align: center;
 }
 
-/* Einzelnes Tageskästchen - Feste Höhe garantiert gleich große Kacheln */
 .calendar-day {
-    height: 95px;               /* Feste Höhe für starr gleich große Kacheln */
-    border: 1px solid #000;     /* Schwarze Rahmeneinfassung */
-    border-radius: 4px;         /* Leicht abgerundete Ecken */
-    padding: 6px;               /* Innenabstand für Tageszahl */
-    text-align: left;           /* Tageszahl oben links platzieren */
-    background-color: #fff;     /* Weißer Hintergrund */
-    cursor: pointer;           /* Hand-Symbol */
-    transition: background 0.2s, border-color 0.2s; /* Übergang bei Interaktion */
-    box-sizing: border-box;     /* Rechnet Rahmendicke sauber in die Höhe ein */
-    overflow-y: auto;           /* Scrollbalken bei vielen Notizen an einem Tag */
+    height: 95px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    padding: 6px;
+    text-align: left;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    box-sizing: border-box;
+    overflow-y: auto;
+
+    &:hover:not(.empty) {
+        background-color: #e6f0ff;
+        border-color: #0c47be;
+    }
+
+    &.empty {
+        background-color: #f9f9f9;
+        border-color: #eee;
+        cursor: default;
+    }
 }
 
-.day-num {
-    font-weight: bold;          /* Fette Tageszahl */
-    font-size: 14px;            /* Größe der Zahl */
-}
+.day-num { font-weight: bold; font-size: 14px; }
 
-/* Hover-Effekt beim Drüberfahren */
-.calendar-day:hover:not(.empty) {
-    background-color: #e6f0ff; /* Hellblaue Einfärbung aktiver Tage */
-    border-color: #0c47be;     /* Dunkelblauer Rahmen */
-}
-
-/* Ausgegraute Felder für Vor-/Folgemonate */
-.calendar-day.empty {
-    background-color: #f9f9f9; /* Ausgegrauter Hintergrund */
-    border-color: #eee;         /* Sehr schwacher Rahmen */
-    cursor: default;           /* Normaler Zeiger (nicht klickbar) */
-}
-
-/* Steuerung unter dem Kalender (Button & Legende) */
 .calendar-controls {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 25px;
-    margin: 25px auto 15px auto;
+    margin: 25px auto 15px;
     flex-wrap: wrap;
 }
 
-/* "+ Hinzufügen"-Button im NoteNest-Design */
 .add-event-btn {
     padding: 8px 16px;
     background-color: #fff;
@@ -528,27 +442,21 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: background 0.3s, color 0.3s;
+
+    &:hover {
+        background-color: #0c47be;
+        color: white;
+    }
 }
 
-.add-event-btn:hover {
-    background-color: #0c47be;
-    color: white;
-}
-
-/* Farblegende */
-.legend {
+.legend, .legend-item {
     display: flex;
-    gap: 15px;
     align-items: center;
+    gap: 15px;
     font-size: 14px;
     font-weight: bold;
 }
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
+.legend-item { gap: 6px; }
 
 .color-dot {
     width: 12px;
@@ -557,21 +465,13 @@ body {
     display: inline-block;
     border: 1px solid rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
+
+    &.event, &.work { background-color: #0170f8; }
+    &.task { background-color: #28a745; }
+    &.note { background-color: #6c757d; }
+    &.urgent { background-color: #ffffff; border: 2px solid #dc3545 !important; }
 }
 
-/* Farben für Legende & Einträge */
-.color-dot.event,
-.color-dot.work { background-color: #0170f8; } /* Blau für Ereignisse */
-.color-dot.task { background-color: #28a745; }  /* Grün für Aufgaben */
-.color-dot.note { background-color: #6c757d; }  /* Grau für Notizen */
-
-/* Weisser Kreis mit rotem Rand für "Wichtig" in der Legende */
-.color-dot.urgent {
-    background-color: #ffffff;
-    border: 2px solid #dc3545 !important;
-}
-
-/* Styling für "Wichtige" Einträge (dezenter roter Rand) */
 .event-urgent {
     border: 2px solid #dc3545 !important;
     box-shadow: 0 0 4px rgba(220, 53, 69, 0.5);
@@ -582,13 +482,9 @@ body {
                                             Styling für das Pop-up (Modal) & Typ-Schalter
 ----------------------------------------------------------------------------------------------------------------------- */
 
-/* Dunkler Hintergrund-Overlay */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
@@ -596,7 +492,6 @@ body {
     z-index: 9999;
 }
 
-/* Pop-up Fenster im NoteNest-Stil */
 .modal-box {
     background: #ffffff;
     border: 1px solid #000000;
@@ -606,6 +501,10 @@ body {
     max-width: 480px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
+
+    & textarea { resize: none !important; }
+    & .top-inputs-row { align-items: flex-end; }
+    & .top-inputs-row .input-group:first-child { margin-top: 0; }
 }
 
 .modal-header {
@@ -615,12 +514,8 @@ body {
     border-bottom: 1px solid #000;
     padding-bottom: 10px;
     margin-bottom: 15px;
-}
 
-.modal-header h3 {
-    margin: 0;
-    font-size: 20px;
-    color: #000;
+    & h3 { margin: 0; font-size: 20px; color: #000; }
 }
 
 .modal-close-icon {
@@ -630,17 +525,18 @@ body {
     font-weight: bold;
     cursor: pointer;
     color: #000;
+
+    &:hover { color: #dc3545; }
 }
 
-.modal-close-icon:hover {
-    color: #dc3545;
-}
-
-/* Typ-Schalter oben im Modal (Aufgabe vs. Ereignis) */
 .type-selector {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+
+    & input[type="radio"] { display: none; }
+    & input[type="radio"]#typeTask:checked + .type-btn-label { background-color: #28a745; color: white; border-color: #28a745; }
+    & input[type="radio"]#typeEvent:checked + .type-btn-label { background-color: #0170f8; color: white; border-color: #0170f8; }
 }
 
 .type-btn-label {
@@ -657,25 +553,6 @@ body {
     transition: all 0.2s ease;
 }
 
-/* Versteckt das Standard-Radio-Icon */
-.type-selector input[type="radio"] {
-    display: none;
-}
-
-/* Aktive Einfärbung je nach Wahl */
-.type-selector input[type="radio"]#typeTask:checked + .type-btn-label {
-    background-color: #28a745;
-    color: white;
-    border-color: #28a745;
-}
-
-.type-selector input[type="radio"]#typeEvent:checked + .type-btn-label {
-    background-color: #0170f8;
-    color: white;
-    border-color: #0170f8;
-}
-
-/* Aktionen/Buttons im Modal */
 .modal-actions {
     display: flex;
     gap: 10px;
@@ -692,26 +569,12 @@ body {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-}
+    transition: background 0.3s, color 0.3s;
 
-.cancel-btn:hover {
-    background-color: #dc3545;
-    color: white;
-    transition: background 0.3s;
-}
-
-/* Verhindert das Skalieren des Textfeldes AUSSCHLIESSLICH im Pop-up-Fenster */
-.modal-box textarea {
-    resize: none !important;
-}
-
-/* Bündiges Ausrichten der Eingabefelder im Pop-up */
-.modal-box .top-inputs-row {
-    align-items: flex-end;
-}
-
-.modal-box .top-inputs-row .input-group:first-child {
-    margin-top: 0;
+    &:hover {
+        background-color: #dc3545;
+        color: white;
+    }
 }
 
 
@@ -735,11 +598,8 @@ body {
     border-bottom: 1px solid #000;
     padding-bottom: 10px;
     margin-bottom: 15px;
-}
 
-.day-detail-header h3 {
-    margin: 0;
-    color: #000;
+    & h3 { margin: 0; color: #000; }
 }
 
 .btn-close-detail {
@@ -750,13 +610,10 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+
+    &:hover { background: #a71d2a; }
 }
 
-.btn-close-detail:hover {
-    background: #a71d2a;
-}
-
-/* Card-Item für Termine/Aufgaben in der Tagesansicht */
 .event-card-item {
     background: #fff;
     padding: 10px 14px;
@@ -768,7 +625,6 @@ body {
     align-items: center;
 }
 
-/* Hebungs-Regel: Setzt Notizinhalte im Kalender auf linksbündig */
 #dayDetailContainer,
 #dayDetailContainer * {
     text-align: left !important;
@@ -780,68 +636,63 @@ body {
 ----------------------------------------------------------------------------------------------------------------------- */
 
 .welcome-section {
-    margin-bottom: 30px;        /* Abstand nach unten zum Grid */
-    text-align: center;         /* Zentrierter Text */
+    margin-bottom: 30px;
+    text-align: center;
 }
 
 .info-text {
-    font-size: 16px;            /* Textgröße der Einleitung */
-    max-width: 700px;           /* Verhindert zu breite Textzeilen */
-    margin: 10px auto 0 auto;   /* Zentriert den Textbereich horizontal */
-    line-height: 1.5;           /* Angenehmer Zeilenabstand */
+    font-size: 16px;
+    max-width: 700px;
+    margin: 10px auto 0;
+    line-height: 1.5;
 }
 
 .dashboard-grid {
-    display: flex;              /* Flexbox für Kacheln */
-    justify-content: center;    /* Zentriert die Karte waagerecht */
-    margin-top: 25px;           /* Abstand nach oben */
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
 }
 
 .dashboard-card {
-    width: 100%;                /* Nutzt verfügbare Breite */
-    max-width: 600px;           /* Schöne, ausgewogene Maximalbreite */
-    background-color: #fff;     /* Weißer Hintergrund */
-    border: 1px solid #000;     /* Schwarze Außeneinfassung */
-    border-radius: 8px;         /* Abgerundete Ecken */
-    padding: 20px;              /* Innenabstand */
-    text-align: left;           /* Linksbündiger Inhalt */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Dezenter Schattenwurf */
-}
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 
-.dashboard-card h3 {
-    margin-top: 0;              /* Entfernt oberen Abstand */
-    margin-bottom: 15px;        /* Abstand zur Liste darunter */
-    border-bottom: 1px solid #000; /* Trennlinie unter Kachel-Titel */
-    padding-bottom: 8px;        /* Innenabstand vor Trennlinie */
-    font-size: 18px;            /* Schriftgröße der Überschrift */
+    & h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #000;
+        padding-bottom: 8px;
+        font-size: 18px;
+    }
 }
 
 .dashboard-list {
-    list-style: none;          /* Entfernt Standard-Listenpunkte */
-    padding: 0;                 /* Entfernt Listen-Einrückung */
-    margin: 0;                  /* Entfernt Außenabstände */
-}
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
-.dashboard-list li {
-    padding: 10px 0;            /* Abstand oben/unten für Listenelemente */
-    border-bottom: 1px solid #eee; /* Trennlinie zwischen Einträgen */
-}
+    & li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
 
-.dashboard-list li:last-child {
-    border-bottom: none;        /* Entzieht dem letzten Element die Trennlinie */
+        &:last-child { border-bottom: none; }
+    }
+
+    & p { margin: 0; font-size: 14px; }
 }
 
 .list-date {
-    font-size: 12px;            /* Kleine Datumsgröße */
-    color: #666;                /* Graue Schriftfarbe */
-    font-weight: bold;          /* Fettes Datum */
-    display: block;             /* Erzwingt eine eigene Zeile für das Datum */
-    margin-bottom: 3px;         /* Abstand zum darunterliegenden Text */
-}
-
-.dashboard-list p {
-    margin: 0;                  /* Entfernt Absatzaußenabstand */
-    font-size: 14px;            /* Textgröße der Vorschau */
+    font-size: 12px;
+    color: #666;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 3px;
 }
 
 
@@ -849,10 +700,9 @@ body {
                                             Styling für das Bild-Modal
 ----------------------------------------------------------------------------------------------------------------------- */
 
-/* Erhöht die maximale Darstellungsgröße des Bildes in der Großansicht */
 #imageModalImg {
-    max-width: 95vw !important;  /* Nutzt bis zu 95% der Bildschirmbreite */
-    max-height: 90vh !important; /* Nutzt bis zu 90% der Bildschirmhöhe */
+    max-width: 95vw !important;
+    max-height: 90vh !important;
 }
 
 
@@ -860,21 +710,14 @@ body {
                                 Quill.js Formatierungen & Textausrichtungen (Archiv/Kalender)
 ----------------------------------------------------------------------------------------------------------------------- */
 
-/* Erzwingt Bullet-Punkte für Quill-Listen mit data-list="bullet" */
 #dayDetailContainer ol li[data-list="bullet"],
 #archiveContainer ol li[data-list="bullet"],
 .archive-card ol li[data-list="bullet"] {
     list-style-type: disc !important;
+
+    &::before { content: none !important; }
 }
 
-/* Entfernt bei diesen Listenpunkten die automatische Nummerierung */
-#dayDetailContainer ol li[data-list="bullet"]::before,
-#archiveContainer ol li[data-list="bullet"]::before,
-.archive-card ol li[data-list="bullet"]::before {
-    content: none !important;
-}
-
-/* Standard-Ausrichtung im Archiv für Absätze, Listen und Container linksbündig zwingen */
 .archive-card div,
 .archive-card p,
 .archive-card li,
@@ -884,33 +727,11 @@ body {
     text-align: left;
 }
 
-/* Quill Schriftgrößen & Ausrichtungen im Archiv und Kalender */
-#archiveContainer .ql-size-small,
-#dayDetailContainer .ql-size-small {
-    font-size: 0.75em;
-}
-
-#archiveContainer .ql-size-large,
-#dayDetailContainer .ql-size-large {
-    font-size: 1.5em;
-}
-
-#archiveContainer .ql-size-huge,
-#dayDetailContainer .ql-size-huge {
-    font-size: 2.5em;
-}
-
-#archiveContainer .ql-align-center,
-#dayDetailContainer .ql-align-center {
-    text-align: center;
-}
-
-#archiveContainer .ql-align-right,
-#dayDetailContainer .ql-align-right {
-    text-align: right;
-}
-
-#archiveContainer .ql-align-justify,
-#dayDetailContainer .ql-align-justify {
-    text-align: justify;
+#archiveContainer, #dayDetailContainer {
+    & .ql-size-small { font-size: 0.75em; }
+    & .ql-size-large { font-size: 1.5em; }
+    & .ql-size-huge { font-size: 2.5em; }
+    & .ql-align-center { text-align: center; }
+    & .ql-align-right { text-align: right; }
+    & .ql-align-justify { text-align: justify; }
 }
