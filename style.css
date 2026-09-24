@@ -419,6 +419,19 @@ body {
         border-color: #eee;
         cursor: default;
     }
+
+    /* Heute (starker blauer Rahmen) */
+    &.today {
+        border: 2px solid #026fec !important;
+        background-color: #f5f6f7 !important;
+    }
+
+    /* Dezent ausgewählter Tag */
+    &.selected:not(.today) {
+        background-color: #f9fafb !important;
+        border: 2px solid #a2b9d1 !important;
+    }
+
 }
 
 .day-num { font-weight: bold; font-size: 14px; }

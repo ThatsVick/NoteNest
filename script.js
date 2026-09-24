@@ -5,6 +5,7 @@
 let currentEditId = null;
 let currentCalendarDate = new Date();
 let dashboardDate = new Date();
+let selectedDate = null; // Speichert das aktuell ausgewählte Datum im Kalender
 let quill = null;
 
 // =======================================================================================================================
@@ -606,6 +607,7 @@ function searchCssGuide() {
 
 function changeMonth(delta) {
     currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+    selectedDate = null; // Stellt sicher, dass beim Monatswechsel die Auswahl zurückgesetzt wird
     renderCalendar();
     closeDayDetail();
 }
@@ -646,6 +648,8 @@ async function renderCalendar() {
         });
 
         const isToday = dateString === todayStr;
+        const isSelected = dateString === selectedDate;
+
         let itemsHtml = matchingEvents.map(evt => `
             <div class="${evt.isUrgent ? 'event-urgent' : ''}" style="background: ${evt.type === 'task' ? '#28a745' : '#0170f8'}; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 ${evt.type === 'task' ? '📋 ' : '📅 '}${evt.title}
@@ -655,7 +659,7 @@ async function renderCalendar() {
             </div>`).join('');
 
         htmlContent += `
-            <div class="calendar-day ${isToday ? 'today' : ''}" onclick="showDayDetails('${dateString}')" style="cursor: pointer; ${isToday ? 'border: 2px solid #007bff; background: #f0f7ff;' : ''}">
+            <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" onclick="showDayDetails('${dateString}')" style="cursor: pointer;">
                 <div class="day-num" style="${isToday ? 'color: #007bff; font-weight: bold;' : ''}">${day}</div>
                 ${itemsHtml}
             </div>`;
@@ -665,6 +669,9 @@ async function renderCalendar() {
 }
 
 async function showDayDetails(dateString) {
+    selectedDate = dateString;
+    await renderCalendar();
+
     const detailSection = document.getElementById('dayDetailSection');
     const title = document.getElementById('selectedDateTitle');
     const container = document.getElementById('dayDetailContainer');
@@ -714,6 +721,8 @@ async function showDayDetails(dateString) {
 }
 
 function closeDayDetail() {
+    selectedDate = null;
+    renderCalendar();
     document.getElementById('dayDetailSection')?.style.setProperty('display', 'none');
 }
 
