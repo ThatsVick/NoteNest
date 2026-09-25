@@ -52,8 +52,12 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
-    padding: 10px 20px 20px 20px; /* Oben: 0, Rechts: 20px, Unten: 20px, Links: 20px */
+    padding: 10px 20px 0 20px; /* Unten 0, damit der Footer Bündig abschließt */
     background-color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* Grundvoraussetzung für den Sticky Footer */
+    box-sizing: border-box;
 }
 
 .top-inputs-row input:focus,
@@ -69,12 +73,12 @@ body {
 .main-header {
     display: flex;
     align-items: center;
-    padding: 4px 15px 10px 15px; /* Oben: 4px, Rechts: 15px, Unten: 10px, Links: 15px */
+    padding: 4px 15px 10px 15px;
     margin-bottom: 20px;
     border-bottom: 1px solid #000;
     border-radius: 5px;
     position: relative;
-    height: 60px; /* Feste Höhe für den gesamten Header */
+    height: 60px;
 }
 
 .logo-container {
@@ -95,7 +99,7 @@ body {
     position: absolute;
     right: 15px;
     transform: translateY(-50%) scale(1);
-    height: 80px;          /* Exakt dieselbe Höhe wie das linke Logo */
+    height: 80px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }
@@ -140,11 +144,12 @@ body {
 
 .content-area {
     border-top: 1px solid black;
-    border-radius: 10px;
+    
     min-height: 300px;
     padding: 20px;
     background-color: #fff;
     text-align: center;
+    flex: 1; /* Nimmt den freien Platz ein und drückt den Footer nach ganz unten */
 }
 
 
@@ -434,7 +439,7 @@ body {
         cursor: default;
     }
 
-    /* Heute (starker warmer kupferroter Rahmen) */
+    /* Heute */
     &.today {
         border: 2px solid #c85a28 !important;
         background-color: #fbf3eb !important;
@@ -492,9 +497,9 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
 
-    &.event, &.work { background-color: #e57338; }  /* Helleres Orange-Rot für Ereignisse */
-    &.task { background-color: #6a3518; }           /* Sichtbar dunkleres Schokoladenbraun für Aufgaben */
-    &.note { background-color: #6c757d; }           /* Unverändertes Grau für Notizen */
+    &.event, &.work { background-color: #e57338; }
+    &.task { background-color: #6a3518; }
+    &.note { background-color: #6c757d; }
     &.urgent { background-color: #ffffff; border: 2px solid #dc3545 !important; }
 }
 
@@ -766,9 +771,6 @@ body {
     & .ql-align-justify { text-align: justify; }
 }
 
-/* -----------------------------------------------------------------------------------------------------------------------
-                                                    Login
------------------------------------------------------------------------------------------------------------------------ */
 
 /* -----------------------------------------------------------------------------------------------------------------------
                                             Styling für die Login-Seite (login.html)
@@ -868,4 +870,55 @@ body {
 
 .login-footer a:hover {
     text-decoration: underline;
+}
+
+
+/* -----------------------------------------------------------------------------------------------------------------------
+                                            Styling für den Footer (Immer unten)
+----------------------------------------------------------------------------------------------------------------------- */
+
+.main-footer {
+    margin-top: 40px;
+    padding: 20px 15px;
+    border-top: 1px solid #000;
+    border-radius: 5px;
+    background-color: #fff;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    flex-shrink: 0; /* Stellt sicher, dass der Footer seine Höhe nicht verliert */
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-content p {
+    margin: 0;
+}
+
+.footer-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-nav a {
+    color: #c85a28;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.footer-nav a:hover {
+    color: #6a3518;
+    text-decoration: underline;
+}
+
+.footer-divider {
+    color: #aaa;
+    font-size: 12px;
 }
