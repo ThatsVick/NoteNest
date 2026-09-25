@@ -52,7 +52,7 @@
 body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 10px 20px 20px 20px; /* Oben: 0, Rechts: 20px, Unten: 20px, Links: 20px */
     background-color: white;
 }
 
@@ -69,11 +69,12 @@ body {
 .main-header {
     display: flex;
     align-items: center;
-    padding: 10px 15px;
+    padding: 4px 15px 10px 15px; /* Oben: 4px, Rechts: 15px, Unten: 10px, Links: 15px */
     margin-bottom: 20px;
     border-bottom: 1px solid #000;
     border-radius: 5px;
     position: relative;
+    height: 60px; /* Feste Höhe für den gesamten Header */
 }
 
 .logo-container {
@@ -81,13 +82,28 @@ body {
     align-items: center;
     text-decoration: none;
     z-index: 2;
+
 }
 
 .header-logo {
-    height: 48px;
+    height: 70px;
     width: auto;
     display: block;
     object-fit: contain;
+}
+
+.header_login {
+    position: absolute;
+    right: 15px;
+    transform: translateY(-50%) scale(1);
+    height: 80px;          /* Exakt dieselbe Höhe wie das linke Logo */
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.header_login:hover {
+    transform: translateY(-50%) scale(1.12);
+    
 }
 
 .navbar {
@@ -132,6 +148,8 @@ body {
     background-color: #fff;
     text-align: center;
 }
+
+
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
