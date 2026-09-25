@@ -417,7 +417,7 @@ body {
 }
 
 .calendar-day {
-    height: 95px;
+    height: 75px;
     border: 1px solid #000;
     border-radius: 4px;
     padding: 6px;
