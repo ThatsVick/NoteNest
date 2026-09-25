@@ -5,7 +5,7 @@
 let currentEditId = null;
 let currentCalendarDate = new Date();
 let dashboardDate = new Date();
-let selectedDate = null; // Speichert das aktuell ausgewählte Datum im Kalender
+let selectedDate = null;
 let quill = null;
 
 // =======================================================================================================================
@@ -209,12 +209,12 @@ async function renderStartDashboard() {
         const germanDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
         const timeText = (!evt.isAllDay && evt.time) ? (evt.endTime ? `⏰ ${evt.time} - ${evt.endTime} Uhr` : `⏰ ${evt.time} Uhr`) : '📌 Ganztägig';
         const isTask = evt.type === 'task';
-        const badgeColor = isTask ? '#28a745' : '#0170f8';
+        const badgeColor = isTask ? '#6a3518' : '#e57338';
         const typeLabel = isTask ? '📋 Aufgabe' : '📅 Ereignis';
         const urgentBadge = evt.isUrgent ? '<span style="color: #dc3545; font-weight: bold; margin-left: 8px;">⚠️ Wichtig</span>' : '';
 
         return `
-            <li style="border-left: 4px solid ${evt.isUrgent ? '#dc3545' : badgeColor}; padding-left: 8px; display: flex; justify-content: space-between; align-items: center; padding: 8px; transition: background 0.2s;" onmouseover="this.style.background='#f0f7ff';" onmouseout="this.style.background='transparent';">
+            <li style="border-left: 4px solid ${evt.isUrgent ? '#dc3545' : badgeColor}; padding-left: 8px; display: flex; justify-content: space-between; align-items: center; padding: 8px; transition: background 0.2s;" onmouseover="this.style.background='#fcf4eb';" onmouseout="this.style.background='transparent';">
                 <div onclick="editEvent(${evt.id})" style="cursor: pointer; flex-grow: 1;">
                     <span class="list-date">${typeLabel} • ${germanDate} • ${timeText} ${urgentBadge}</span>
                     <p style="margin: 4px 0 0 0;"><strong>${evt.title}</strong></p>
@@ -319,17 +319,17 @@ function getMonthYearLabel(dateString) {
     return `${monthNames[parseInt(parts[1], 10) - 1] || 'Unbekannt'} ${parts[0]}`;
 }
 
-// Hilfsfunktion zur UI-Erstellung von Notizkarten
+// Hilfsfunktion zur UI-Erstellung von Notizkarten (Warmes Snorri-Kupferrot statt Blau)
 function createNoteCardHTML(item, deleteFnName) {
     return `
-        <div class="archive-card" data-tags="${item.tags || ''}" data-title="${item.title}" data-date="${item.date || ''}" style="background: #fff; border-left: 4px solid #007bff; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+        <div class="archive-card" data-tags="${item.tags || ''}" data-title="${item.title}" data-date="${item.date || ''}" style="background: #fff; border-left: 4px solid #c85a28; margin-bottom: 10px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
             <div style="padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
                 <div onclick="toggleContent(${item.id})" style="cursor: pointer; display: flex; align-items: center; gap: 12px; flex-grow: 1;">
                     <span style="font-size: 12px; font-weight: bold; color: #555;">📅 ${item.date}</span>
                     <h4 style="margin: 0; font-size: 15px; color: #222;">${item.title}</h4>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span onclick="toggleContent(${item.id})" style="cursor: pointer; font-size: 11px; background: #e9f2ff; color: #007bff; padding: 2px 6px; border-radius: 4px;">🏷️ ${item.tags || 'Keine Tags'}</span>
+                    <span onclick="toggleContent(${item.id})" style="cursor: pointer; font-size: 11px; background: #fbf3eb; color: #c85a28; padding: 2px 6px; border-radius: 4px;">🏷️ ${item.tags || 'Keine Tags'}</span>
                     <button onclick="event.stopPropagation(); editEntry(${item.id});" title="Bearbeiten" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">✏️</button>
                     <button onclick="event.stopPropagation(); ${deleteFnName}(${item.id}, '${item.date}');" title="Löschen" style="background: transparent; border: none; cursor: pointer; font-size: 15px;">🗑️</button>
                     <span onclick="toggleContent(${item.id})" id="icon-${item.id}" style="cursor: pointer; font-size: 12px; color: #888; width: 15px; text-align: center;">▼</span>
@@ -371,12 +371,12 @@ async function loadArchive() {
         const items = monthGroups[monthLabel];
         folderIdx++;
         return `
-            <div class="month-folder-card" style="background: #fff; border: 1px solid #007bff; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <div onclick="toggleMonthFolder(${folderIdx})" style="padding: 12px 15px; background: #e9f2ff; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0; font-size: 16px; color: #007bff;">📁 ${monthLabel}</h3>
-                    <span id="month-folder-icon-${folderIdx}" style="font-size: 13px; color: #007bff; font-weight: bold;">▼ (${items.length} ${items.length === 1 ? 'Eintrag' : 'Einträge'})</span>
+            <div class="month-folder-card" style="background: #fff; border: 1px solid #c85a28; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div onclick="toggleMonthFolder(${folderIdx})" style="padding: 12px 15px; background: #fbf3eb; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; font-size: 16px; color: #c85a28;">📁 ${monthLabel}</h3>
+                    <span id="month-folder-icon-${folderIdx}" style="font-size: 13px; color: #c85a28; font-weight: bold;">▼ (${items.length} ${items.length === 1 ? 'Eintrag' : 'Einträge'})</span>
                 </div>
-                <div id="month-folder-body-${folderIdx}" class="month-folder-body" style="display: none; padding: 15px; background: #fafafa; border-top: 1px solid #d0e3ff;">
+                <div id="month-folder-body-${folderIdx}" class="month-folder-body" style="display: none; padding: 15px; background: #fafafa; border-top: 1px solid #f2dfce;">
                     ${items.map(item => createNoteCardHTML(item, 'deleteEntry')).join('')}
                 </div>
             </div>`;
@@ -460,7 +460,7 @@ const cssDatabase = [
             { name: "border", syntax: "border: 1px solid #000;", desc: "Kurzform für Breite, Stil und Farbe des Außenrahmens." },
             { name: "border-width", syntax: "border-width: 2px;", desc: "Bestimmt die Dicke des Außenrahmens." },
             { name: "border-style", syntax: "border-style: solid | dashed | dotted...", desc: "Legt den Rahmentyp fest." },
-            { name: "border-color", syntax: "border-color: #007bff;", desc: "Bestimmt die Farbe des Rahmens." },
+            { name: "border-color", syntax: "border-color: #c85a28;", desc: "Bestimmt die Farbe des Rahmens." },
             { name: "border-radius", syntax: "border-radius: 8px | 50%;", desc: "Ründet die Ecken ab." },
             { name: "border-top/bottom/left/right", syntax: "border-bottom: 2px solid #000;", desc: "Setzt den Rahmen gezielt an eine Seite." },
             { name: "border-image", syntax: "border-image: url(...) 30 round;", desc: "Verwendet ein Bild als Rahmen." },
@@ -553,15 +553,15 @@ function renderCssGuide() {
 
     container.innerHTML = cssDatabase.map((cat, catIdx) => `
         <div class="css-category-card" style="background: #fff; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            <div onclick="toggleCssCategory(${catIdx})" style="padding: 12px 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
-                <h3 style="margin: 0; font-size: 16px; color: #007bff;">${cat.icon} ${cat.category}</h3>
+            <div onclick="toggleCssCategory(${catIdx})" style="padding: 12px 15px; background: #fbf3eb; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
+                <h3 style="margin: 0; font-size: 16px; color: #c85a28;">${cat.icon} ${cat.category}</h3>
                 <span id="css-cat-icon-${catIdx}" style="font-size: 12px; color: #666;">▼ (${cat.commands.length} Befehle)</span>
             </div>
             <div id="css-cat-body-${catIdx}" class="css-cat-body" style="display: none; padding: 15px;">
                 ${cat.commands.map(cmd => `
                     <div class="css-command-item" data-name="${cmd.name.toLowerCase()}" data-desc="${cmd.desc.toLowerCase()}" style="margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #eee;">
                         <strong style="color: #222; font-size: 15px;">${cmd.name}</strong>
-                        <pre style="background: #f4f4f4; padding: 6px 10px; border-radius: 4px; font-size: 13px; color: #d63384; margin: 5px 0;">${cmd.syntax}</pre>
+                        <pre style="background: #f4f4f4; padding: 6px 10px; border-radius: 4px; font-size: 13px; color: #c85a28; margin: 5px 0;">${cmd.syntax}</pre>
                         <span style="font-size: 13px; color: #555;">${cmd.desc}</span>
                     </div>`).join('')}
             </div>
@@ -607,7 +607,7 @@ function searchCssGuide() {
 
 function changeMonth(delta) {
     currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
-    selectedDate = null; // Stellt sicher, dass beim Monatswechsel die Auswahl zurückgesetzt wird
+    selectedDate = null;
     renderCalendar();
     closeDayDetail();
 }
@@ -650,8 +650,9 @@ async function renderCalendar() {
         const isToday = dateString === todayStr;
         const isSelected = dateString === selectedDate;
 
+        // Aufgaben: #6a3518 (Dunkles Kastanienbraun) | Ereignisse: #e57338 (Hellers Orange-Rot)
         let itemsHtml = matchingEvents.map(evt => `
-            <div class="${evt.isUrgent ? 'event-urgent' : ''}" style="background: ${evt.type === 'task' ? '#28a745' : '#0170f8'}; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <div class="${evt.isUrgent ? 'event-urgent' : ''}" style="background: ${evt.type === 'task' ? '#6a3518' : '#e57338'}; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                 ${evt.type === 'task' ? '📋 ' : '📅 '}${evt.title}
             </div>`).join('') + matchingNotes.map(note => `
             <div style="background: #6c757d; color: white; font-size: 10px; padding: 2px 4px; border-radius: 3px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -660,7 +661,7 @@ async function renderCalendar() {
 
         htmlContent += `
             <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" onclick="showDayDetails('${dateString}')" style="cursor: pointer;">
-                <div class="day-num" style="${isToday ? 'color: #007bff; font-weight: bold;' : ''}">${day}</div>
+                <div class="day-num" style="${isToday ? 'color: #c85a28; font-weight: bold;' : ''}">${day}</div>
                 ${itemsHtml}
             </div>`;
     }
@@ -696,8 +697,9 @@ async function showDayDetails(dateString) {
             html += `<h4 style="margin: 10px 0 8px 0; color: #000;">📅 Aufgaben & Ereignisse</h4>` + dayEvents.map(evt => {
                 const timeStr = !evt.isAllDay ? (evt.endTime ? `⏰ ${evt.time} - ${evt.endTime} Uhr` : `⏰ ${evt.time} Uhr`) : '📌 Ganztägig';
                 const isTask = evt.type === 'task';
+                const borderColor = isTask ? '#6a3518' : '#e57338';
                 return `
-                    <div class="event-card-item ${evt.isUrgent ? 'event-urgent' : ''}" style="border-left: 4px solid ${isTask ? '#28a745' : '#0170f8'};">
+                    <div class="event-card-item ${evt.isUrgent ? 'event-urgent' : ''}" style="border-left: 4px solid ${borderColor};">
                         <div>
                             <strong>${isTask ? '📋 [Aufgabe]' : '📅 [Ereignis]'} ${timeStr} - ${evt.title}</strong>
                             ${evt.notes ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #555;">${evt.notes}</p>` : ''}

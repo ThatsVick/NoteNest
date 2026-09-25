@@ -38,7 +38,39 @@
     </header>
 
     <!-- Hauptbereich -->
-    
+    <main class="content-area">
+    <div class="login-card">
+        <h2>Anmelden bei SnorrisCave</h2>
+        <p class="login-subtitle">Gib deine Zugangsdaten ein, um deine Notizen und Termine zu verwalten.</p>
+
+        <form id="loginForm" class="editor-form" onsubmit="event.preventDefault(); alert('Login-Funktion wird vorbereitet!');">
+            
+            <div class="input-group">
+                <label for="loginEmail">E-Mail oder Benutzername:</label>
+                <input type="text" id="loginEmail" required placeholder="z. B. snorri@snorriscave.de" autocomplete="username">
+            </div>
+
+            <div class="input-group">
+                <label for="loginPassword">Passwort:</label>
+                <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
+            </div>
+
+            <div class="login-options">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe"> Angemeldet bleiben
+                </label>
+                <a href="#" class="forgot-password">Passwort vergessen?</a>
+            </div>
+
+            <button type="submit" class="login-btn">Anmelden</button>
+
+        </form>
+
+        <div class="login-footer">
+            <p>Noch kein Konto? <a href="registrieren.html">Jetzt registrieren</a></p>
+        </div>
+    </div>
+</main>
 
 
 

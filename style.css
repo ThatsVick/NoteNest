@@ -39,7 +39,7 @@
     transition: background 1s, color 1s;
 
     &:hover {
-        background-color: #0c47be;
+        background-color: #c85a28;
         color: white;
     }
 }
@@ -61,9 +61,9 @@ body {
 .input-group select:focus,
 .input-group textarea:focus,
 .toolbar-select:focus {
-    border-color: #007bff !important;
+    border-color: #c85a28 !important;
     outline: none !important;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 0 5px rgba(200, 90, 40, 0.4);
 }
 
 .main-header {
@@ -82,7 +82,6 @@ body {
     align-items: center;
     text-decoration: none;
     z-index: 2;
-
 }
 
 .header-logo {
@@ -103,7 +102,6 @@ body {
 
 .header_login:hover {
     transform: translateY(-50%) scale(1.12);
-    
 }
 
 .navbar {
@@ -134,7 +132,7 @@ body {
 
         &:hover,
         &.active {
-            background-color: #0c47be;
+            background-color: #c85a28;
             color: white;
         }
     }
@@ -148,8 +146,6 @@ body {
     background-color: #fff;
     text-align: center;
 }
-
-
 
 
 /* -----------------------------------------------------------------------------------------------------------------------
@@ -209,7 +205,7 @@ body {
     transition: background 0.3s, color 0.3s;
 
     &:hover {
-        background-color: #0c47be;
+        background-color: #c85a28;
         color: white;
     }
 }
@@ -246,8 +242,8 @@ body {
     }
 
     &:focus-within {
-        border-color: #007bff !important;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+        border-color: #c85a28 !important;
+        box-shadow: 0 0 5px rgba(200, 90, 40, 0.4);
     }
 }
 
@@ -288,7 +284,7 @@ body {
     transition: background 0.3s, color 0.3s;
 
     &:hover {
-        background-color: #0c47be;
+        background-color: #c85a28;
         color: white;
     }
 }
@@ -322,7 +318,7 @@ body {
 
 .archive-card {
     background: #ffffff;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid #c85a28;
     border-radius: 8px;
     margin-bottom: 12px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -338,7 +334,7 @@ body {
     background-color: #fafafa;
     transition: background 0.2s ease;
 
-    &:hover { background-color: #f0f4f8; }
+    &:hover { background-color: #fbf5ee; }
 }
 
 .header-left, .header-right {
@@ -349,7 +345,7 @@ body {
 
 .archive-date { font-size: 13px; font-weight: 600; color: #666; }
 .archive-title { margin: 0; font-size: 16px; color: #333; }
-.archive-tags { font-size: 13px; color: #007bff; background: #e9f2ff; padding: 4px 8px; border-radius: 4px; }
+.archive-tags { font-size: 13px; color: #c85a28; background: #fbf3eb; padding: 4px 8px; border-radius: 4px; }
 .toggle-icon { font-size: 12px; color: #888; }
 
 .archive-card-body {
@@ -393,7 +389,7 @@ body {
     transition: background 0.3s, color 0.3s;
 
     &:hover {
-        background-color: #0c47be;
+        background-color: #c85a28;
         color: white;
     }
 }
@@ -428,8 +424,8 @@ body {
     overflow-y: auto;
 
     &:hover:not(.empty) {
-        background-color: #e6f0ff;
-        border-color: #0c47be;
+        background-color: #fcf4eb;
+        border-color: #c85a28;
     }
 
     &.empty {
@@ -438,18 +434,17 @@ body {
         cursor: default;
     }
 
-    /* Heute (starker blauer Rahmen) */
+    /* Heute (starker warmer kupferroter Rahmen) */
     &.today {
-        border: 2px solid #026fec !important;
-        background-color: #f5f6f7 !important;
+        border: 2px solid #c85a28 !important;
+        background-color: #fbf3eb !important;
     }
 
     /* Dezent ausgewählter Tag */
     &.selected:not(.today) {
-        background-color: #f9fafb !important;
-        border: 2px solid #a2b9d1 !important;
+        background-color: #fcf4eb !important;
+        border: 2px solid #d8aa8d !important;
     }
-
 }
 
 .day-num { font-weight: bold; font-size: 14px; }
@@ -475,7 +470,7 @@ body {
     transition: background 0.3s, color 0.3s;
 
     &:hover {
-        background-color: #0c47be;
+        background-color: #c85a28;
         color: white;
     }
 }
@@ -497,9 +492,9 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
 
-    &.event, &.work { background-color: #0170f8; }
-    &.task { background-color: #28a745; }
-    &.note { background-color: #6c757d; }
+    &.event, &.work { background-color: #e57338; }  /* Helleres Orange-Rot für Ereignisse */
+    &.task { background-color: #6a3518; }           /* Sichtbar dunkleres Schokoladenbraun für Aufgaben */
+    &.note { background-color: #6c757d; }           /* Unverändertes Grau für Notizen */
     &.urgent { background-color: #ffffff; border: 2px solid #dc3545 !important; }
 }
 
@@ -566,8 +561,8 @@ body {
     margin-bottom: 10px;
 
     & input[type="radio"] { display: none; }
-    & input[type="radio"]#typeTask:checked + .type-btn-label { background-color: #28a745; color: white; border-color: #28a745; }
-    & input[type="radio"]#typeEvent:checked + .type-btn-label { background-color: #0170f8; color: white; border-color: #0170f8; }
+    & input[type="radio"]#typeTask:checked + .type-btn-label { background-color: #6a3518; color: white; border-color: #6a3518; }
+    & input[type="radio"]#typeEvent:checked + .type-btn-label { background-color: #e57338; color: white; border-color: #e57338; }
 }
 
 .type-btn-label {
@@ -654,6 +649,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    &:hover {
+        background-color: #fcf4eb;
+    }
 }
 
 #dayDetailContainer,
@@ -765,4 +764,108 @@ body {
     & .ql-align-center { text-align: center; }
     & .ql-align-right { text-align: right; }
     & .ql-align-justify { text-align: justify; }
+}
+
+/* -----------------------------------------------------------------------------------------------------------------------
+                                                    Login
+----------------------------------------------------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------------------------------------------------
+                                            Styling für die Login-Seite (login.html)
+----------------------------------------------------------------------------------------------------------------------- */
+
+.login-card {
+    max-width: 400px;
+    margin: 30px auto;
+    padding: 30px 25px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: left;
+}
+
+.login-card h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 22px;
+    color: #222;
+    text-align: center;
+}
+
+.login-subtitle {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: #444;
+}
+
+.remember-me input {
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #c85a28;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+    color: #6a3518;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #c85a28;
+    color: white;
+    border: 1px solid #000;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background-color: #6a3518;
+}
+
+.login-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    text-align: center;
+    font-size: 14px;
+}
+
+.login-footer a {
+    color: #c85a28;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
 }
